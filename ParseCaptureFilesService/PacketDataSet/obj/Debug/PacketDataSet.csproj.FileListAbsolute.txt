@@ -1,0 +1,5 @@
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\ParseCaptureFilesService\PacketDataSet\bin\Debug\PacketDataSet.dll
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\ParseCaptureFilesService\PacketDataSet\bin\Debug\PacketDataSet.pdb
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\ParseCaptureFilesService\PacketDataSet\obj\Debug\PacketDataSet.dll
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\ParseCaptureFilesService\PacketDataSet\obj\Debug\PacketDataSet.pdb
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\ParseCaptureFilesService\PacketDataSet\obj\Debug\PacketDataSet.csprojResolveAssemblyReference.cache

@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="PacketAnalysisModelStoreContainer" CdmEntityContainer="PacketAnalysisEntity">
+    <EntitySetMapping Name="CapturePackets">
+      <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.CapturePacket">
+        <MappingFragment StoreEntitySet="CapturePacket">
+          <ScalarProperty Name="CaptureBatchId" ColumnName="CaptureBatchId" />
+          <ScalarProperty Name="CapturePacketId" ColumnName="CapturePacketId" />
+          <ScalarProperty Name="PacketNumber" ColumnName="PacketNumber" />
+          <ScalarProperty Name="TimeStamp" ColumnName="TimeStamp" />
+          <ScalarProperty Name="Marked" ColumnName="Marked" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <FunctionImportMapping FunctionImportName="CaptureBatchInsert" FunctionName="PacketAnalysisModel.Store.CaptureBatchInsert" />
+    <EntitySetMapping Name="BatchIntervals">
+      <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.BatchInterval">
+        <MappingFragment StoreEntitySet="BatchInterval">
+          <ScalarProperty Name="PacketCount" ColumnName="PacketCount" />
+          <ScalarProperty Name="IntervalNumber" ColumnName="IntervalNumber" />
+          <ScalarProperty Name="CaptureBatchId" ColumnName="CaptureBatchId" />
+          <ScalarProperty Name="BatchIntervalId" ColumnName="BatchIntervalId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="CaptureBatches">
+      <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.CaptureBatch">
+        <MappingFragment StoreEntitySet="CaptureBatch">
+          <ScalarProperty Name="Marked" ColumnName="Marked" />
+          <ScalarProperty Name="FileName" ColumnName="FileName" />
+          <ScalarProperty Name="CaptureBatchId" ColumnName="CaptureBatchId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="CumulativeIntervals">
+      <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.CumulativeInterval">
+        <MappingFragment StoreEntitySet="CumulativeInterval">
+          <ScalarProperty Name="Marked" ColumnName="Marked" />
+          <ScalarProperty Name="PacketCount" ColumnName="PacketCount" />
+          <ScalarProperty Name="CumulativeIntervalNumber" ColumnName="CumulativeIntervalNumber" />
+        </MappingFragment>
+      </EntityTypeMapping>
+      <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.CumulativeInterval">
+        <ModificationFunctionMapping>
+          <DeleteFunction FunctionName="PacketAnalysisModel.Store.CumulativeIntervalDelete" RowsAffectedParameter="RowsDeleted">
+            <ScalarProperty Name="Marked" ParameterName="Marked" />
+          </DeleteFunction>
+        </ModificationFunctionMapping>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <FunctionImportMapping FunctionImportName="CumulativeIntervalDelete" FunctionName="PacketAnalysisModel.Store.CumulativeIntervalDelete" />
+  </EntityContainerMapping>
+</Mapping>

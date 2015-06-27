@@ -1,0 +1,7 @@
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\COWE-Client\DomainClasses\bin\Debug\DomainClasses.dll
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\COWE-Client\DomainClasses\bin\Debug\DomainClasses.pdb
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\COWE-Client\DomainClasses\bin\Debug\Enumerations.dll
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\COWE-Client\DomainClasses\bin\Debug\Enumerations.pdb
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\COWE-Client\DomainClasses\obj\Debug\DomainClasses.csprojResolveAssemblyReference.cache
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\COWE-Client\DomainClasses\obj\Debug\DomainClasses.dll
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\COWE-Client\DomainClasses\obj\Debug\DomainClasses.pdb

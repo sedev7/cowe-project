@@ -1,0 +1,6 @@
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\ClientSocketTest\ClientSocketTest\bin\Debug\ClientSocketTest.exe.config
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\ClientSocketTest\ClientSocketTest\bin\Debug\ClientSocketTest.exe
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\ClientSocketTest\ClientSocketTest\bin\Debug\ClientSocketTest.pdb
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\ClientSocketTest\ClientSocketTest\obj\Debug\ClientSocketTest.csprojResolveAssemblyReference.cache
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\ClientSocketTest\ClientSocketTest\obj\Debug\ClientSocketTest.exe
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\ClientSocketTest\ClientSocketTest\obj\Debug\ClientSocketTest.pdb

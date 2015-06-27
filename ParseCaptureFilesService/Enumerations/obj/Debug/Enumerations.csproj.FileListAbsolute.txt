@@ -1,0 +1,4 @@
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\ParseCaptureFilesService\Enumerations\bin\Debug\Enumerations.dll
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\ParseCaptureFilesService\Enumerations\bin\Debug\Enumerations.pdb
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\ParseCaptureFilesService\Enumerations\obj\Debug\Enumerations.dll
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\ParseCaptureFilesService\Enumerations\obj\Debug\Enumerations.pdb

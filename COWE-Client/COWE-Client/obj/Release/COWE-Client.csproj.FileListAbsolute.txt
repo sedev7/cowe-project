@@ -1,0 +1,9 @@
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\COWE-Client\COWE-Client\bin\Release\COWE-Client.exe.config
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\COWE-Client\COWE-Client\bin\Release\COWE-Client.exe
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\COWE-Client\COWE-Client\bin\Release\COWE-Client.pdb
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\COWE-Client\COWE-Client\obj\Release\COWE-Client.csprojResolveAssemblyReference.cache
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\COWE-Client\COWE-Client\obj\Release\COWEClient.Client.resources
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\COWE-Client\COWE-Client\obj\Release\COWE_Client.Properties.Resources.resources
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\COWE-Client\COWE-Client\obj\Release\COWE-Client.csproj.GenerateResource.Cache
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\COWE-Client\COWE-Client\obj\Release\COWE-Client.exe
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\COWE-Client\COWE-Client\obj\Release\COWE-Client.pdb

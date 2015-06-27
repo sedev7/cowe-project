@@ -1,0 +1,9 @@
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\ParseCaptureFile\ParseCaptureFile\bin\Debug\ParseCaptureFile.exe.config
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\ParseCaptureFile\ParseCaptureFile\bin\Debug\ParseCaptureFile.exe
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\ParseCaptureFile\ParseCaptureFile\bin\Debug\ParseCaptureFile.pdb
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\ParseCaptureFile\ParseCaptureFile\obj\Debug\ParseCaptureFile.csprojResolveAssemblyReference.cache
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\ParseCaptureFile\ParseCaptureFile\obj\Debug\ParseCaptureFile.MainForm.resources
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\ParseCaptureFile\ParseCaptureFile\obj\Debug\ParseCaptureFile.Properties.Resources.resources
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\ParseCaptureFile\ParseCaptureFile\obj\Debug\ParseCaptureFile.csproj.GenerateResource.Cache
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\ParseCaptureFile\ParseCaptureFile\obj\Debug\ParseCaptureFile.exe
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\ParseCaptureFile\ParseCaptureFile\obj\Debug\ParseCaptureFile.pdb

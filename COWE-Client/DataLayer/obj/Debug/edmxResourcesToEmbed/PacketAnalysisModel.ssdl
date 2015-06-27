@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="PacketAnalysisModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="BatchInterval">
+    <Key>
+      <PropertyRef Name="BatchIntervalId" />
+    </Key>
+    <Property Name="BatchIntervalId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="CaptureBatchId" Type="int" Nullable="false" />
+    <Property Name="IntervalNumber" Type="int" Nullable="false" />
+    <Property Name="PacketCount" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="CaptureBatch">
+    <Key>
+      <PropertyRef Name="CaptureBatchId" />
+    </Key>
+    <Property Name="CaptureBatchId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="FileName" Type="varchar" MaxLength="200" Nullable="false" />
+    <Property Name="Marked" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="CapturePacket">
+    <Key>
+      <PropertyRef Name="CapturePacketId" />
+    </Key>
+    <Property Name="CapturePacketId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="CaptureBatchId" Type="int" Nullable="false" />
+    <Property Name="PacketNumber" Type="int" Nullable="false" />
+    <Property Name="TimeStamp" Type="datetime" Nullable="false" />
+    <Property Name="Marked" Type="bit" Nullable="false" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'Packets.COWE.CumulativeInterval' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="CumulativeInterval">
+    <Key>
+      <PropertyRef Name="CumulativeIntervalNumber" />
+      <PropertyRef Name="PacketCount" />
+      <PropertyRef Name="Marked" />
+    </Key>
+    <Property Name="CumulativeIntervalNumber" Type="int" Nullable="false" />
+    <Property Name="PacketCount" Type="int" Nullable="false" />
+    <Property Name="Marked" Type="bit" Nullable="false" />
+  </EntityType>
+  <Association Name="FK_BatchInterval$CaptureBatch_CaptureBatchId">
+    <End Role="CaptureBatch" Type="Self.CaptureBatch" Multiplicity="1" />
+    <End Role="BatchInterval" Type="Self.BatchInterval" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CaptureBatch">
+        <PropertyRef Name="CaptureBatchId" />
+      </Principal>
+      <Dependent Role="BatchInterval">
+        <PropertyRef Name="CaptureBatchId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CapturePacket$CaptureBatch_CaptureBatchId">
+    <End Role="CaptureBatch" Type="Self.CaptureBatch" Multiplicity="1" />
+    <End Role="CapturePacket" Type="Self.CapturePacket" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CaptureBatch">
+        <PropertyRef Name="CaptureBatchId" />
+      </Principal>
+      <Dependent Role="CapturePacket">
+        <PropertyRef Name="CaptureBatchId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Function Name="CaptureBatchInsert" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="COWE">
+    <Parameter Name="FileName" Type="varchar" Mode="In" />
+    <Parameter Name="Marked" Type="bit" Mode="In" />
+    <Parameter Name="NewCaptureBatchId" Type="int" Mode="InOut" />
+  </Function>
+  <Function Name="CumulativeIntervalDelete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="COWE">
+    <Parameter Name="Marked" Type="bit" Mode="In" />
+    <Parameter Name="RowsDeleted" Type="int" Mode="InOut" />
+  </Function>
+  <EntityContainer Name="PacketAnalysisModelStoreContainer">
+    <EntitySet Name="BatchInterval" EntityType="Self.BatchInterval" Schema="COWE" store:Type="Tables" />
+    <EntitySet Name="CaptureBatch" EntityType="Self.CaptureBatch" Schema="COWE" store:Type="Tables" />
+    <EntitySet Name="CapturePacket" EntityType="Self.CapturePacket" Schema="COWE" store:Type="Tables" />
+    <EntitySet Name="CumulativeInterval" EntityType="Self.CumulativeInterval" store:Type="Tables" store:Schema="COWE">
+      <DefiningQuery>SELECT 
+    [CumulativeInterval].[CumulativeIntervalNumber] AS [CumulativeIntervalNumber], 
+    [CumulativeInterval].[PacketCount] AS [PacketCount], 
+    [CumulativeInterval].[Marked] AS [Marked]
+    FROM [COWE].[CumulativeInterval] AS [CumulativeInterval]</DefiningQuery>
+    </EntitySet>
+    <AssociationSet Name="FK_BatchInterval$CaptureBatch_CaptureBatchId" Association="Self.FK_BatchInterval$CaptureBatch_CaptureBatchId">
+      <End Role="CaptureBatch" EntitySet="CaptureBatch" />
+      <End Role="BatchInterval" EntitySet="BatchInterval" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CapturePacket$CaptureBatch_CaptureBatchId" Association="Self.FK_CapturePacket$CaptureBatch_CaptureBatchId">
+      <End Role="CaptureBatch" EntitySet="CaptureBatch" />
+      <End Role="CapturePacket" EntitySet="CapturePacket" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>
