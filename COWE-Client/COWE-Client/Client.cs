@@ -179,6 +179,10 @@ namespace COWE.Client
             // Start the background worker thread for the new file notifier
             bgWorker.RunWorkerAsync();
         }
+        private void Client_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            System.Windows.Forms.Application.Exit();
+        }
         private void DeleteFlooderButton_Click(object sender, EventArgs e)
         {
             int rowsToDelete = 0;
@@ -698,7 +702,7 @@ namespace COWE.Client
                     histValues = h.CalculateHistogramValues(capturePackets);
 
                     //Dictionary<int, decimal> probabilities = new CalculateProbability(histValues).GetProbabilityValues();
-                    SortedDictionary<int, decimal> probabilities = new CalculateProbability(markedIntervals).GetProbabilityByPacketRange();
+                    //SortedDictionary<int, decimal> probabilities = new CalculateProbability(markedIntervals).GetProbabilityByPacketRange();
 
                     // Display the batch in the graph:
                     // - One batch each of marked and unmarked - alternate as a new batch becomes available
@@ -1620,5 +1624,7 @@ namespace COWE.Client
             }
         }
         #endregion
+
+       
     }
 }

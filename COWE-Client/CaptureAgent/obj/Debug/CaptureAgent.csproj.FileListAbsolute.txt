@@ -2,3 +2,7 @@ C:\Jim's Folders\VS2013 Projects\CoResidencyProject\COWE-Client\CaptureAgent\bin
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\COWE-Client\CaptureAgent\bin\Debug\CaptureAgent.pdb
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\COWE-Client\CaptureAgent\obj\Debug\CaptureAgent.dll
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\COWE-Client\CaptureAgent\obj\Debug\CaptureAgent.pdb
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\CaptureAgent\bin\Debug\CaptureAgent.dll
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\CaptureAgent\bin\Debug\CaptureAgent.pdb
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\CaptureAgent\obj\Debug\CaptureAgent.dll
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\CaptureAgent\obj\Debug\CaptureAgent.pdb

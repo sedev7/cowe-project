@@ -403,31 +403,6 @@ namespace COWE.BusinessLayer
                 // Get the cumulative intervals for the marked type
                 cumulativeIntervals = cid.GetMarkedCumulativeIntervals(marked);
 
-                //// Add the current interval counts to the cumulative counts
-                //foreach (PacketInterval pi in intervalCounts)
-                //{
-                //    foreach (CumulativeInterval ci in cumulativeIntervals)
-                //    {
-                //        if (ci.CumulativeIntervalNumber == pi.Interval)
-                //        {
-                //            ci.PacketCount += pi.PacketCount;
-                //            break;
-                //        }
-                //        else if (pi.Interval >= cumulativeIntervals.Count)
-                //        {
-                //            // There are additional intervals in this batch
-                //            // Add them to the cumulative intervals
-                //            CumulativeInterval newci = new CumulativeInterval();
-                //            newci.CumulativeIntervalNumber = pi.Interval;
-                //            newci.PacketCount = pi.PacketCount;
-                //            newci.Marked = pi.PacketState == CaptureState.Marked ? true : false;
-                //            cumulativeIntervals.Add(newci);
-                //        }
-                //    }
-                //}
-
-                // test git
-
                 for (int i = 0; i < cumulativeIntervals.Count; i++)
                 {
                     cumulativeIntervals[i].PacketCount += intervalCounts[i].PacketCount;
@@ -435,6 +410,8 @@ namespace COWE.BusinessLayer
 
                 if (intervalCounts.Count >= cumulativeIntervals.Count)
                 {
+                    int lastIntervalNumber = cid.LastIntervalNumber;
+
                     // There are additional intervals in this batch
                     // Add them to the cumulative intervals
                     foreach (PacketInterval pi in intervalCounts)
@@ -443,9 +420,10 @@ namespace COWE.BusinessLayer
                         {
                             CumulativeInterval newci = new CumulativeInterval();
                             // Get the last cumulative interval number
-                            var cin = (from c in cumulativeIntervals select c.CumulativeIntervalNumber).Max();
+                            //var cin = (from c in cumulativeIntervals select c.CumulativeIntervalNumber).Max();
                             //newci.CumulativeIntervalNumber = pi.Interval;
-                            newci.CumulativeIntervalNumber = cin + 1;
+                            //newci.CumulativeIntervalNumber = cin + 1;
+                            newci.CumulativeIntervalNumber = lastIntervalNumber++;
                             newci.PacketCount = pi.PacketCount;
                             newci.Marked = pi.PacketState == CaptureState.Marked ? true : false;
                             cumulativeIntervals.Add(newci);

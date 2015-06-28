@@ -760,6 +760,7 @@
             this.MinimumSize = new System.Drawing.Size(1029, 770);
             this.Name = "Client";
             this.Text = "Co-Residency Probe (Client)";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Client_FormClosing);
             this.Load += new System.EventHandler(this.Client_Load);
             this.topPanel.ResumeLayout(false);
             this.topPanel.PerformLayout();

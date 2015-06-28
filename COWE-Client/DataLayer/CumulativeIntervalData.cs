@@ -25,15 +25,15 @@ namespace COWE.DataLayer
 
         #region Properties
         public string DbConnectionString { get; set; }
-        public int LastIntervalNumber { get; 
+        public int LastIntervalNumber { 
         
-            set 
+            get 
             {
                 using (var context = new PacketAnalysisEntity())
                 {
                     var intervalNumber = (from i in context.CumulativeIntervals
                                           select i.CumulativeIntervalNumber).Max();
-                    LastIntervalNumber = intervalNumber;
+                    return intervalNumber;
                 }
             }
         }

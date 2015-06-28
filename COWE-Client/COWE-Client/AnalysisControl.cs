@@ -19,8 +19,8 @@ namespace COWE.Client
     {
         #region Global Variables
         DataGridView _AnalysisDataGridView = new DataGridView();
-        int _MaxGridDisplayRows = 9;
-        int _MaxGridHeight = 320;
+        int _MaxGridDisplayRows = 8;
+        int _MaxGridHeight = 300;
         #endregion
         #region Constructor
         public AnalysisControl()
@@ -36,10 +36,11 @@ namespace COWE.Client
             InitializeAnalysisDataGridView();
             //AnalysisIntervalSizeTextBox.Text = "30";
             AnalysisIntervalSizeTextBox.Text = InterarrivalInterval.GetIntervalMilliSeconds().ToString();
-            RefreshSingleDataChart(2);
+            RefreshSingleDataChart();
             RefreshCumulativeDataChart();
             RefreshSingleBatchStatistics();
             RefreshCumulativeBatchStatistics();
+            TrimIntervalsCheckBox.Checked = true;
         }
         #endregion
 
@@ -168,128 +169,18 @@ namespace COWE.Client
             // Add the DataTable to the grid
             _AnalysisDataGridView.AutoGenerateColumns = false;
             _AnalysisDataGridView.DataSource = dt;
-            
-            //// Adjust the row height
+
+            // Adjust the row height
             //foreach (DataGridViewRow r in _AnalysisDataGridView.Rows)
             //{
-            //    r.Height = 30;
+            //    r.Height = 60;
             //}
-            
+            //for (int i = 0; i <_AnalysisDataGridView.Rows.Count; i++ )
+            //{
+            //    _AnalysisDataGridView.Rows[i].Height = 60;
+            //}
+
             _AnalysisDataGridView.Refresh();
-
-
-
-            //// Add data to the first row
-            ////row = _AnalysisDataGridView.Rows.Count - 1; // Next row
-            //col = 0;
-            //row++;
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "Count";           // Statistic Name
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Single Baseline
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Single Marked
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Single Variance
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Cumulative Baseline
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Cumulative Marked
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Cumulative Variance
-            //_AnalysisDataGridView.Rows[row].Cells[col].Value = "0";                 // K-S Statistic
-            ////_AnalysisDataGridView.Rows[row].Cells[col].Style.BackColor = NotConnected;
-
-            //row++;
-            //col = 0;
-            //DataGridViewRow meanGridRow = new DataGridViewRow();
-            //_AnalysisDataGridView.Rows.Add();
-            //_AnalysisDataGridView.Rows[row].Height = 30;
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "Mean";           // Statistic Name
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Single Baseline
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Single Marked
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Single Variance
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Cumulative Baseline
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Cumulative Marked
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Cumulative Variance
-            //_AnalysisDataGridView.Rows[row].Cells[col].Value = "0";                 // K-S Statistic
-
-            //row++;
-            //col = 0;
-            //DataGridViewRow stdDevGridRow = new DataGridViewRow();
-            //_AnalysisDataGridView.Rows.Add();
-            //_AnalysisDataGridView.Rows[row].Height = 30;
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "Std Dev";           // Statistic Name
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Single Baseline
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Single Marked
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Single Variance
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Cumulative Baseline
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Cumulative Marked
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Cumulative Variance
-            //_AnalysisDataGridView.Rows[row].Cells[col].Value = "0";                 // K-S Statistic
-
-            //row++;
-            //col = 0;
-            //DataGridViewRow minGridRow = new DataGridViewRow();
-            //_AnalysisDataGridView.Rows.Add();
-            //_AnalysisDataGridView.Rows[row].Height = 30;
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "Min";           // Statistic Name
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Single Baseline
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Single Marked
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Single Variance
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Cumulative Baseline
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Cumulative Marked
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Cumulative Variance
-            //_AnalysisDataGridView.Rows[row].Cells[col].Value = "0";                 // K-S Statistic
-
-            //row++;
-            //col = 0;
-            //DataGridViewRow maxGridRow = new DataGridViewRow();
-            //_AnalysisDataGridView.Rows.Add();
-            //_AnalysisDataGridView.Rows[row].Height = 30;
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "Max";           // Statistic Name
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Single Baseline
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Single Marked
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Single Variance
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Cumulative Baseline
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Cumulative Marked
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Cumulative Variance
-            //_AnalysisDataGridView.Rows[row].Cells[col].Value = "0";                 // K-S Statistic
-
-            //row++;
-            //col = 0;
-            //DataGridViewRow meanOfMeansGridRow = new DataGridViewRow();
-            //_AnalysisDataGridView.Rows.Add();
-            //_AnalysisDataGridView.Rows[row].Height = 30;
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "Mean of Means";           // Statistic Name
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Single Baseline
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Single Marked
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Single Variance
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Cumulative Baseline
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Cumulative Marked
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Cumulative Variance
-            //_AnalysisDataGridView.Rows[row].Cells[col].Value = "0";                 // K-S Statistic
-
-            //row++;
-            //col = 0;
-            //DataGridViewRow alphaGridRow = new DataGridViewRow();
-            //_AnalysisDataGridView.Rows.Add();
-            //_AnalysisDataGridView.Rows[row].Height = 30;
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "Alpha";           // Statistic Name
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Single Baseline
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Single Marked
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Single Variance
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Cumulative Baseline
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Cumulative Marked
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Cumulative Variance
-            //_AnalysisDataGridView.Rows[row].Cells[col].Value = "0";                 // K-S Statistic
-
-            //row++;
-            //col = 0;
-            //DataGridViewRow rejectH0GridRow = new DataGridViewRow();
-            //_AnalysisDataGridView.Rows.Add();
-            //_AnalysisDataGridView.Rows[row].Height = 30;
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "Reject H0?";           // Statistic Name
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Single Baseline
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Single Marked
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Single Variance
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Cumulative Baseline
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Cumulative Marked
-            //_AnalysisDataGridView.Rows[row].Cells[col++].Value = "0";               // Cumulative Variance
-            //_AnalysisDataGridView.Rows[row].Cells[col].Value = "0";                 // K-S Statistic
 
             // Hide the row header column
             _AnalysisDataGridView.RowHeadersVisible = false;
@@ -317,6 +208,8 @@ namespace COWE.Client
                 _MaxGridHeight = height;
             }
 
+            //this._AnalysisDataGridView.ClientSize = new Size(width + 3, height + 3);
+
             if (_AnalysisDataGridView.Rows.Count > _MaxGridDisplayRows)
             {
                 // Allow additional width for scroll bar
@@ -328,7 +221,8 @@ namespace COWE.Client
             }
 
         }
-        private void RefreshSingleDataChart(int captureBatchId)
+        //private void RefreshSingleDataChart(int captureBatchId)
+        private void RefreshSingleDataChart()
         {
             // Get the last marked and unmarked batches and add them to the graph
             BindingList<CurrentCaptureFile> lastBatchIds = new BindingList<CurrentCaptureFile>();
@@ -342,6 +236,7 @@ namespace COWE.Client
             //standardSeries.BorderColor = Color.Black;
             //standardSeries.Color = Color.Blue;
             SingleChart.Series.Clear();
+            SingleChart.Titles.Clear();
             SingleChart.Titles.Add("Current Capture Packet Probability Distribution");
             //SingleChart.Legends[0].Position.Auto = true; //ElementPosition
             SingleChart.Legends[0].IsDockedInsideChartArea = true;
@@ -372,7 +267,8 @@ namespace COWE.Client
                 //batchIntervals = pcp.GetMarkedBatchIntervals(captureBatchId);
                 batchIntervals = pcp.GetMarkedBatchIntervals(file.CaptureBatchId);
                 //Dictionary<int, decimal> probabilities = new CalculateProbability(batchIntervals).GetProbabilityValues();
-                SortedDictionary<int, decimal> probabilities = new CalculateProbability(batchIntervals).GetProbabilityByPacketRange();
+                //SortedDictionary<int, decimal> probabilities = new CalculateProbability(batchIntervals).GetProbabilityByPacketRange(TrimIntervalsCheckBox.Checked ? true : false);
+                SortedDictionary<int, decimal> probabilities = new CalculateProbability(batchIntervals).GetProbabilityByPacketRange(false);
 
                 if (file.Marked == CaptureState.Marked)
                 {
@@ -501,29 +397,30 @@ namespace COWE.Client
             //standardSeries.BorderDashStyle = ChartDashStyle.Solid;
             //standardSeries.BorderColor = Color.Black;
             //standardSeries.Color = Color.Blue;
-            SingleChart.Series.Clear();
-            SingleChart.Titles.Add("Cumulative Capture Packet Probability Distribution");
-            //SingleChart.Legends[0].Position.Auto = true; //ElementPosition
-            SingleChart.Legends[0].IsDockedInsideChartArea = true;
-            SingleChart.Legends[0].Docking = Docking.Bottom;
-            SingleChart.Legends[0].Alignment = StringAlignment.Center;
-            SingleChart.ChartAreas[0].AxisX.Title = "Packets per Interval";
-            SingleChart.ChartAreas[0].AxisX.Minimum = 0;
-            //SingleChart.ChartAreas[0].AxisX.Maximum = 
+            CumulativeChart.Series.Clear();
+            CumulativeChart.Titles.Clear();
+            CumulativeChart.Titles.Add("Cumulative Capture Packet Probability Distribution");
+            //CumulativeChart.Legends[0].Position.Auto = true; //ElementPosition
+            CumulativeChart.Legends[0].IsDockedInsideChartArea = true;
+            CumulativeChart.Legends[0].Docking = Docking.Bottom;
+            CumulativeChart.Legends[0].Alignment = StringAlignment.Center;
+            CumulativeChart.ChartAreas[0].AxisX.Title = "Packets per Interval";
+            CumulativeChart.ChartAreas[0].AxisX.Minimum = 0;
+            //CumulativeChart.ChartAreas[0].AxisX.Maximum = 
 
             // Marked probabilities series
-            SingleChart.Series.Add("MarkedProbabilities");
-            //SingleChart.Series["MarkedProbabilities"].ChartType = SeriesChartType.Line;
-            SingleChart.Series["MarkedProbabilities"].ChartType = SeriesChartType.Column;
-            SingleChart.Series["MarkedProbabilities"].IsVisibleInLegend = true;
-            SingleChart.Series["MarkedProbabilities"].LegendText = "Marked";
+            CumulativeChart.Series.Add("MarkedProbabilities");
+            //CumulativeChart.Series["MarkedProbabilities"].ChartType = SeriesChartType.Line;
+            CumulativeChart.Series["MarkedProbabilities"].ChartType = SeriesChartType.Column;
+            CumulativeChart.Series["MarkedProbabilities"].IsVisibleInLegend = true;
+            CumulativeChart.Series["MarkedProbabilities"].LegendText = "Marked";
 
             // Unmarked probabilities series
-            SingleChart.Series.Add("UnmarkedProbabilities");
-            //SingleChart.Series["UnmarkedProbabilities"].ChartType = SeriesChartType.Line;
-            SingleChart.Series["UnmarkedProbabilities"].ChartType = SeriesChartType.Column;
-            SingleChart.Series["UnmarkedProbabilities"].IsVisibleInLegend = true;
-            SingleChart.Series["UnmarkedProbabilities"].LegendText = "Unmarked";
+            CumulativeChart.Series.Add("UnmarkedProbabilities");
+            //CumulativeChart.Series["UnmarkedProbabilities"].ChartType = SeriesChartType.Line;
+            CumulativeChart.Series["UnmarkedProbabilities"].ChartType = SeriesChartType.Column;
+            CumulativeChart.Series["UnmarkedProbabilities"].IsVisibleInLegend = true;
+            CumulativeChart.Series["UnmarkedProbabilities"].LegendText = "Unmarked";
 
             // Get the cumulative interval counts
             ProcessCapturePackets pcp = new ProcessCapturePackets();
@@ -554,12 +451,12 @@ namespace COWE.Client
                     bim.IntervalNumber = ci.CumulativeIntervalNumber;
                     bim.Marked = CaptureState.Unmarked;
                     bim.PacketCount = ci.PacketCount;
-                    markedBatchIntervals.Add(bim);
+                    unmarkedBatchIntervals.Add(bim);
                 }
             }
 
-            SortedDictionary<int, decimal> markedProbabilities = new CalculateProbability(markedBatchIntervals).GetProbabilityByPacketRange();
-            SortedDictionary<int, decimal> unmarkedProbabilities = new CalculateProbability(unmarkedBatchIntervals).GetProbabilityByPacketRange();
+            SortedDictionary<int, decimal> markedProbabilities = new CalculateProbability(markedBatchIntervals).GetProbabilityByPacketRange(TrimIntervalsCheckBox.Checked ? true : false);
+            SortedDictionary<int, decimal> unmarkedProbabilities = new CalculateProbability(unmarkedBatchIntervals).GetProbabilityByPacketRange(TrimIntervalsCheckBox.Checked ? true : false);
 
             CumulativeChart.Series["MarkedProbabilities"].Color = Color.CornflowerBlue;
 
@@ -613,49 +510,72 @@ namespace COWE.Client
             BatchStatistics markedCumulativeStats = new BatchStatistics();
             BatchStatistics unmarkedCumulativeStats = new BatchStatistics();
 
-            markedCumulativeStats = GetBatchStatistics(markedBatchIntervals);
-            unmarkedCumulativeStats = GetBatchStatistics(unmarkedBatchIntervals);
+            if(markedBatchIntervals.Count > 0)
+            {
+                markedCumulativeStats = GetBatchStatistics(markedBatchIntervals);
 
-            // Load up the table
-            // Cumulative unmarked column
-            int row = 0;
-            _AnalysisDataGridView.Rows[row++].Cells[4].Value = unmarkedCumulativeStats.IntervalCount;
-            _AnalysisDataGridView.Rows[row++].Cells[4].Value = string.Format("{0:N2}", unmarkedCumulativeStats.PacketCountMean);
-            _AnalysisDataGridView.Rows[row++].Cells[4].Value = string.Format("{0:N2}", unmarkedCumulativeStats.PacketCountStandardDeviation);
-            _AnalysisDataGridView.Rows[row++].Cells[4].Value = unmarkedCumulativeStats.PacketCountMinimum;
-            _AnalysisDataGridView.Rows[row++].Cells[4].Value = unmarkedCumulativeStats.PacketCountMaximum;
-            _AnalysisDataGridView.Rows[row++].Cells[4].Value = "N/A";
-            _AnalysisDataGridView.Rows[row++].Cells[4].Value = "N/A";
-            _AnalysisDataGridView.Rows[row++].Cells[4].Value = "N/A";
+                // Load up the table
+                // Cumulative marked column
+                int row = 0;
+                _AnalysisDataGridView.Rows[row++].Cells[5].Value = markedCumulativeStats.IntervalCount;
+                _AnalysisDataGridView.Rows[row++].Cells[5].Value = string.Format("{0:N2}", markedCumulativeStats.PacketCountMean);
+                _AnalysisDataGridView.Rows[row++].Cells[5].Value = string.Format("{0:N2}", markedCumulativeStats.PacketCountStandardDeviation);
+                _AnalysisDataGridView.Rows[row++].Cells[5].Value = markedCumulativeStats.PacketCountMinimum;
+                _AnalysisDataGridView.Rows[row++].Cells[5].Value = markedCumulativeStats.PacketCountMaximum;
+                _AnalysisDataGridView.Rows[row++].Cells[5].Value = "N/A";
+                _AnalysisDataGridView.Rows[row++].Cells[5].Value = "N/A";
+                _AnalysisDataGridView.Rows[row++].Cells[5].Value = "N/A";
+            }
 
-            // Cumulative marked column
-            row = 0;
-            _AnalysisDataGridView.Rows[row++].Cells[5].Value = markedCumulativeStats.IntervalCount;
-            _AnalysisDataGridView.Rows[row++].Cells[5].Value = string.Format("{0:N2}", markedCumulativeStats.PacketCountMean);
-            _AnalysisDataGridView.Rows[row++].Cells[5].Value = string.Format("{0:N2}", markedCumulativeStats.PacketCountStandardDeviation);
-            _AnalysisDataGridView.Rows[row++].Cells[5].Value = markedCumulativeStats.PacketCountMinimum;
-            _AnalysisDataGridView.Rows[row++].Cells[5].Value = markedCumulativeStats.PacketCountMaximum;
-            _AnalysisDataGridView.Rows[row++].Cells[5].Value = "N/A";
-            _AnalysisDataGridView.Rows[row++].Cells[5].Value = "N/A";
-            _AnalysisDataGridView.Rows[row++].Cells[5].Value = "N/A";
+            if (unmarkedBatchIntervals.Count > 0)
+            {
+                unmarkedCumulativeStats = GetBatchStatistics(unmarkedBatchIntervals);
 
-            // Cumulative variance column
-            row = 0;
-            _AnalysisDataGridView.Rows[row++].Cells[6].Value = unmarkedCumulativeStats.IntervalCount - markedCumulativeStats.IntervalCount;
-            _AnalysisDataGridView.Rows[row++].Cells[6].Value = string.Format("{0:N2}", (unmarkedCumulativeStats.PacketCountMean - markedCumulativeStats.PacketCountMean));
-            _AnalysisDataGridView.Rows[row++].Cells[6].Value = string.Format("{0:N2}", (unmarkedCumulativeStats.PacketCountStandardDeviation - markedCumulativeStats.PacketCountStandardDeviation));
-            _AnalysisDataGridView.Rows[row++].Cells[6].Value = unmarkedCumulativeStats.PacketCountMinimum - markedCumulativeStats.PacketCountMinimum;
-            _AnalysisDataGridView.Rows[row++].Cells[6].Value = unmarkedCumulativeStats.PacketCountMaximum - markedCumulativeStats.PacketCountMaximum;
-            _AnalysisDataGridView.Rows[row++].Cells[6].Value = "N/A";
-            // Alpha
-            // Reject H0?
+                // Load up the table
+                // Cumulative unmarked column
+                int row = 0;
+                _AnalysisDataGridView.Rows[row++].Cells[4].Value = unmarkedCumulativeStats.IntervalCount;
+                _AnalysisDataGridView.Rows[row++].Cells[4].Value = string.Format("{0:N2}", unmarkedCumulativeStats.PacketCountMean);
+                _AnalysisDataGridView.Rows[row++].Cells[4].Value = string.Format("{0:N2}", unmarkedCumulativeStats.PacketCountStandardDeviation);
+                _AnalysisDataGridView.Rows[row++].Cells[4].Value = unmarkedCumulativeStats.PacketCountMinimum;
+                _AnalysisDataGridView.Rows[row++].Cells[4].Value = unmarkedCumulativeStats.PacketCountMaximum;
+                _AnalysisDataGridView.Rows[row++].Cells[4].Value = "N/A";
+                _AnalysisDataGridView.Rows[row++].Cells[4].Value = "N/A";
+                _AnalysisDataGridView.Rows[row++].Cells[4].Value = "N/A";
+            }
+
+
+            if (markedBatchIntervals.Count > 0 && unmarkedBatchIntervals.Count > 0)
+            {
+                // Cumulative variance column
+                int row = 0;
+                _AnalysisDataGridView.Rows[row++].Cells[6].Value = unmarkedCumulativeStats.IntervalCount - markedCumulativeStats.IntervalCount;
+                _AnalysisDataGridView.Rows[row++].Cells[6].Value = string.Format("{0:N2}", (unmarkedCumulativeStats.PacketCountMean - markedCumulativeStats.PacketCountMean));
+                _AnalysisDataGridView.Rows[row++].Cells[6].Value = string.Format("{0:N2}", (unmarkedCumulativeStats.PacketCountStandardDeviation - markedCumulativeStats.PacketCountStandardDeviation));
+                _AnalysisDataGridView.Rows[row++].Cells[6].Value = unmarkedCumulativeStats.PacketCountMinimum - markedCumulativeStats.PacketCountMinimum;
+                _AnalysisDataGridView.Rows[row++].Cells[6].Value = unmarkedCumulativeStats.PacketCountMaximum - markedCumulativeStats.PacketCountMaximum;
+                _AnalysisDataGridView.Rows[row++].Cells[6].Value = "N/A";
+                // Alpha
+                // Reject H0?
+            }
         }
         #endregion
 
         private void RefreshButton_Click(object sender, EventArgs e)
         {
-            RefreshSingleDataChart(2);
+            //RefreshSingleDataChart(2);
+            RefreshSingleDataChart();
             RefreshCumulativeDataChart();
+        }
+
+        private void groupBox2_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panel5_Paint(object sender, PaintEventArgs e)
+        {
+
         }
 
 

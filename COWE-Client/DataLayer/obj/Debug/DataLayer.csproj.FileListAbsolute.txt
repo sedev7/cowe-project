@@ -12,3 +12,17 @@ C:\Jim's Folders\VS2013 Projects\CoResidencyProject\COWE-Client\DataLayer\bin\De
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\COWE-Client\DataLayer\obj\Debug\DataLayer.csprojResolveAssemblyReference.cache
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\COWE-Client\DataLayer\obj\Debug\DataLayer.dll
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\COWE-Client\DataLayer\obj\Debug\DataLayer.pdb
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\DataLayer\bin\Debug\DataLayer.dll.config
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\DataLayer\bin\Debug\DataLayer.dll
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\DataLayer\bin\Debug\DataLayer.pdb
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\DataLayer\bin\Debug\DomainClasses.dll
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\DataLayer\bin\Debug\EntityFramework.dll
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\DataLayer\bin\Debug\EntityFramework.SqlServer.dll
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\DataLayer\bin\Debug\Enumerations.dll
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\DataLayer\bin\Debug\DomainClasses.pdb
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\DataLayer\bin\Debug\Enumerations.pdb
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\DataLayer\bin\Debug\EntityFramework.xml
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\DataLayer\bin\Debug\EntityFramework.SqlServer.xml
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\DataLayer\obj\Debug\DataLayer.csprojResolveAssemblyReference.cache
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\DataLayer\obj\Debug\DataLayer.dll
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\DataLayer\obj\Debug\DataLayer.pdb

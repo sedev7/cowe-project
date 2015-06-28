@@ -15,8 +15,9 @@ select * from COWE.CumulativeInterval;
 /*
 -- Clean out tables
 delete from COWE.BatchInterval;
-delete from COWE.CaptureBatch;
 delete from COWE.CumulativeInterval;
+delete from COWE.CaptureBatch;
+delete from COWE.CapturePacket;
 */
 
 ---- Test CaptureBatchInsert sproc

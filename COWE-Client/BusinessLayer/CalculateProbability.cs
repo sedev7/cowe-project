@@ -74,56 +74,103 @@ namespace COWE.BusinessLayer
             return sortedProbabilities;
         }
 
-        public SortedDictionary<int, decimal> GetProbabilityByPacketRange()
+        public SortedDictionary<int, decimal> GetProbabilityByPacketRange(bool trimZeroIntervals)
         {
+            // We are calculating the number of intervals that contain packets counts
+            // in the specified range (packetRange)
+
             Dictionary<int, int> packetRangeCounts = new Dictionary<int, int>();
 
-            int packetRange = 25;
+            int minPacketRange = 5;
+            int packetRange = minPacketRange;
 
             foreach (BatchIntervalMarked bim in _markedIntervals)
             {
                 // Find the packet count range top
                 int rangeTop = 0;
-                int rem = bim.PacketCount % 25;
+                int rem = bim.PacketCount % packetRange;
                 if(rem == 0)
                 {
                     if (bim.PacketCount > 0)
                     {
-                        // We  are at the top of the range
+                        // We  are at the top of the range (PacketCount is a multiple of packetRange)
                         rangeTop = bim.PacketCount;
+
+                        // Add this range to the interval count
+                        if(packetRangeCounts.ContainsKey(rangeTop))
+                        {
+                            // Increment the interval count for this range
+                            packetRangeCounts[rangeTop]++;
+                        }
+                        else
+                        {
+                            // We don't have this range yet - add a new one
+                            packetRangeCounts.Add(rangeTop, 1);
+                        }
                     }
                     else
                     {
                         // The packet count is zero
-                        rangeTop = packetRange;
+                        if (!trimZeroIntervals)
+                        {
+                            rangeTop = packetRange;
+
+                            // Add this range to the interval count
+                            if (packetRangeCounts.ContainsKey(rangeTop))
+                            {
+                                // Increment the interval count for this range
+                                packetRangeCounts[rangeTop]++;
+                            }
+                            else
+                            {
+                                // We don't have this range yet - add a new one
+                                packetRangeCounts.Add(rangeTop, 1);
+                            }
+                        }
                     }
                 }
                 else
                 {
-                    // We are below the top of the range
+                    // We are below the top of the range - need to find the top of the range
                     rangeTop = bim.PacketCount + (packetRange - rem);
                 }
-                packetRangeCounts.Add(bim.IntervalNumber, rangeTop);
+
+                if (rangeTop == minPacketRange && !trimZeroIntervals)
+                {
+                    // Add this range to the interval count
+                    if (packetRangeCounts.ContainsKey(rangeTop))
+                    {
+                        // The key already exists - add the packet count
+                        packetRangeCounts[rangeTop]++;
+                    }
+                    else
+                    {
+                        // Add a new key and packet count
+                        packetRangeCounts.Add(rangeTop, 1);
+                    }
+                }
             }
 
-            // Get a count of the intervals for each range and the total number of interval
+            // Get a count of the intervals for each range and the total number of intervals
             int rangeCountTotal = 0;
             SortedDictionary<int, int> intervalRangeCounts = new SortedDictionary<int, int>();
             foreach (KeyValuePair<int, int> pair in packetRangeCounts)
             {
-                if (intervalRangeCounts.ContainsKey(pair.Value))
-                {
-                    // Add the value to the value for this key
-                    intervalRangeCounts[pair.Value]++; // += pair.Value;
-                    rangeCountTotal++;
-                }
-                else
-                {
-                    //// Add the key value pair
-                    //intervalRangeCounts.Add(pair.Value, pair.Value);
-                    intervalRangeCounts.Add(pair.Value, 1);
-                    rangeCountTotal++;
-                }
+                rangeCountTotal++;
+
+                intervalRangeCounts.Add(pair.Key, pair.Value);
+
+                //if (intervalRangeCounts.ContainsKey(pair.Key))
+                //{
+                //    // Add the value to the value for this key
+                //    intervalRangeCounts[pair.Value]++; // += pair.Value;
+                //}
+                //else
+                //{
+                //    //// Add the key value pair
+                //    //intervalRangeCounts.Add(pair.Value, pair.Value);
+                //    intervalRangeCounts.Add(pair.Value, 1);
+                //}
             }
 
             // Get the max packet count
