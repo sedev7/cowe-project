@@ -74,14 +74,14 @@ namespace COWE.BusinessLayer
             return sortedProbabilities;
         }
 
-        public SortedDictionary<int, decimal> GetProbabilityByPacketRange(bool trimZeroIntervals)
+        public SortedDictionary<int, decimal> GetProbabilityByPacketRange(bool trimZeroIntervals, int histogramBinSize)
         {
             // We are calculating the number of intervals that contain packets counts
             // in the specified range (packetRange)
 
             Dictionary<int, int> packetRangeCounts = new Dictionary<int, int>();
 
-            int minPacketRange = 5;
+            int minPacketRange = histogramBinSize;
             int packetRange = minPacketRange;
 
             foreach (BatchIntervalMarked bim in _markedIntervals)
@@ -89,7 +89,7 @@ namespace COWE.BusinessLayer
                 // Find the packet count range top
                 int rangeTop = 0;
                 int rem = bim.PacketCount % packetRange;
-                if(rem == 0)
+                if (rem == 0)
                 {
                     if (bim.PacketCount > 0)
                     {
@@ -97,7 +97,7 @@ namespace COWE.BusinessLayer
                         rangeTop = bim.PacketCount;
 
                         // Add this range to the interval count
-                        if(packetRangeCounts.ContainsKey(rangeTop))
+                        if (packetRangeCounts.ContainsKey(rangeTop))
                         {
                             // Increment the interval count for this range
                             packetRangeCounts[rangeTop]++;
@@ -133,20 +133,34 @@ namespace COWE.BusinessLayer
                 {
                     // We are below the top of the range - need to find the top of the range
                     rangeTop = bim.PacketCount + (packetRange - rem);
-                }
 
-                if (rangeTop == minPacketRange && !trimZeroIntervals)
-                {
-                    // Add this range to the interval count
-                    if (packetRangeCounts.ContainsKey(rangeTop))
+                    if (rangeTop == minPacketRange && !trimZeroIntervals)
                     {
-                        // The key already exists - add the packet count
-                        packetRangeCounts[rangeTop]++;
+                        // Add this range to the interval count
+                        if (packetRangeCounts.ContainsKey(rangeTop))
+                        {
+                            // The key already exists - add the packet count
+                            packetRangeCounts[rangeTop]++;
+                        }
+                        else
+                        {
+                            // Add a new key and packet count
+                            packetRangeCounts.Add(rangeTop, 1);
+                        }
                     }
-                    else
+                    else if(rangeTop != minPacketRange)
                     {
-                        // Add a new key and packet count
-                        packetRangeCounts.Add(rangeTop, 1);
+                        // Add this range to the interval count
+                        if (packetRangeCounts.ContainsKey(rangeTop))
+                        {
+                            // The key already exists - add the packet count
+                            packetRangeCounts[rangeTop]++;
+                        }
+                        else
+                        {
+                            // Add a new key and packet count
+                            packetRangeCounts.Add(rangeTop, 1);
+                        }
                     }
                 }
             }
@@ -156,67 +170,18 @@ namespace COWE.BusinessLayer
             SortedDictionary<int, int> intervalRangeCounts = new SortedDictionary<int, int>();
             foreach (KeyValuePair<int, int> pair in packetRangeCounts)
             {
-                rangeCountTotal++;
+                rangeCountTotal += pair.Value;
 
                 intervalRangeCounts.Add(pair.Key, pair.Value);
-
-                //if (intervalRangeCounts.ContainsKey(pair.Key))
-                //{
-                //    // Add the value to the value for this key
-                //    intervalRangeCounts[pair.Value]++; // += pair.Value;
-                //}
-                //else
-                //{
-                //    //// Add the key value pair
-                //    //intervalRangeCounts.Add(pair.Value, pair.Value);
-                //    intervalRangeCounts.Add(pair.Value, 1);
-                //}
             }
 
-            // Get the max packet count
-            //var maxPacketCount = (from m in _markedIntervals select m.PacketCount).Max();
-
-            //Dictionary<int, int> consolidatedPacketCounts = new Dictionary<int, int>();
             SortedDictionary<int, decimal> probabilities = new SortedDictionary<int, decimal>();
-            //Dictionary<int, decimal> sortedProbabilities = new Dictionary<int, decimal>();
-
-            //// Get the total packet count
-            //int packetCountTotal = 0;
-            //foreach (KeyValuePair<int, int> pair in intervalRangeCounts)
-            //{
-            //    packetCountTotal += pair.Value;
-            //}
-
-            // Consolidate packet counts so we don't have duplicates (packet is the new key)
-            //foreach (KeyValuePair<int, int> pair in intervalRangeCounts)
-            //{
-            //    if (consolidatedPacketCounts.ContainsKey(pair.Value))
-            //    {
-            //        // Add the value to the value for this key
-            //        consolidatedPacketCounts[pair.Value] += pair.Value;
-            //    }
-            //    else
-            //    {
-            //        // Add the key value pair
-            //        consolidatedPacketCounts.Add(pair.Value, pair.Value);
-            //    }
-            //}
-
+            
             foreach (KeyValuePair<int, int> pair in intervalRangeCounts)
             {
                 probabilities.Add(pair.Key, (decimal)pair.Value / rangeCountTotal);
             }
 
-            //var items = from p in probabilities
-            //            orderby p.Key ascending
-            //            select p;
-
-            //foreach (KeyValuePair<int, decimal> pair in items)
-            //{
-            //    sortedProbabilities.Add(pair.Key, pair.Value);
-            //}
-
-            //return sortedProbabilities;
             return probabilities;
         }
 

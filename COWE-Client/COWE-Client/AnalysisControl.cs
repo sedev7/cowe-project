@@ -18,6 +18,7 @@ namespace COWE.Client
     public partial class AnalysisControl : UserControl
     {
         #region Global Variables
+        bool _trimZeroPacketIntervals = true;
         DataGridView _AnalysisDataGridView = new DataGridView();
         int _MaxGridDisplayRows = 8;
         int _MaxGridHeight = 300;
@@ -26,7 +27,6 @@ namespace COWE.Client
         public AnalysisControl()
         {
             InitializeComponent();
-            //InitializeAnalysisDataGridView();
         }
         #endregion
 
@@ -34,14 +34,28 @@ namespace COWE.Client
         private void AnalysisControl_Load(object sender, EventArgs e)
         {
             InitializeAnalysisDataGridView();
-            //AnalysisIntervalSizeTextBox.Text = "30";
+            InitializeChartTypeComboBox();
+            InitializeAnalysisMetricsGroupBox();
             AnalysisIntervalSizeTextBox.Text = InterarrivalInterval.GetIntervalMilliSeconds().ToString();
+            HistogramBinSizeTextBox.Text = "5";
             RefreshSingleDataChart();
             RefreshCumulativeDataChart();
             RefreshSingleBatchStatistics();
             RefreshCumulativeBatchStatistics();
             TrimIntervalsCheckBox.Checked = true;
         }
+        private void RefreshButton_Click(object sender, EventArgs e)
+        {
+            //RefreshSingleDataChart(2);
+            RefreshSingleDataChart();
+            RefreshCumulativeDataChart();
+        }
+
+        private void TrimIntervalsCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            _trimZeroPacketIntervals = TrimIntervalsCheckBox.Checked ? true : false;
+        }
+
         #endregion
 
         #region Private Methods
@@ -222,6 +236,23 @@ namespace COWE.Client
 
         }
         //private void RefreshSingleDataChart(int captureBatchId)
+        private void InitializeChartTypeComboBox()
+        {
+            ChartTypeComboBox.Items.Add("Bar");
+            ChartTypeComboBox.Items.Add("Line");
+
+            // Make the control read-only
+            ChartTypeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            ChartTypeComboBox.FlatStyle = FlatStyle.Flat;
+            ChartTypeComboBox.SelectedIndex = 0;
+            ChartTypeComboBox.Font = new Font("Microsoft Sans Serif", 10);
+        }
+        private void InitializeAnalysisMetricsGroupBox()
+        {
+            // Set the font size for the GroupBox (but not for the controls it contains)
+            Font analysisMetricsFont = new Font("Microsoft Sans Serif", 8);
+            AnalysisMetricsGroupBox.Font = analysisMetricsFont;
+        }
         private void RefreshSingleDataChart()
         {
             // Get the last marked and unmarked batches and add them to the graph
@@ -246,17 +277,20 @@ namespace COWE.Client
             SingleChart.ChartAreas[0].AxisX.Minimum = 0;
             //SingleChart.ChartAreas[0].AxisX.Maximum = 
 
+            // Get the type of chart to display
+            string chartType = ChartTypeComboBox.Items[ChartTypeComboBox.SelectedIndex].ToString();
+
             // Marked probabilities series
             SingleChart.Series.Add("MarkedProbabilities");
             //SingleChart.Series["MarkedProbabilities"].ChartType = SeriesChartType.Line;
-            SingleChart.Series["MarkedProbabilities"].ChartType = SeriesChartType.Column;
+            SingleChart.Series["MarkedProbabilities"].ChartType = chartType == "Bar" ? SeriesChartType.Column : SeriesChartType.Line;
             SingleChart.Series["MarkedProbabilities"].IsVisibleInLegend = true;
             SingleChart.Series["MarkedProbabilities"].LegendText = "Marked";
 
             // Unmarked probabilities series
             SingleChart.Series.Add("UnmarkedProbabilities");
             //SingleChart.Series["UnmarkedProbabilities"].ChartType = SeriesChartType.Line;
-            SingleChart.Series["UnmarkedProbabilities"].ChartType = SeriesChartType.Column;
+            SingleChart.Series["UnmarkedProbabilities"].ChartType = chartType == "Bar" ? SeriesChartType.Column : SeriesChartType.Line;
             SingleChart.Series["UnmarkedProbabilities"].IsVisibleInLegend = true;
             SingleChart.Series["UnmarkedProbabilities"].LegendText = "Unmarked";
 
@@ -264,11 +298,10 @@ namespace COWE.Client
             {
                 BindingList<BatchIntervalMarked> batchIntervals = new BindingList<BatchIntervalMarked>();
                 
-                //batchIntervals = pcp.GetMarkedBatchIntervals(captureBatchId);
+                // Calculate probabilities
                 batchIntervals = pcp.GetMarkedBatchIntervals(file.CaptureBatchId);
-                //Dictionary<int, decimal> probabilities = new CalculateProbability(batchIntervals).GetProbabilityValues();
-                //SortedDictionary<int, decimal> probabilities = new CalculateProbability(batchIntervals).GetProbabilityByPacketRange(TrimIntervalsCheckBox.Checked ? true : false);
-                SortedDictionary<int, decimal> probabilities = new CalculateProbability(batchIntervals).GetProbabilityByPacketRange(false);
+                int histogramBinSize = Convert.ToInt32(HistogramBinSizeTextBox.Text);
+                SortedDictionary<int, decimal> probabilities = new CalculateProbability(batchIntervals).GetProbabilityByPacketRange(_trimZeroPacketIntervals, histogramBinSize);
 
                 if (file.Marked == CaptureState.Marked)
                 {
@@ -408,17 +441,20 @@ namespace COWE.Client
             CumulativeChart.ChartAreas[0].AxisX.Minimum = 0;
             //CumulativeChart.ChartAreas[0].AxisX.Maximum = 
 
+            // Get the type of chart to display
+            string chartType = ChartTypeComboBox.Items[ChartTypeComboBox.SelectedIndex].ToString();
+
             // Marked probabilities series
             CumulativeChart.Series.Add("MarkedProbabilities");
             //CumulativeChart.Series["MarkedProbabilities"].ChartType = SeriesChartType.Line;
-            CumulativeChart.Series["MarkedProbabilities"].ChartType = SeriesChartType.Column;
+            CumulativeChart.Series["MarkedProbabilities"].ChartType = chartType == "Bar" ? SeriesChartType.Column : SeriesChartType.Line;
             CumulativeChart.Series["MarkedProbabilities"].IsVisibleInLegend = true;
             CumulativeChart.Series["MarkedProbabilities"].LegendText = "Marked";
 
             // Unmarked probabilities series
             CumulativeChart.Series.Add("UnmarkedProbabilities");
             //CumulativeChart.Series["UnmarkedProbabilities"].ChartType = SeriesChartType.Line;
-            CumulativeChart.Series["UnmarkedProbabilities"].ChartType = SeriesChartType.Column;
+            CumulativeChart.Series["UnmarkedProbabilities"].ChartType = chartType == "Bar" ? SeriesChartType.Column : SeriesChartType.Line;
             CumulativeChart.Series["UnmarkedProbabilities"].IsVisibleInLegend = true;
             CumulativeChart.Series["UnmarkedProbabilities"].LegendText = "Unmarked";
 
@@ -455,8 +491,9 @@ namespace COWE.Client
                 }
             }
 
-            SortedDictionary<int, decimal> markedProbabilities = new CalculateProbability(markedBatchIntervals).GetProbabilityByPacketRange(TrimIntervalsCheckBox.Checked ? true : false);
-            SortedDictionary<int, decimal> unmarkedProbabilities = new CalculateProbability(unmarkedBatchIntervals).GetProbabilityByPacketRange(TrimIntervalsCheckBox.Checked ? true : false);
+            int histogramBinSize = Convert.ToInt32(HistogramBinSizeTextBox.Text);
+            SortedDictionary<int, decimal> markedProbabilities = new CalculateProbability(markedBatchIntervals).GetProbabilityByPacketRange(_trimZeroPacketIntervals, histogramBinSize);
+            SortedDictionary<int, decimal> unmarkedProbabilities = new CalculateProbability(unmarkedBatchIntervals).GetProbabilityByPacketRange(_trimZeroPacketIntervals, histogramBinSize);
 
             CumulativeChart.Series["MarkedProbabilities"].Color = Color.CornflowerBlue;
 
@@ -503,7 +540,7 @@ namespace COWE.Client
                     bim.IntervalNumber = ci.CumulativeIntervalNumber;
                     bim.Marked = CaptureState.Unmarked;
                     bim.PacketCount = ci.PacketCount;
-                    markedBatchIntervals.Add(bim);
+                    unmarkedBatchIntervals.Add(bim);
                 }
             }
 
@@ -560,24 +597,5 @@ namespace COWE.Client
             }
         }
         #endregion
-
-        private void RefreshButton_Click(object sender, EventArgs e)
-        {
-            //RefreshSingleDataChart(2);
-            RefreshSingleDataChart();
-            RefreshCumulativeDataChart();
-        }
-
-        private void groupBox2_Enter(object sender, EventArgs e)
-        {
-
-        }
-
-        private void panel5_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-
     }
 }
