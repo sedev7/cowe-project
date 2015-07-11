@@ -28,21 +28,21 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle21 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle22 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea31 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend31 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series31 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea32 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend32 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series32 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea33 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend33 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series33 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.AnalysisDataGridView = new System.Windows.Forms.DataGridView();
             this.SingleChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.CumulativeChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.KsChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.CdfChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.panel3 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
@@ -61,7 +61,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.AnalysisDataGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SingleChart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.CumulativeChart)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.KsChart)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.CdfChart)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -76,72 +76,72 @@
             this.AnalysisDataGridView.AllowUserToAddRows = false;
             this.AnalysisDataGridView.AllowUserToDeleteRows = false;
             this.AnalysisDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle21.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle21.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle21.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle21.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle21.Padding = new System.Windows.Forms.Padding(2, 4, 2, 4);
-            dataGridViewCellStyle21.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle21.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle21.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.AnalysisDataGridView.DefaultCellStyle = dataGridViewCellStyle21;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle1.Padding = new System.Windows.Forms.Padding(2, 4, 2, 4);
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.AnalysisDataGridView.DefaultCellStyle = dataGridViewCellStyle1;
             this.AnalysisDataGridView.Location = new System.Drawing.Point(2, 3);
             this.AnalysisDataGridView.Name = "AnalysisDataGridView";
-            dataGridViewCellStyle22.Padding = new System.Windows.Forms.Padding(2);
-            this.AnalysisDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle22;
+            dataGridViewCellStyle2.Padding = new System.Windows.Forms.Padding(2);
+            this.AnalysisDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle2;
             this.AnalysisDataGridView.Size = new System.Drawing.Size(410, 146);
             this.AnalysisDataGridView.TabIndex = 0;
             // 
             // SingleChart
             // 
-            chartArea31.Name = "ChartArea1";
-            this.SingleChart.ChartAreas.Add(chartArea31);
+            chartArea1.Name = "ChartArea1";
+            this.SingleChart.ChartAreas.Add(chartArea1);
             this.SingleChart.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend31.Name = "Legend1";
-            this.SingleChart.Legends.Add(legend31);
+            legend1.Name = "Legend1";
+            this.SingleChart.Legends.Add(legend1);
             this.SingleChart.Location = new System.Drawing.Point(0, 0);
             this.SingleChart.Name = "SingleChart";
-            series31.ChartArea = "ChartArea1";
-            series31.Legend = "Legend1";
-            series31.Name = "Series1";
-            this.SingleChart.Series.Add(series31);
+            series1.ChartArea = "ChartArea1";
+            series1.Legend = "Legend1";
+            series1.Name = "Series1";
+            this.SingleChart.Series.Add(series1);
             this.SingleChart.Size = new System.Drawing.Size(242, 219);
             this.SingleChart.TabIndex = 1;
             this.SingleChart.Text = "chart1";
             // 
             // CumulativeChart
             // 
-            chartArea32.Name = "ChartArea1";
-            this.CumulativeChart.ChartAreas.Add(chartArea32);
+            chartArea2.Name = "ChartArea1";
+            this.CumulativeChart.ChartAreas.Add(chartArea2);
             this.CumulativeChart.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend32.Name = "Legend1";
-            this.CumulativeChart.Legends.Add(legend32);
+            legend2.Name = "Legend1";
+            this.CumulativeChart.Legends.Add(legend2);
             this.CumulativeChart.Location = new System.Drawing.Point(0, 0);
             this.CumulativeChart.Name = "CumulativeChart";
-            series32.ChartArea = "ChartArea1";
-            series32.Legend = "Legend1";
-            series32.Name = "Series1";
-            this.CumulativeChart.Series.Add(series32);
+            series2.ChartArea = "ChartArea1";
+            series2.Legend = "Legend1";
+            series2.Name = "Series1";
+            this.CumulativeChart.Series.Add(series2);
             this.CumulativeChart.Size = new System.Drawing.Size(242, 219);
             this.CumulativeChart.TabIndex = 2;
             this.CumulativeChart.Text = "chart2";
             // 
-            // KsChart
+            // CdfChart
             // 
-            chartArea33.Name = "ChartArea1";
-            this.KsChart.ChartAreas.Add(chartArea33);
-            this.KsChart.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend33.Name = "Legend1";
-            this.KsChart.Legends.Add(legend33);
-            this.KsChart.Location = new System.Drawing.Point(0, 0);
-            this.KsChart.Name = "KsChart";
-            series33.ChartArea = "ChartArea1";
-            series33.Legend = "Legend1";
-            series33.Name = "Series1";
-            this.KsChart.Series.Add(series33);
-            this.KsChart.Size = new System.Drawing.Size(242, 219);
-            this.KsChart.TabIndex = 3;
-            this.KsChart.Text = "chart3";
+            chartArea3.Name = "ChartArea1";
+            this.CdfChart.ChartAreas.Add(chartArea3);
+            this.CdfChart.Dock = System.Windows.Forms.DockStyle.Fill;
+            legend3.Name = "Legend1";
+            this.CdfChart.Legends.Add(legend3);
+            this.CdfChart.Location = new System.Drawing.Point(0, 0);
+            this.CdfChart.Name = "CdfChart";
+            series3.ChartArea = "ChartArea1";
+            series3.Legend = "Legend1";
+            series3.Name = "Series1";
+            this.CdfChart.Series.Add(series3);
+            this.CdfChart.Size = new System.Drawing.Size(242, 219);
+            this.CdfChart.TabIndex = 3;
+            this.CdfChart.Text = "chart3";
             // 
             // groupBox1
             // 
@@ -172,7 +172,7 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.KsChart);
+            this.panel1.Controls.Add(this.CdfChart);
             this.panel1.Location = new System.Drawing.Point(495, 14);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(242, 219);
@@ -306,7 +306,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.AnalysisDataGridView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.SingleChart)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.CumulativeChart)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.KsChart)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.CdfChart)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
@@ -324,7 +324,7 @@
         private System.Windows.Forms.DataGridView AnalysisDataGridView;
         private System.Windows.Forms.DataVisualization.Charting.Chart SingleChart;
         private System.Windows.Forms.DataVisualization.Charting.Chart CumulativeChart;
-        private System.Windows.Forms.DataVisualization.Charting.Chart KsChart;
+        private System.Windows.Forms.DataVisualization.Charting.Chart CdfChart;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox AnalysisMetricsGroupBox;
         private System.Windows.Forms.TextBox AnalysisIntervalSizeTextBox;

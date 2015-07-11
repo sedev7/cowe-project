@@ -7,11 +7,11 @@
       <Diagram DiagramId="5803cce9521a43ceabc9b8667815353c" Name="Diagram1">
         <EntityTypeShape EntityType="COWE.PacketAnalysisModel.CapturePacket" Width="1.5" PointX="0.75" PointY="3.75" IsExpanded="true" />
         <EntityTypeShape EntityType="COWE.PacketAnalysisModel.BatchInterval" Width="1.5" PointX="3" PointY="1" />
+        <EntityTypeShape EntityType="COWE.PacketAnalysisModel.CumulativeInterval" Width="1.5" PointX="3.375" PointY="3.75" />
         <EntityTypeShape EntityType="COWE.PacketAnalysisModel.CaptureBatch" Width="1.5" PointX="0.75" PointY="1" />
         <AssociationConnector Association="COWE.PacketAnalysisModel.FK_BatchInterval_CaptureBatch_CaptureBatchId" />
         <AssociationConnector Association="COWE.PacketAnalysisModel.FK_CapturePacket_CaptureBatch_CaptureBatchId" />
-        <EntityTypeShape EntityType="COWE.PacketAnalysisModel.CumulativeInterval" Width="1.5" PointX="3.375" PointY="3.75" />
-      </Diagram>
+        </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
 </edmx:Edmx>

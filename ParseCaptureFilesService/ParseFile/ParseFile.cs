@@ -139,7 +139,6 @@ namespace COWE.ParseFile
                         foreach (Packet pkt in packets)
                         {
                             DataRow dr = packetTable.NewRow();
-                            //dr["FileName"] = fileName;
                             dr["CaptureBatchId"] = captureBatchId;
                             dr["PacketNumber"] = pktno++;
                             dr["TimeStamp"] = Convert.ToDateTime(pkt.Timestamp).TimeOfDay.ToString();

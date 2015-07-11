@@ -23,15 +23,6 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <EntitySetMapping Name="CaptureBatches">
-      <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.CaptureBatch">
-        <MappingFragment StoreEntitySet="CaptureBatch">
-          <ScalarProperty Name="Marked" ColumnName="Marked" />
-          <ScalarProperty Name="FileName" ColumnName="FileName" />
-          <ScalarProperty Name="CaptureBatchId" ColumnName="CaptureBatchId" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
     <EntitySetMapping Name="CumulativeIntervals">
       <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.CumulativeInterval">
         <MappingFragment StoreEntitySet="CumulativeInterval">
@@ -49,5 +40,15 @@
       </EntityTypeMapping>
     </EntitySetMapping>
     <FunctionImportMapping FunctionImportName="CumulativeIntervalDelete" FunctionName="PacketAnalysisModel.Store.CumulativeIntervalDelete" />
+    <EntitySetMapping Name="CaptureBatches">
+      <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.CaptureBatch">
+        <MappingFragment StoreEntitySet="CaptureBatch">
+          <ScalarProperty Name="Mean" ColumnName="Mean" />
+          <ScalarProperty Name="Marked" ColumnName="Marked" />
+          <ScalarProperty Name="FileName" ColumnName="FileName" />
+          <ScalarProperty Name="CaptureBatchId" ColumnName="CaptureBatchId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
   </EntityContainerMapping>
 </Mapping>

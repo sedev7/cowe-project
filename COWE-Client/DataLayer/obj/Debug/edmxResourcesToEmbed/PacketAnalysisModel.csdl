@@ -16,9 +16,15 @@
     <FunctionImport Name="CaptureBatchInsert">
       <Parameter Name="FileName" Mode="In" Type="String" />
       <Parameter Name="Marked" Mode="In" Type="Boolean" />
+      <Parameter Name="Mean" Mode="In" Type="Decimal" />
       <Parameter Name="NewCaptureBatchId" Mode="InOut" Type="Int32" />
     </FunctionImport>
     <EntitySet Name="BatchIntervals" EntityType="COWE.PacketAnalysisModel.BatchInterval" />
+    <EntitySet Name="CumulativeIntervals" EntityType="COWE.PacketAnalysisModel.CumulativeInterval" />
+    <FunctionImport Name="CumulativeIntervalDelete" ReturnType="Collection(Decimal)">
+      <Parameter Name="Marked" Mode="In" Type="Boolean" />
+      <Parameter Name="RowsDeleted" Mode="InOut" Type="Int32" />
+    </FunctionImport>
     <EntitySet Name="CaptureBatches" EntityType="COWE.PacketAnalysisModel.CaptureBatch" />
     <AssociationSet Name="FK_BatchInterval_CaptureBatch_CaptureBatchId" Association="COWE.PacketAnalysisModel.FK_BatchInterval_CaptureBatch_CaptureBatchId">
       <End Role="CaptureBatch" EntitySet="CaptureBatches" />
@@ -28,11 +34,6 @@
       <End Role="CaptureBatch" EntitySet="CaptureBatches" />
       <End Role="CapturePacket" EntitySet="CapturePackets" />
     </AssociationSet>
-    <EntitySet Name="CumulativeIntervals" EntityType="COWE.PacketAnalysisModel.CumulativeInterval" />
-    <FunctionImport Name="CumulativeIntervalDelete" ReturnType="Collection(Decimal)">
-      <Parameter Name="Marked" Mode="In" Type="Boolean" />
-      <Parameter Name="RowsDeleted" Mode="InOut" Type="Int32" />
-    </FunctionImport>
   </EntityContainer>
   <EntityType Name="BatchInterval">
     <Key>
@@ -44,6 +45,16 @@
     <Property Name="PacketCount" Type="Int32" Nullable="false" />
     <NavigationProperty Name="CaptureBatch" Relationship="COWE.PacketAnalysisModel.FK_BatchInterval_CaptureBatch_CaptureBatchId" FromRole="BatchInterval" ToRole="CaptureBatch" />
   </EntityType>
+  <EntityType Name="CumulativeInterval">
+    <Key>
+      <PropertyRef Name="CumulativeIntervalNumber" />
+      <PropertyRef Name="PacketCount" />
+      <PropertyRef Name="Marked" />
+    </Key>
+    <Property Name="CumulativeIntervalNumber" Type="Int32" Nullable="false" />
+    <Property Name="PacketCount" Type="Int32" Nullable="false" />
+    <Property Name="Marked" Type="Boolean" Nullable="false" />
+  </EntityType>
   <EntityType Name="CaptureBatch">
     <Key>
       <PropertyRef Name="CaptureBatchId" />
@@ -51,6 +62,7 @@
     <Property Name="CaptureBatchId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="FileName" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
     <Property Name="Marked" Type="Boolean" Nullable="false" />
+    <Property Name="Mean" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
     <NavigationProperty Name="BatchIntervals" Relationship="COWE.PacketAnalysisModel.FK_BatchInterval_CaptureBatch_CaptureBatchId" FromRole="CaptureBatch" ToRole="BatchInterval" />
     <NavigationProperty Name="CapturePackets" Relationship="COWE.PacketAnalysisModel.FK_CapturePacket_CaptureBatch_CaptureBatchId" FromRole="CaptureBatch" ToRole="CapturePacket" />
   </EntityType>
@@ -78,14 +90,4 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <EntityType Name="CumulativeInterval">
-    <Key>
-      <PropertyRef Name="CumulativeIntervalNumber" />
-      <PropertyRef Name="PacketCount" />
-      <PropertyRef Name="Marked" />
-    </Key>
-    <Property Name="CumulativeIntervalNumber" Type="Int32" Nullable="false" />
-    <Property Name="PacketCount" Type="Int32" Nullable="false" />
-    <Property Name="Marked" Type="Boolean" Nullable="false" />
-  </EntityType>
 </Schema>

@@ -74,5 +74,42 @@ namespace COWE.DataLayer
 
             return batchIds;
         }
+
+        public bool UpdateBatchMean(int captureBatchId, decimal mean)
+        {
+            bool result = false;
+
+            using (var context = new PacketAnalysisEntity())
+            {
+                var batch = context.CaptureBatches.Where(c => c.CaptureBatchId == captureBatchId).FirstOrDefault();
+                batch.Mean = mean;
+                context.SaveChanges();
+                result = true;
+            }
+            return result;
+        }
+
+        public decimal CalculateMeanOfMeans(CaptureState captureState)
+        {
+            bool marked = captureState == CaptureState.Marked ? true : false;
+            decimal meanOfMeans = 0;
+            decimal sumOfMeans = 0;
+
+            using (var context = new PacketAnalysisEntity())
+            {
+                var means = (from m in context.CaptureBatches
+                             where m.Marked == marked
+                             select m.Mean).ToList();
+
+                foreach (var mean in means)
+                {
+                    sumOfMeans += mean;
+                }
+
+                meanOfMeans = sumOfMeans / means.Count;
+            }
+
+            return meanOfMeans;
+        }
     }
 }

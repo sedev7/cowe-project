@@ -755,3 +755,66 @@ Affected parameters are:
    logtoconsole = 
    assemblypath = C:\Jim's Folders\VS2013 Projects\CoResidencyProject\ParseCaptureFilesService\ParseCaptureFilesService\bin\Debug\ParseCaptureFilesService.exe
    logfile = C:\Jim's Folders\VS2013 Projects\CoResidencyProject\ParseCaptureFilesService\ParseCaptureFilesService\bin\Debug\ParseCaptureFilesService.InstallLog
+Uninstalling assembly 'C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\ParseCaptureFilesService\ParseCaptureFilesService\bin\Debug\ParseCaptureFilesService.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\ParseCaptureFilesService\ParseCaptureFilesService\bin\Debug\ParseCaptureFilesService.exe
+   logfile = C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\ParseCaptureFilesService\ParseCaptureFilesService\bin\Debug\ParseCaptureFilesService.InstallLog
+Removing EventLog source ParseCaptureFilesService.
+Service ParseCaptureFilesService is being removed from the system...
+Service ParseCaptureFilesService was successfully removed from the system.
+Installing assembly 'C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\ParseCaptureFilesService\ParseCaptureFilesService\bin\Debug\ParseCaptureFilesService.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\ParseCaptureFilesService\ParseCaptureFilesService\bin\Debug\ParseCaptureFilesService.exe
+   logfile = C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\ParseCaptureFilesService\ParseCaptureFilesService\bin\Debug\ParseCaptureFilesService.InstallLog
+Installing service ParseCaptureFilesService...
+Service ParseCaptureFilesService has been successfully installed.
+Creating EventLog source ParseCaptureFilesService in log Application...
+Committing assembly 'C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\ParseCaptureFilesService\ParseCaptureFilesService\bin\Debug\ParseCaptureFilesService.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\ParseCaptureFilesService\ParseCaptureFilesService\bin\Debug\ParseCaptureFilesService.exe
+   logfile = C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\ParseCaptureFilesService\ParseCaptureFilesService\bin\Debug\ParseCaptureFilesService.InstallLog
+Uninstalling assembly 'C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\ParseCaptureFilesService\ParseCaptureFilesService\bin\Debug\ParseCaptureFilesService.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\ParseCaptureFilesService\ParseCaptureFilesService\bin\Debug\ParseCaptureFilesService.exe
+   logfile = C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\ParseCaptureFilesService\ParseCaptureFilesService\bin\Debug\ParseCaptureFilesService.InstallLog
+Removing EventLog source ParseCaptureFilesService.
+Service ParseCaptureFilesService is being removed from the system...
+Service ParseCaptureFilesService was successfully removed from the system.
+Installing assembly 'C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\ParseCaptureFilesService\ParseCaptureFilesService\bin\Debug\ParseCaptureFilesService.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\ParseCaptureFilesService\ParseCaptureFilesService\bin\Debug\ParseCaptureFilesService.exe
+   logfile = C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\ParseCaptureFilesService\ParseCaptureFilesService\bin\Debug\ParseCaptureFilesService.InstallLog
+Installing service ParseCaptureFilesService...
+Service ParseCaptureFilesService has been successfully installed.
+Creating EventLog source ParseCaptureFilesService in log Application...
+Committing assembly 'C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\ParseCaptureFilesService\ParseCaptureFilesService\bin\Debug\ParseCaptureFilesService.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\ParseCaptureFilesService\ParseCaptureFilesService\bin\Debug\ParseCaptureFilesService.exe
+   logfile = C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\ParseCaptureFilesService\ParseCaptureFilesService\bin\Debug\ParseCaptureFilesService.InstallLog
+Uninstalling assembly 'C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\ParseCaptureFilesService\ParseCaptureFilesService\bin\Debug\ParseCaptureFilesService.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\ParseCaptureFilesService\ParseCaptureFilesService\bin\Debug\ParseCaptureFilesService.exe
+   logfile = C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\ParseCaptureFilesService\ParseCaptureFilesService\bin\Debug\ParseCaptureFilesService.InstallLog
+Removing EventLog source ParseCaptureFilesService.
+Service ParseCaptureFilesService is being removed from the system...
+Service ParseCaptureFilesService was successfully removed from the system.
+Installing assembly 'C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\ParseCaptureFilesService\ParseCaptureFilesService\bin\Debug\ParseCaptureFilesService.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\ParseCaptureFilesService\ParseCaptureFilesService\bin\Debug\ParseCaptureFilesService.exe
+   logfile = C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\ParseCaptureFilesService\ParseCaptureFilesService\bin\Debug\ParseCaptureFilesService.InstallLog
+Installing service ParseCaptureFilesService...
+Service ParseCaptureFilesService has been successfully installed.
+Creating EventLog source ParseCaptureFilesService in log Application...
+Committing assembly 'C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\ParseCaptureFilesService\ParseCaptureFilesService\bin\Debug\ParseCaptureFilesService.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\ParseCaptureFilesService\ParseCaptureFilesService\bin\Debug\ParseCaptureFilesService.exe
+   logfile = C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\ParseCaptureFilesService\ParseCaptureFilesService\bin\Debug\ParseCaptureFilesService.InstallLog

@@ -6,9 +6,6 @@
 --
 -- Create all tables and database structures for COWE project.
 --
--- v3 07-06-2015:
---  - Add "mean" column to CaptureBatch table.
---
 -- v2 06-14-2015:
 --  - Remove identity column for CumulativeInterval table (not needed 
 --    because we are replacing the data each time an capture file is
@@ -102,7 +99,6 @@ CREATE TABLE [COWE].[CaptureBatch](
 	[CaptureBatchId] [int] IDENTITY(1,1) NOT NULL,
 	[FileName] [varchar](200) NOT NULL,
 	[Marked] [bit] NOT NULL,
-	[Mean] [decimal](8,8) NOT NULL,
  CONSTRAINT [AK_CaptureBatch_FileName] UNIQUE ([FileName]),
  CONSTRAINT [PK_CaptureBatch_CaptureBatchId] PRIMARY KEY CLUSTERED
  (

@@ -20,14 +20,5 @@ namespace COWE.BusinessLayer
             this._marked = (from m in batchIntervals
                             select m.Marked).FirstOrDefault();
         }
-
-        public void DisplayData()
-        {
-            
-        }
-
-
-
-        
     }
 }

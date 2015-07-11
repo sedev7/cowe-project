@@ -21,6 +21,7 @@
           <Property Name="CaptureBatchId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="FileName" Type="varchar" MaxLength="200" Nullable="false" />
           <Property Name="Marked" Type="bit" Nullable="false" />
+          <Property Name="Mean" Type="decimal" Precision="28" Scale="10" Nullable="false" />
         </EntityType>
         <EntityType Name="CapturePacket">
           <Key>
@@ -71,6 +72,7 @@ warning 6002: The table/view 'Packets.COWE.CumulativeInterval' does not have a p
         <Function Name="CaptureBatchInsert" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="COWE">
           <Parameter Name="FileName" Type="varchar" Mode="In" />
           <Parameter Name="Marked" Type="bit" Mode="In" />
+          <Parameter Name="Mean" Type="decimal" Mode="In" />
           <Parameter Name="NewCaptureBatchId" Type="int" Mode="InOut" />
         </Function>
         <Function Name="CumulativeIntervalDelete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="COWE">
@@ -117,9 +119,15 @@ warning 6002: The table/view 'Packets.COWE.CumulativeInterval' does not have a p
           <FunctionImport Name="CaptureBatchInsert">
             <Parameter Name="FileName" Mode="In" Type="String" />
             <Parameter Name="Marked" Mode="In" Type="Boolean" />
+            <Parameter Name="Mean" Mode="In" Type="Decimal" />
             <Parameter Name="NewCaptureBatchId" Mode="InOut" Type="Int32" />
           </FunctionImport>
           <EntitySet Name="BatchIntervals" EntityType="COWE.PacketAnalysisModel.BatchInterval" />
+          <EntitySet Name="CumulativeIntervals" EntityType="COWE.PacketAnalysisModel.CumulativeInterval" />
+          <FunctionImport Name="CumulativeIntervalDelete" ReturnType="Collection(Decimal)">
+            <Parameter Name="Marked" Mode="In" Type="Boolean" />
+            <Parameter Name="RowsDeleted" Mode="InOut" Type="Int32" />
+          </FunctionImport>
           <EntitySet Name="CaptureBatches" EntityType="COWE.PacketAnalysisModel.CaptureBatch" />
           <AssociationSet Name="FK_BatchInterval_CaptureBatch_CaptureBatchId" Association="COWE.PacketAnalysisModel.FK_BatchInterval_CaptureBatch_CaptureBatchId">
             <End Role="CaptureBatch" EntitySet="CaptureBatches" />
@@ -129,12 +137,7 @@ warning 6002: The table/view 'Packets.COWE.CumulativeInterval' does not have a p
             <End Role="CaptureBatch" EntitySet="CaptureBatches" />
             <End Role="CapturePacket" EntitySet="CapturePackets" />
           </AssociationSet>
-          <EntitySet Name="CumulativeIntervals" EntityType="COWE.PacketAnalysisModel.CumulativeInterval" />
-          <FunctionImport Name="CumulativeIntervalDelete" ReturnType="Collection(Decimal)">
-            <Parameter Name="Marked" Mode="In" Type="Boolean" />
-            <Parameter Name="RowsDeleted" Mode="InOut" Type="Int32" />
-          </FunctionImport>
-        </EntityContainer>
+          </EntityContainer>
         <EntityType Name="BatchInterval">
           <Key>
             <PropertyRef Name="BatchIntervalId" />
@@ -145,6 +148,16 @@ warning 6002: The table/view 'Packets.COWE.CumulativeInterval' does not have a p
           <Property Name="PacketCount" Type="Int32" Nullable="false" />
           <NavigationProperty Name="CaptureBatch" Relationship="COWE.PacketAnalysisModel.FK_BatchInterval_CaptureBatch_CaptureBatchId" FromRole="BatchInterval" ToRole="CaptureBatch" />
         </EntityType>
+        <EntityType Name="CumulativeInterval">
+          <Key>
+            <PropertyRef Name="CumulativeIntervalNumber" />
+            <PropertyRef Name="PacketCount" />
+            <PropertyRef Name="Marked" />
+          </Key>
+          <Property Name="CumulativeIntervalNumber" Type="Int32" Nullable="false" />
+          <Property Name="PacketCount" Type="Int32" Nullable="false" />
+          <Property Name="Marked" Type="Boolean" Nullable="false" />
+        </EntityType>
         <EntityType Name="CaptureBatch">
           <Key>
             <PropertyRef Name="CaptureBatchId" />
@@ -152,6 +165,7 @@ warning 6002: The table/view 'Packets.COWE.CumulativeInterval' does not have a p
           <Property Name="CaptureBatchId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="FileName" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
           <Property Name="Marked" Type="Boolean" Nullable="false" />
+          <Property Name="Mean" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
           <NavigationProperty Name="BatchIntervals" Relationship="COWE.PacketAnalysisModel.FK_BatchInterval_CaptureBatch_CaptureBatchId" FromRole="CaptureBatch" ToRole="BatchInterval" />
           <NavigationProperty Name="CapturePackets" Relationship="COWE.PacketAnalysisModel.FK_CapturePacket_CaptureBatch_CaptureBatchId" FromRole="CaptureBatch" ToRole="CapturePacket" />
         </EntityType>
@@ -179,17 +193,7 @@ warning 6002: The table/view 'Packets.COWE.CumulativeInterval' does not have a p
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="CumulativeInterval">
-          <Key>
-            <PropertyRef Name="CumulativeIntervalNumber" />
-            <PropertyRef Name="PacketCount" />
-            <PropertyRef Name="Marked" />
-          </Key>
-          <Property Name="CumulativeIntervalNumber" Type="Int32" Nullable="false" />
-          <Property Name="PacketCount" Type="Int32" Nullable="false" />
-          <Property Name="Marked" Type="Boolean" Nullable="false" />
-        </EntityType>
-      </Schema>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
@@ -217,15 +221,6 @@ warning 6002: The table/view 'Packets.COWE.CumulativeInterval' does not have a p
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="CaptureBatches">
-            <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.CaptureBatch">
-              <MappingFragment StoreEntitySet="CaptureBatch">
-                <ScalarProperty Name="Marked" ColumnName="Marked" />
-                <ScalarProperty Name="FileName" ColumnName="FileName" />
-                <ScalarProperty Name="CaptureBatchId" ColumnName="CaptureBatchId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="CumulativeIntervals">
             <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.CumulativeInterval">
               <MappingFragment StoreEntitySet="CumulativeInterval">
@@ -243,6 +238,16 @@ warning 6002: The table/view 'Packets.COWE.CumulativeInterval' does not have a p
             </EntityTypeMapping>
           </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="CumulativeIntervalDelete" FunctionName="PacketAnalysisModel.Store.CumulativeIntervalDelete" />
+          <EntitySetMapping Name="CaptureBatches">
+            <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.CaptureBatch">
+              <MappingFragment StoreEntitySet="CaptureBatch">
+                <ScalarProperty Name="Mean" ColumnName="Mean" />
+                <ScalarProperty Name="Marked" ColumnName="Marked" />
+                <ScalarProperty Name="FileName" ColumnName="FileName" />
+                <ScalarProperty Name="CaptureBatchId" ColumnName="CaptureBatchId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

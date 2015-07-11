@@ -19,9 +19,16 @@ namespace COWE.Client
     {
         #region Global Variables
         bool _trimZeroPacketIntervals = true;
+        
         DataGridView _AnalysisDataGridView = new DataGridView();
+
+        double _alpha = 0.05;       // Hypothesis test significance level
+        
         int _MaxGridDisplayRows = 8;
         int _MaxGridHeight = 300;
+        
+        SortedDictionary<int, decimal> _CumulativeMarkedProbabilities = new SortedDictionary<int, decimal>();
+        SortedDictionary<int, decimal> _CumulativeUnmarkedProbabilities = new SortedDictionary<int, decimal>();
         #endregion
         #region Constructor
         public AnalysisControl()
@@ -42,6 +49,7 @@ namespace COWE.Client
             RefreshCumulativeDataChart();
             RefreshSingleBatchStatistics();
             RefreshCumulativeBatchStatistics();
+            RefreshCumulativeProbabilityChart();
             TrimIntervalsCheckBox.Checked = true;
         }
         private void RefreshButton_Click(object sender, EventArgs e)
@@ -49,6 +57,9 @@ namespace COWE.Client
             //RefreshSingleDataChart(2);
             RefreshSingleDataChart();
             RefreshCumulativeDataChart();
+            RefreshSingleBatchStatistics();
+            RefreshCumulativeBatchStatistics();
+            RefreshCumulativeProbabilityChart();
         }
 
         private void TrimIntervalsCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -416,6 +427,23 @@ namespace COWE.Client
             bs.PacketCountMean = Convert.ToDecimal(meanValue);
             bs.PacketCountStandardDeviation = Convert.ToDecimal(stdDevValue);
 
+            // Update the batch mean - only for single batches, not cumulative batches
+            var captureBatchId = (from c in batchIntervals select c.CaptureBatchId).FirstOrDefault();
+            if (captureBatchId != 0)
+            {
+                try
+                {
+                    ProcessCapturePackets pcp = new ProcessCapturePackets();
+                    if (!pcp.UpdateBatchMean(Convert.ToInt32(captureBatchId), bs.PacketCountMean))
+                    {
+                        MessageBox.Show("Error updating batch mean for CaptureBatchId " + captureBatchId, "Update Batch Mean", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error updating batch mean for CaptureBatchId " + captureBatchId + ": " + ex.Message, "Update Batch Mean", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
             return bs;
         }
 
@@ -492,19 +520,21 @@ namespace COWE.Client
             }
 
             int histogramBinSize = Convert.ToInt32(HistogramBinSizeTextBox.Text);
-            SortedDictionary<int, decimal> markedProbabilities = new CalculateProbability(markedBatchIntervals).GetProbabilityByPacketRange(_trimZeroPacketIntervals, histogramBinSize);
-            SortedDictionary<int, decimal> unmarkedProbabilities = new CalculateProbability(unmarkedBatchIntervals).GetProbabilityByPacketRange(_trimZeroPacketIntervals, histogramBinSize);
+            //SortedDictionary<int, decimal> markedProbabilities = new CalculateProbability(markedBatchIntervals).GetProbabilityByPacketRange(_trimZeroPacketIntervals, histogramBinSize);
+            //SortedDictionary<int, decimal> unmarkedProbabilities = new CalculateProbability(unmarkedBatchIntervals).GetProbabilityByPacketRange(_trimZeroPacketIntervals, histogramBinSize);
+            _CumulativeMarkedProbabilities = new CalculateProbability(markedBatchIntervals).GetProbabilityByPacketRange(_trimZeroPacketIntervals, histogramBinSize);
+            _CumulativeUnmarkedProbabilities = new CalculateProbability(unmarkedBatchIntervals).GetProbabilityByPacketRange(_trimZeroPacketIntervals, histogramBinSize);
 
             CumulativeChart.Series["MarkedProbabilities"].Color = Color.CornflowerBlue;
 
-            foreach (KeyValuePair<int, decimal> pair in markedProbabilities)
+            foreach (KeyValuePair<int, decimal> pair in _CumulativeMarkedProbabilities)
             {
                 CumulativeChart.Series["MarkedProbabilities"].Points.AddXY(Convert.ToDouble(pair.Key), Convert.ToDouble(pair.Value));
             }
 
             CumulativeChart.Series["UnmarkedProbabilities"].Color = Color.Red;
 
-            foreach (KeyValuePair<int, decimal> pair in unmarkedProbabilities)
+            foreach (KeyValuePair<int, decimal> pair in _CumulativeUnmarkedProbabilities)
             {
                 CumulativeChart.Series["UnmarkedProbabilities"].Points.AddXY(Convert.ToDouble(pair.Key), Convert.ToDouble(pair.Value));
             }
@@ -546,10 +576,13 @@ namespace COWE.Client
 
             BatchStatistics markedCumulativeStats = new BatchStatistics();
             BatchStatistics unmarkedCumulativeStats = new BatchStatistics();
+            decimal markedMeanOfMeans = 0;
+            decimal unmarkedMeanOfMeans = 0;
 
             if(markedBatchIntervals.Count > 0)
             {
                 markedCumulativeStats = GetBatchStatistics(markedBatchIntervals);
+                markedMeanOfMeans = pcp.CalculateMeanOfMeans(CaptureState.Marked);
 
                 // Load up the table
                 // Cumulative marked column
@@ -559,7 +592,7 @@ namespace COWE.Client
                 _AnalysisDataGridView.Rows[row++].Cells[5].Value = string.Format("{0:N2}", markedCumulativeStats.PacketCountStandardDeviation);
                 _AnalysisDataGridView.Rows[row++].Cells[5].Value = markedCumulativeStats.PacketCountMinimum;
                 _AnalysisDataGridView.Rows[row++].Cells[5].Value = markedCumulativeStats.PacketCountMaximum;
-                _AnalysisDataGridView.Rows[row++].Cells[5].Value = "N/A";
+                _AnalysisDataGridView.Rows[row++].Cells[5].Value = string.Format("{0:N2}", markedMeanOfMeans);
                 _AnalysisDataGridView.Rows[row++].Cells[5].Value = "N/A";
                 _AnalysisDataGridView.Rows[row++].Cells[5].Value = "N/A";
             }
@@ -567,6 +600,7 @@ namespace COWE.Client
             if (unmarkedBatchIntervals.Count > 0)
             {
                 unmarkedCumulativeStats = GetBatchStatistics(unmarkedBatchIntervals);
+                unmarkedMeanOfMeans = pcp.CalculateMeanOfMeans(CaptureState.Unmarked);
 
                 // Load up the table
                 // Cumulative unmarked column
@@ -576,7 +610,7 @@ namespace COWE.Client
                 _AnalysisDataGridView.Rows[row++].Cells[4].Value = string.Format("{0:N2}", unmarkedCumulativeStats.PacketCountStandardDeviation);
                 _AnalysisDataGridView.Rows[row++].Cells[4].Value = unmarkedCumulativeStats.PacketCountMinimum;
                 _AnalysisDataGridView.Rows[row++].Cells[4].Value = unmarkedCumulativeStats.PacketCountMaximum;
-                _AnalysisDataGridView.Rows[row++].Cells[4].Value = "N/A";
+                _AnalysisDataGridView.Rows[row++].Cells[4].Value = string.Format("{0:N2}", unmarkedMeanOfMeans);
                 _AnalysisDataGridView.Rows[row++].Cells[4].Value = "N/A";
                 _AnalysisDataGridView.Rows[row++].Cells[4].Value = "N/A";
             }
@@ -591,10 +625,92 @@ namespace COWE.Client
                 _AnalysisDataGridView.Rows[row++].Cells[6].Value = string.Format("{0:N2}", (unmarkedCumulativeStats.PacketCountStandardDeviation - markedCumulativeStats.PacketCountStandardDeviation));
                 _AnalysisDataGridView.Rows[row++].Cells[6].Value = unmarkedCumulativeStats.PacketCountMinimum - markedCumulativeStats.PacketCountMinimum;
                 _AnalysisDataGridView.Rows[row++].Cells[6].Value = unmarkedCumulativeStats.PacketCountMaximum - markedCumulativeStats.PacketCountMaximum;
-                _AnalysisDataGridView.Rows[row++].Cells[6].Value = "N/A";
+                _AnalysisDataGridView.Rows[row++].Cells[6].Value = string.Format("{0:N2}", (unmarkedMeanOfMeans - markedMeanOfMeans));
                 // Alpha
                 // Reject H0?
             }
+        }
+
+        private void RefreshCumulativeProbabilityChart()
+        {
+            // Get the cumulative probabilities for marked and unmarked batches and add them to the graph
+
+            // Format the chart
+            //standardSeries.ChartType = SeriesChartType.RangeColumn;
+            //standardSeries.BorderWidth = 1;
+            //standardSeries.BorderDashStyle = ChartDashStyle.Solid;
+            //standardSeries.BorderColor = Color.Black;
+            //standardSeries.Color = Color.Blue;
+            CdfChart.Series.Clear();
+            CdfChart.Titles.Clear();
+            CdfChart.Titles.Add("Cumulative Probability Distribution");
+            //CdfChart.Legends[0].Position.Auto = true; //ElementPosition
+            CdfChart.Legends[0].IsDockedInsideChartArea = true;
+            CdfChart.Legends[0].Docking = Docking.Bottom;
+            CdfChart.Legends[0].Alignment = StringAlignment.Center;
+            CdfChart.ChartAreas[0].AxisX.Title = "Packets per Interval";
+            CdfChart.ChartAreas[0].AxisX.Minimum = 0;
+            //CumulativeChart.ChartAreas[0].AxisX.Maximum = 
+
+            // Get the type of chart to display
+            string chartType = ChartTypeComboBox.Items[ChartTypeComboBox.SelectedIndex].ToString();
+
+            // Marked probabilities series
+            CdfChart.Series.Add("MarkedProbabilities");
+            CdfChart.Series["MarkedProbabilities"].ChartType = SeriesChartType.Line;
+            //CdfChart.Series["MarkedProbabilities"].ChartType = chartType == "Bar" ? SeriesChartType.Column : SeriesChartType.Line;
+            CdfChart.Series["MarkedProbabilities"].IsVisibleInLegend = true;
+            CdfChart.Series["MarkedProbabilities"].LegendText = "Marked";
+
+            // Unmarked probabilities series
+            CdfChart.Series.Add("UnmarkedProbabilities");
+            CdfChart.Series["UnmarkedProbabilities"].ChartType = SeriesChartType.Line;
+            //CdfChart.Series["UnmarkedProbabilities"].ChartType = chartType == "Bar" ? SeriesChartType.Column : SeriesChartType.Line;
+            CdfChart.Series["UnmarkedProbabilities"].IsVisibleInLegend = true;
+            CdfChart.Series["UnmarkedProbabilities"].LegendText = "Unmarked";
+
+            // Get the batch intervals
+            BindingList<BatchIntervalMarked> unmarkedBatchIntervals = new BindingList<BatchIntervalMarked>();
+            BindingList<BatchIntervalMarked> markedBatchIntervals = new BindingList<BatchIntervalMarked>();
+
+            //int histogramBinSize = Convert.ToInt32(HistogramBinSizeTextBox.Text);
+            SortedDictionary<int, decimal> markedProbabilities = new CalculateProbability(markedBatchIntervals).GetCumulativeProbabilityDistribution(_CumulativeMarkedProbabilities);
+            SortedDictionary<int, decimal> unmarkedProbabilities = new CalculateProbability(unmarkedBatchIntervals).GetCumulativeProbabilityDistribution(_CumulativeUnmarkedProbabilities);
+
+            CdfChart.Series["MarkedProbabilities"].Color = Color.CornflowerBlue;
+
+            foreach (KeyValuePair<int, decimal> pair in markedProbabilities)
+            {
+                CdfChart.Series["MarkedProbabilities"].Points.AddXY(Convert.ToDouble(pair.Key), Convert.ToDouble(pair.Value));
+            }
+
+            CdfChart.Series["UnmarkedProbabilities"].Color = Color.Red;
+
+            foreach (KeyValuePair<int, decimal> pair in unmarkedProbabilities)
+            {
+                CdfChart.Series["UnmarkedProbabilities"].Points.AddXY(Convert.ToDouble(pair.Key), Convert.ToDouble(pair.Value));
+            }
+        }
+        private bool GetHypothesisTestResult(decimal unmarkedMean, decimal markedMean, decimal unmarkedStdDev, decimal markedStdDev, int unmarkedPacketCount, int markedPacketCount)
+        {
+            bool result = false;
+
+            // H0: there is no difference in the distribution of packets between marked and unmarked batches
+            // H1: there is a difference between the batches
+
+            // Test the differenct in the distribution means
+            decimal meanDifference = unmarkedMean - markedMean;
+            decimal sigmaDifference = Convert.ToDecimal(Math.Sqrt(Math.Pow((double)markedStdDev, 2) / markedPacketCount + Math.Pow((double)unmarkedStdDev, 2) / unmarkedPacketCount));
+
+            // Single-tail test (if there is a difference in the means it will be a positive value)
+            // Z value for alpha = 5% significance level:
+            decimal z_value = 1.65M;
+            decimal stdDevValue = z_value * sigmaDifference;
+
+            // Test result: true = reject H0 - difference of means has only 5% probability of occurring if H0 is true
+            result = meanDifference > stdDevValue ? true : false;
+
+            return result;
         }
         #endregion
     }

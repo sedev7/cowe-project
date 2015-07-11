@@ -30,10 +30,10 @@ namespace COWE.DataLayer
     
         public virtual DbSet<CapturePacket> CapturePackets { get; set; }
         public virtual DbSet<BatchInterval> BatchIntervals { get; set; }
-        public virtual DbSet<CaptureBatch> CaptureBatches { get; set; }
         public virtual DbSet<CumulativeInterval> CumulativeIntervals { get; set; }
+        public virtual DbSet<CaptureBatch> CaptureBatches { get; set; }
     
-        public virtual int CaptureBatchInsert(string fileName, Nullable<bool> marked, ObjectParameter newCaptureBatchId)
+        public virtual int CaptureBatchInsert(string fileName, Nullable<bool> marked, Nullable<decimal> mean, ObjectParameter newCaptureBatchId)
         {
             var fileNameParameter = fileName != null ?
                 new ObjectParameter("FileName", fileName) :
@@ -43,7 +43,11 @@ namespace COWE.DataLayer
                 new ObjectParameter("Marked", marked) :
                 new ObjectParameter("Marked", typeof(bool));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("CaptureBatchInsert", fileNameParameter, markedParameter, newCaptureBatchId);
+            var meanParameter = mean.HasValue ?
+                new ObjectParameter("Mean", mean) :
+                new ObjectParameter("Mean", typeof(decimal));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("CaptureBatchInsert", fileNameParameter, markedParameter, meanParameter, newCaptureBatchId);
         }
     
         public virtual ObjectResult<Nullable<decimal>> CumulativeIntervalDelete(Nullable<bool> marked, ObjectParameter rowsDeleted)

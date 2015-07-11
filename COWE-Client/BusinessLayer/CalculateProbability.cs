@@ -12,8 +12,12 @@ namespace COWE.BusinessLayer
 {
     public class CalculateProbability
     {
+        #region Variables
         BindingList<BatchIntervalMarked> _markedIntervals = new BindingList<BatchIntervalMarked>();
         Dictionary<int, int> _histogram = new Dictionary<int, int>();
+        #endregion
+
+        #region Public Methods
         public CalculateProbability(Dictionary<int, int> histogram)
         {
             this._histogram = histogram;
@@ -184,6 +188,19 @@ namespace COWE.BusinessLayer
 
             return probabilities;
         }
+        public SortedDictionary<int, decimal> GetCumulativeProbabilityDistribution(SortedDictionary<int, decimal> probability)
+        {
+            decimal cumulativeProbabilityValue = 0;
 
+            SortedDictionary<int, decimal> cumulativeProbability = new SortedDictionary<int, decimal>();
+
+            foreach (KeyValuePair<int,decimal> pair in probability)
+            {
+                cumulativeProbabilityValue += pair.Value;
+                cumulativeProbability.Add(pair.Key, cumulativeProbabilityValue);
+            }
+            return cumulativeProbability;
+        }
+        #endregion
     }
 }

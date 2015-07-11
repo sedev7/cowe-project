@@ -613,12 +613,14 @@ namespace COWE.Client
 
             // For testing:
             BindingList<CurrentCaptureFile> _CurrentCaptureFiles = new BindingList<CurrentCaptureFile>();
-            CurrentCaptureFile ccf = new CurrentCaptureFile("CaptureFile635674934042778589d.pcap", CaptureState.Marked);
-            CurrentCaptureFile ccf1 = new CurrentCaptureFile("CaptureFile635674934252530702u.pcap", CaptureState.Unmarked);
-            CurrentCaptureFile ccf2 = new CurrentCaptureFile("CaptureFile635674934452612146d.pcap", CaptureState.Marked);
+            CurrentCaptureFile ccf = new CurrentCaptureFile("CaptureFile635674934252530702u.pcap", CaptureState.Unmarked);
+            CurrentCaptureFile ccf1 = new CurrentCaptureFile("CaptureFile635674934452612146d.pcap", CaptureState.Marked);
+            CurrentCaptureFile ccf2 = new CurrentCaptureFile("CaptureFile635674934652743658u.pcap", CaptureState.Unmarked);
+            CurrentCaptureFile ccf3 = new CurrentCaptureFile("CaptureFile635674934852905142d.pcap", CaptureState.Marked);
             _CurrentCaptureFiles.Add(ccf);
             _CurrentCaptureFiles.Add(ccf1);
             _CurrentCaptureFiles.Add(ccf2);
+            _CurrentCaptureFiles.Add(ccf3);
 
             if (_CurrentCaptureFiles.Count > 0)
             {
@@ -1575,12 +1577,19 @@ namespace COWE.Client
         }
         private void StartParseCaptureFilesService()
         {
-            ServiceController sc = new ServiceController("ParseCaptureFilesService");
-            sc.Start();
+            try
+            {
+                ServiceController sc = new ServiceController("ParseCaptureFilesService");
+                sc.Start();
 
-            // Allow time for serivce to start, otherwise status will not show "stopped"
-            Thread.Sleep(1000);
-            UpdateParseFilesServiceStatus();
+                // Allow time for serivce to start, otherwise status will not show "stopped"
+                Thread.Sleep(1000);
+                UpdateParseFilesServiceStatus();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error starting [Parse Capture Files Service]: " + ex.Message, "Start Parse Capture Files Service", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
         private void StopParseCaptureFilesService()
         {

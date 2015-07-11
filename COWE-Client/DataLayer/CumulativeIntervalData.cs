@@ -31,9 +31,19 @@ namespace COWE.DataLayer
             {
                 using (var context = new PacketAnalysisEntity())
                 {
-                    var intervalNumber = (from i in context.CumulativeIntervals
-                                          select i.CumulativeIntervalNumber).Max();
-                    return intervalNumber;
+                    var intervals = (from i in context.CumulativeIntervals
+                                     select i).Count();
+
+                    if (intervals > 0)
+                    {
+                        var intervalNumber = (from i in context.CumulativeIntervals
+                                              select i.CumulativeIntervalNumber).Max();
+                        return intervalNumber;
+                    }
+                    else
+                    {
+                        return 0;
+                    }
                 }
             }
         }
