@@ -24,3 +24,4 @@ delete from COWE.CapturePacket;
 --declare @CaptureBatchId int
 --exec [COWE].[CaptureBatchInsert] @FileName = 'CaptureFile635674934042778582d.pcap', @Marked = 1, @NewCaptureBatchId = @CaptureBatchId output
 --select @CaptureBatchId
+

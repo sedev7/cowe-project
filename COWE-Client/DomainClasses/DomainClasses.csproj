@@ -47,6 +47,7 @@
     <Compile Include="CapturePacket.cs" />
     <Compile Include="CumulativeInterval.cs" />
     <Compile Include="CurrentCaptureFile.cs" />
+    <Compile Include="KsStatistics.cs" />
     <Compile Include="ParsedCaptureBatch.cs" />
     <Compile Include="PacketInterval.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

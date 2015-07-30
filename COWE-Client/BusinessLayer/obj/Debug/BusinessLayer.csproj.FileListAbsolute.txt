@@ -11,7 +11,7 @@ C:\Jim's Folders\VS2013 Projects\CoResidencyProject\COWE-Client\BusinessLayer\bi
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\COWE-Client\BusinessLayer\obj\Debug\BusinessLayer.csprojResolveAssemblyReference.cache
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\COWE-Client\BusinessLayer\obj\Debug\BusinessLayer.dll
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\COWE-Client\BusinessLayer\obj\Debug\BusinessLayer.pdb
-C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\BusinessLayer\bin\Debug\EntityFramework.xml
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\BusinessLayer\obj\Debug\BusinessLayer.csprojResolveAssemblyReference.cache
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\BusinessLayer\bin\Debug\BusinessLayer.dll
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\BusinessLayer\bin\Debug\BusinessLayer.pdb
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\BusinessLayer\bin\Debug\DataLayer.dll
@@ -21,6 +21,6 @@ C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\BusinessLayer\bin\Debug\DataLayer.pdb
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\BusinessLayer\bin\Debug\DomainClasses.pdb
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\BusinessLayer\bin\Debug\Enumerations.pdb
-C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\BusinessLayer\obj\Debug\BusinessLayer.csprojResolveAssemblyReference.cache
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\BusinessLayer\bin\Debug\EntityFramework.xml
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\BusinessLayer\obj\Debug\BusinessLayer.dll
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\BusinessLayer\obj\Debug\BusinessLayer.pdb

@@ -11,7 +11,7 @@ using System.Data.Entity.Infrastructure.MappingViews;
 
 [assembly: DbMappingViewCacheTypeAttribute(
     typeof(COWE.DataLayer.PacketAnalysisEntity),
-    typeof(Edm_EntityMappingGeneratedViews.ViewsForBaseEntitySetsb4fc1be6ba3002b3d8f265a148ee8056732d1d4c2221b33e2afc4f2fdec48637))]
+    typeof(Edm_EntityMappingGeneratedViews.ViewsForBaseEntitySetse6b0e5b11e58e82c5378a472c2f2ceda3d722cce7d51ff3265f789eeb79b9413))]
 
 namespace Edm_EntityMappingGeneratedViews
 {
@@ -23,14 +23,14 @@ namespace Edm_EntityMappingGeneratedViews
     /// Implements a mapping view cache.
     /// </summary>
     [GeneratedCode("Entity Framework Power Tools", "0.9.0.0")]
-    internal sealed class ViewsForBaseEntitySetsb4fc1be6ba3002b3d8f265a148ee8056732d1d4c2221b33e2afc4f2fdec48637 : DbMappingViewCache
+    internal sealed class ViewsForBaseEntitySetse6b0e5b11e58e82c5378a472c2f2ceda3d722cce7d51ff3265f789eeb79b9413 : DbMappingViewCache
     {
         /// <summary>
         /// Gets a hash value computed over the mapping closure.
         /// </summary>
         public override string MappingHashValue
         {
-            get { return "b4fc1be6ba3002b3d8f265a148ee8056732d1d4c2221b33e2afc4f2fdec48637"; }
+            get { return "e6b0e5b11e58e82c5378a472c2f2ceda3d722cce7d51ff3265f789eeb79b9413"; }
         }
 
         /// <summary>
@@ -139,13 +139,14 @@ namespace Edm_EntityMappingGeneratedViews
         {
             return new DbMappingView(@"
     SELECT VALUE -- Constructing CaptureBatch
-        [PacketAnalysisModel.Store.CaptureBatch](T1.CaptureBatch_CaptureBatchId, T1.CaptureBatch_FileName, T1.CaptureBatch_Marked, T1.CaptureBatch_Mean)
+        [PacketAnalysisModel.Store.CaptureBatch](T1.CaptureBatch_CaptureBatchId, T1.CaptureBatch_FileName, T1.CaptureBatch_Marked, T1.CaptureBatch_Mean, T1.CaptureBatch_TrimmedMean)
     FROM (
         SELECT 
             T.CaptureBatchId AS CaptureBatch_CaptureBatchId, 
             T.FileName AS CaptureBatch_FileName, 
             T.Marked AS CaptureBatch_Marked, 
             T.Mean AS CaptureBatch_Mean, 
+            T.TrimmedMean AS CaptureBatch_TrimmedMean, 
             True AS _from0
         FROM PacketAnalysisEntity.CaptureBatches AS T
     ) AS T1");
@@ -200,13 +201,14 @@ namespace Edm_EntityMappingGeneratedViews
         {
             return new DbMappingView(@"
     SELECT VALUE -- Constructing CaptureBatches
-        [COWE.PacketAnalysisModel.CaptureBatch](T1.CaptureBatch_CaptureBatchId, T1.CaptureBatch_FileName, T1.CaptureBatch_Marked, T1.CaptureBatch_Mean)
+        [COWE.PacketAnalysisModel.CaptureBatch](T1.CaptureBatch_CaptureBatchId, T1.CaptureBatch_FileName, T1.CaptureBatch_Marked, T1.CaptureBatch_Mean, T1.CaptureBatch_TrimmedMean)
     FROM (
         SELECT 
             T.CaptureBatchId AS CaptureBatch_CaptureBatchId, 
             T.FileName AS CaptureBatch_FileName, 
             T.Marked AS CaptureBatch_Marked, 
             T.Mean AS CaptureBatch_Mean, 
+            T.TrimmedMean AS CaptureBatch_TrimmedMean, 
             True AS _from0
         FROM PacketAnalysisModelStoreContainer.CaptureBatch AS T
     ) AS T1");

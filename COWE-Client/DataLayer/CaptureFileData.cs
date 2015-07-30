@@ -75,7 +75,7 @@ namespace COWE.DataLayer
             return batchIds;
         }
 
-        public bool UpdateBatchMean(int captureBatchId, decimal mean)
+        public bool UpdateBatchMean(int captureBatchId, decimal mean, decimal trimmedMean)
         {
             bool result = false;
 
@@ -83,23 +83,35 @@ namespace COWE.DataLayer
             {
                 var batch = context.CaptureBatches.Where(c => c.CaptureBatchId == captureBatchId).FirstOrDefault();
                 batch.Mean = mean;
+                batch.TrimmedMean = trimmedMean;
                 context.SaveChanges();
                 result = true;
             }
             return result;
         }
 
-        public decimal CalculateMeanOfMeans(CaptureState captureState)
+        public decimal CalculateMeanOfMeans(CaptureState captureState, bool trimmed)
         {
             bool marked = captureState == CaptureState.Marked ? true : false;
+            bool _trimmed = trimmed;
             decimal meanOfMeans = 0;
             decimal sumOfMeans = 0;
+            List<decimal> means = new List<decimal>();
 
             using (var context = new PacketAnalysisEntity())
             {
-                var means = (from m in context.CaptureBatches
+                if (_trimmed)
+                {
+                    means = (from m in context.CaptureBatches
+                             where m.Marked == marked
+                             select m.TrimmedMean).ToList();
+                }
+                else
+                {
+                    means = (from m in context.CaptureBatches
                              where m.Marked == marked
                              select m.Mean).ToList();
+                }
 
                 foreach (var mean in means)
                 {
@@ -110,6 +122,52 @@ namespace COWE.DataLayer
             }
 
             return meanOfMeans;
+        }
+
+        public decimal CalculateStdDevForMeanOfMeans(CaptureState captureState, bool trimmed)
+        {
+            decimal stdDev = 0;
+            bool marked = captureState == CaptureState.Marked ? true : false;
+            bool _trimmed = trimmed;
+            decimal meanOfMeans = 0;
+            decimal sumOfMeans = 0;
+            decimal variance = 0;
+            decimal varianceSum = 0;
+
+            List<decimal> means = new List<decimal>();
+
+            // Get the mean of means
+            using (var context = new PacketAnalysisEntity())
+            {
+                if (_trimmed)
+                {
+                    means = (from m in context.CaptureBatches
+                             where m.Marked == marked
+                             select m.TrimmedMean).ToList();
+                }
+                else
+                {
+                    means = (from m in context.CaptureBatches
+                             where m.Marked == marked
+                             select m.Mean).ToList();
+                }
+
+                foreach (var mean in means)
+                {
+                    sumOfMeans += mean;
+                }
+
+                meanOfMeans = sumOfMeans / means.Count;
+
+                // Calculate the standard deviation
+                foreach (var mean in means)
+                {
+                    varianceSum += Convert.ToDecimal(Math.Pow(Convert.ToDouble(meanOfMeans - mean), 2));
+                }
+                variance = varianceSum / (means.Count - 1);
+            }
+
+            return stdDev = Convert.ToDecimal(Math.Sqrt(Convert.ToDouble(variance)));
         }
     }
 }

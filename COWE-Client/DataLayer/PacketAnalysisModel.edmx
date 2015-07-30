@@ -22,6 +22,7 @@
           <Property Name="FileName" Type="varchar" MaxLength="200" Nullable="false" />
           <Property Name="Marked" Type="bit" Nullable="false" />
           <Property Name="Mean" Type="decimal" Precision="28" Scale="10" Nullable="false" />
+          <Property Name="TrimmedMean" Type="decimal" Precision="28" Scale="10" Nullable="false" />
         </EntityType>
         <EntityType Name="CapturePacket">
           <Key>
@@ -73,6 +74,7 @@ warning 6002: The table/view 'Packets.COWE.CumulativeInterval' does not have a p
           <Parameter Name="FileName" Type="varchar" Mode="In" />
           <Parameter Name="Marked" Type="bit" Mode="In" />
           <Parameter Name="Mean" Type="decimal" Mode="In" />
+          <Parameter Name="TrimmedMean" Type="decimal" Mode="In" />
           <Parameter Name="NewCaptureBatchId" Type="int" Mode="InOut" />
         </Function>
         <Function Name="CumulativeIntervalDelete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="COWE">
@@ -120,6 +122,7 @@ warning 6002: The table/view 'Packets.COWE.CumulativeInterval' does not have a p
             <Parameter Name="FileName" Mode="In" Type="String" />
             <Parameter Name="Marked" Mode="In" Type="Boolean" />
             <Parameter Name="Mean" Mode="In" Type="Decimal" />
+            <Parameter Name="TrimmedMean" Mode="In" Type="Decimal" />
             <Parameter Name="NewCaptureBatchId" Mode="InOut" Type="Int32" />
           </FunctionImport>
           <EntitySet Name="BatchIntervals" EntityType="COWE.PacketAnalysisModel.BatchInterval" />
@@ -166,6 +169,7 @@ warning 6002: The table/view 'Packets.COWE.CumulativeInterval' does not have a p
           <Property Name="FileName" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
           <Property Name="Marked" Type="Boolean" Nullable="false" />
           <Property Name="Mean" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
+          <Property Name="TrimmedMean" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
           <NavigationProperty Name="BatchIntervals" Relationship="COWE.PacketAnalysisModel.FK_BatchInterval_CaptureBatch_CaptureBatchId" FromRole="CaptureBatch" ToRole="BatchInterval" />
           <NavigationProperty Name="CapturePackets" Relationship="COWE.PacketAnalysisModel.FK_CapturePacket_CaptureBatch_CaptureBatchId" FromRole="CaptureBatch" ToRole="CapturePacket" />
         </EntityType>
@@ -241,6 +245,7 @@ warning 6002: The table/view 'Packets.COWE.CumulativeInterval' does not have a p
           <EntitySetMapping Name="CaptureBatches">
             <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.CaptureBatch">
               <MappingFragment StoreEntitySet="CaptureBatch">
+                <ScalarProperty Name="TrimmedMean" ColumnName="TrimmedMean" />
                 <ScalarProperty Name="Mean" ColumnName="Mean" />
                 <ScalarProperty Name="Marked" ColumnName="Marked" />
                 <ScalarProperty Name="FileName" ColumnName="FileName" />

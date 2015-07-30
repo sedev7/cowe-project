@@ -16,6 +16,7 @@ namespace COWE.DomainClasses
         public string FileName { get; set; }
         public bool Marked { get; set; }
         public decimal Mean { get; set; }
+        public decimal TrimmedMean { get; set; }
         public virtual ICollection<BatchInterval> BatchIntervals { get; set; }
         public virtual ICollection<CapturePacket> CapturePackets { get; set; }
     }

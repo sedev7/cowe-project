@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
@@ -48,16 +49,17 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.AnalysisMetricsGroupBox = new System.Windows.Forms.GroupBox();
+            this.HistogramBinSizeTextBox = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.ChartTypeComboBox = new System.Windows.Forms.ComboBox();
+            this.TrimIntervalsCheckBox = new System.Windows.Forms.CheckBox();
             this.RefreshButton = new System.Windows.Forms.Button();
             this.AnalysisIntervalSizeTextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.panel4 = new System.Windows.Forms.Panel();
             this.panel5 = new System.Windows.Forms.Panel();
-            this.TrimIntervalsCheckBox = new System.Windows.Forms.CheckBox();
-            this.ChartTypeComboBox = new System.Windows.Forms.ComboBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.HistogramBinSizeTextBox = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
+            this.TrimSmallestBinsToolTip = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.AnalysisDataGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SingleChart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.CumulativeChart)).BeginInit();
@@ -148,7 +150,7 @@
             this.groupBox1.Controls.Add(this.panel3);
             this.groupBox1.Controls.Add(this.panel2);
             this.groupBox1.Controls.Add(this.panel1);
-            this.groupBox1.Location = new System.Drawing.Point(3, 196);
+            this.groupBox1.Location = new System.Drawing.Point(3, 212);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(743, 243);
             this.groupBox1.TabIndex = 4;
@@ -191,15 +193,64 @@
             this.AnalysisMetricsGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.AnalysisMetricsGroupBox.Location = new System.Drawing.Point(0, 0);
             this.AnalysisMetricsGroupBox.Name = "AnalysisMetricsGroupBox";
-            this.AnalysisMetricsGroupBox.Size = new System.Drawing.Size(117, 190);
+            this.AnalysisMetricsGroupBox.Size = new System.Drawing.Size(117, 205);
             this.AnalysisMetricsGroupBox.TabIndex = 1;
             this.AnalysisMetricsGroupBox.TabStop = false;
             this.AnalysisMetricsGroupBox.Text = "Analysis Metrics";
             // 
+            // HistogramBinSizeTextBox
+            // 
+            this.HistogramBinSizeTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.HistogramBinSizeTextBox.Location = new System.Drawing.Point(87, 45);
+            this.HistogramBinSizeTextBox.Name = "HistogramBinSizeTextBox";
+            this.HistogramBinSizeTextBox.Size = new System.Drawing.Size(27, 22);
+            this.HistogramBinSizeTextBox.TabIndex = 7;
+            this.HistogramBinSizeTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label3
+            // 
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(5, 48);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(109, 35);
+            this.label3.TabIndex = 6;
+            this.label3.Text = "Hist Bin Size\r\n(packets/interval)";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(7, 115);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(77, 16);
+            this.label2.TabIndex = 5;
+            this.label2.Text = "Chart Type:";
+            // 
+            // ChartTypeComboBox
+            // 
+            this.ChartTypeComboBox.FormattingEnabled = true;
+            this.ChartTypeComboBox.Location = new System.Drawing.Point(8, 132);
+            this.ChartTypeComboBox.Name = "ChartTypeComboBox";
+            this.ChartTypeComboBox.Size = new System.Drawing.Size(103, 21);
+            this.ChartTypeComboBox.TabIndex = 4;
+            // 
+            // TrimIntervalsCheckBox
+            // 
+            this.TrimIntervalsCheckBox.AutoSize = true;
+            this.TrimIntervalsCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.TrimIntervalsCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TrimIntervalsCheckBox.Location = new System.Drawing.Point(4, 88);
+            this.TrimIntervalsCheckBox.Name = "TrimIntervalsCheckBox";
+            this.TrimIntervalsCheckBox.Size = new System.Drawing.Size(138, 20);
+            this.TrimIntervalsCheckBox.TabIndex = 3;
+            this.TrimIntervalsCheckBox.Text = "Trim Smallest Bins";
+            this.TrimIntervalsCheckBox.UseVisualStyleBackColor = true;
+            this.TrimIntervalsCheckBox.CheckedChanged += new System.EventHandler(this.TrimIntervalsCheckBox_CheckedChanged);
+            // 
             // RefreshButton
             // 
             this.RefreshButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.RefreshButton.Location = new System.Drawing.Point(25, 156);
+            this.RefreshButton.Location = new System.Drawing.Point(25, 166);
             this.RefreshButton.Name = "RefreshButton";
             this.RefreshButton.Size = new System.Drawing.Size(68, 24);
             this.RefreshButton.TabIndex = 2;
@@ -229,9 +280,9 @@
             // panel4
             // 
             this.panel4.Controls.Add(this.AnalysisMetricsGroupBox);
-            this.panel4.Location = new System.Drawing.Point(629, 3);
+            this.panel4.Location = new System.Drawing.Point(627, 3);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(117, 190);
+            this.panel4.Size = new System.Drawing.Size(117, 205);
             this.panel4.TabIndex = 2;
             // 
             // panel5
@@ -239,57 +290,8 @@
             this.panel5.Controls.Add(this.AnalysisDataGridView);
             this.panel5.Location = new System.Drawing.Point(3, 3);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(622, 190);
+            this.panel5.Size = new System.Drawing.Size(620, 205);
             this.panel5.TabIndex = 3;
-            // 
-            // TrimIntervalsCheckBox
-            // 
-            this.TrimIntervalsCheckBox.AutoSize = true;
-            this.TrimIntervalsCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.TrimIntervalsCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.TrimIntervalsCheckBox.Location = new System.Drawing.Point(4, 84);
-            this.TrimIntervalsCheckBox.Name = "TrimIntervalsCheckBox";
-            this.TrimIntervalsCheckBox.Size = new System.Drawing.Size(136, 20);
-            this.TrimIntervalsCheckBox.TabIndex = 3;
-            this.TrimIntervalsCheckBox.Text = "Trim Zero Pkt Bins";
-            this.TrimIntervalsCheckBox.UseVisualStyleBackColor = true;
-            this.TrimIntervalsCheckBox.CheckedChanged += new System.EventHandler(this.TrimIntervalsCheckBox_CheckedChanged);
-            // 
-            // ChartTypeComboBox
-            // 
-            this.ChartTypeComboBox.FormattingEnabled = true;
-            this.ChartTypeComboBox.Location = new System.Drawing.Point(8, 126);
-            this.ChartTypeComboBox.Name = "ChartTypeComboBox";
-            this.ChartTypeComboBox.Size = new System.Drawing.Size(103, 21);
-            this.ChartTypeComboBox.TabIndex = 4;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(7, 109);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(77, 16);
-            this.label2.TabIndex = 5;
-            this.label2.Text = "Chart Type:";
-            // 
-            // HistogramBinSizeTextBox
-            // 
-            this.HistogramBinSizeTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.HistogramBinSizeTextBox.Location = new System.Drawing.Point(87, 43);
-            this.HistogramBinSizeTextBox.Name = "HistogramBinSizeTextBox";
-            this.HistogramBinSizeTextBox.Size = new System.Drawing.Size(27, 22);
-            this.HistogramBinSizeTextBox.TabIndex = 7;
-            this.HistogramBinSizeTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // label3
-            // 
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(5, 46);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(109, 35);
-            this.label3.TabIndex = 6;
-            this.label3.Text = "Hist Bin Size\r\n(packets/interval)";
             // 
             // AnalysisControl
             // 
@@ -301,8 +303,9 @@
             this.Controls.Add(this.groupBox1);
             this.MaximumSize = new System.Drawing.Size(996, 536);
             this.Name = "AnalysisControl";
-            this.Size = new System.Drawing.Size(755, 448);
+            this.Size = new System.Drawing.Size(755, 460);
             this.Load += new System.EventHandler(this.AnalysisControl_Load);
+            this.VisibleChanged += new System.EventHandler(this.AnalysisControl_VisibleChanged);
             ((System.ComponentModel.ISupportInitialize)(this.AnalysisDataGridView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.SingleChart)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.CumulativeChart)).EndInit();
@@ -340,6 +343,7 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ComboBox ChartTypeComboBox;
+        private System.Windows.Forms.ToolTip TrimSmallestBinsToolTip;
 
     }
 }

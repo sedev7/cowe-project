@@ -544,19 +544,24 @@ namespace COWE.BusinessLayer
             return intervals;
         }
  
-        public bool UpdateBatchMean(int captureBatchId, decimal mean)
+        public bool UpdateBatchMean(int captureBatchId, decimal mean, decimal trimmedMean)
         {
             bool result = false;
 
             CaptureFileData cfd = new CaptureFileData();
-            result = cfd.UpdateBatchMean(captureBatchId, mean);
+            result = cfd.UpdateBatchMean(captureBatchId, mean, trimmedMean);
             return result;
         }
 
-        public decimal CalculateMeanOfMeans(CaptureState captureState)
+        public decimal CalculateMeanOfMeans(CaptureState captureState, bool trimmed)
         {
             CaptureFileData cfd = new CaptureFileData();
-            return cfd.CalculateMeanOfMeans(captureState);
+            return cfd.CalculateMeanOfMeans(captureState, trimmed);
+        }
+        public decimal CalculateStdDevForMeanOfMeans(CaptureState captureState, bool trimmed)
+        {
+            CaptureFileData cfd = new CaptureFileData();
+            return cfd.CalculateStdDevForMeanOfMeans(captureState, trimmed);
         }
         #endregion
 

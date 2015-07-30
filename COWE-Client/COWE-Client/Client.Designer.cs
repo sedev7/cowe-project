@@ -62,7 +62,7 @@
             this.DeleteFlooderButton = new System.Windows.Forms.Button();
             this.AddFlooderButton = new System.Windows.Forms.Button();
             this.mainPanel = new System.Windows.Forms.Panel();
-            this.AnalyzeDataButton = new System.Windows.Forms.Button();
+            this.StartTimerButton = new System.Windows.Forms.Button();
             this.ProcessCaptureDataButton = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.FlooderTimerIntervalGroupBox = new System.Windows.Forms.GroupBox();
@@ -302,7 +302,7 @@
             this.bottonPanel.Controls.Add(this.groupBox1);
             this.bottonPanel.Controls.Add(this.AddDeleteFlooderGroupBox);
             this.bottonPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.bottonPanel.Location = new System.Drawing.Point(0, 434);
+            this.bottonPanel.Location = new System.Drawing.Point(0, 453);
             this.bottonPanel.Name = "bottonPanel";
             this.bottonPanel.Size = new System.Drawing.Size(994, 100);
             this.bottonPanel.TabIndex = 1;
@@ -431,7 +431,7 @@
             // 
             this.mainPanel.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.mainPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.mainPanel.Controls.Add(this.AnalyzeDataButton);
+            this.mainPanel.Controls.Add(this.StartTimerButton);
             this.mainPanel.Controls.Add(this.ProcessCaptureDataButton);
             this.mainPanel.Controls.Add(this.bottonPanel);
             this.mainPanel.Controls.Add(this.groupBox2);
@@ -440,17 +440,18 @@
             this.mainPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mainPanel.Location = new System.Drawing.Point(3, 3);
             this.mainPanel.Name = "mainPanel";
-            this.mainPanel.Size = new System.Drawing.Size(996, 536);
+            this.mainPanel.Size = new System.Drawing.Size(996, 555);
             this.mainPanel.TabIndex = 2;
             // 
-            // AnalyzeDataButton
+            // StartTimerButton
             // 
-            this.AnalyzeDataButton.Location = new System.Drawing.Point(878, 383);
-            this.AnalyzeDataButton.Name = "AnalyzeDataButton";
-            this.AnalyzeDataButton.Size = new System.Drawing.Size(99, 43);
-            this.AnalyzeDataButton.TabIndex = 13;
-            this.AnalyzeDataButton.Text = "Analyze Data";
-            this.AnalyzeDataButton.UseVisualStyleBackColor = true;
+            this.StartTimerButton.Location = new System.Drawing.Point(878, 383);
+            this.StartTimerButton.Name = "StartTimerButton";
+            this.StartTimerButton.Size = new System.Drawing.Size(99, 43);
+            this.StartTimerButton.TabIndex = 13;
+            this.StartTimerButton.Text = "Start Timer";
+            this.StartTimerButton.UseVisualStyleBackColor = true;
+            this.StartTimerButton.Click += new System.EventHandler(this.StartTimerButton_Click);
             // 
             // ProcessCaptureDataButton
             // 
@@ -688,7 +689,7 @@
             this.ClientTabControl.Location = new System.Drawing.Point(1, 137);
             this.ClientTabControl.Name = "ClientTabControl";
             this.ClientTabControl.SelectedIndex = 0;
-            this.ClientTabControl.Size = new System.Drawing.Size(1010, 571);
+            this.ClientTabControl.Size = new System.Drawing.Size(1010, 590);
             this.ClientTabControl.TabIndex = 3;
             this.ClientTabControl.Selected += new System.Windows.Forms.TabControlEventHandler(this.ClientTabControl_Selected);
             // 
@@ -699,7 +700,7 @@
             this.FlooderTabPage.Location = new System.Drawing.Point(4, 25);
             this.FlooderTabPage.Name = "FlooderTabPage";
             this.FlooderTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.FlooderTabPage.Size = new System.Drawing.Size(1002, 542);
+            this.FlooderTabPage.Size = new System.Drawing.Size(1002, 561);
             this.FlooderTabPage.TabIndex = 0;
             this.FlooderTabPage.Text = "Flooder";
             // 
@@ -709,7 +710,7 @@
             this.AnalysisTabPage.Location = new System.Drawing.Point(4, 25);
             this.AnalysisTabPage.Name = "AnalysisTabPage";
             this.AnalysisTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.AnalysisTabPage.Size = new System.Drawing.Size(1002, 542);
+            this.AnalysisTabPage.Size = new System.Drawing.Size(1002, 561);
             this.AnalysisTabPage.TabIndex = 1;
             this.AnalysisTabPage.Text = "Analysis";
             this.AnalysisTabPage.UseVisualStyleBackColor = true;
@@ -719,7 +720,7 @@
             this.AnalysisMainPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.AnalysisMainPanel.Location = new System.Drawing.Point(3, 3);
             this.AnalysisMainPanel.Name = "AnalysisMainPanel";
-            this.AnalysisMainPanel.Size = new System.Drawing.Size(996, 536);
+            this.AnalysisMainPanel.Size = new System.Drawing.Size(996, 555);
             this.AnalysisMainPanel.TabIndex = 0;
             // 
             // CientStatusStrip
@@ -727,7 +728,7 @@
             this.CientStatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ClientStatusToolStripProgressBar,
             this.ClientStatusToolStripStatusLabel});
-            this.CientStatusStrip.Location = new System.Drawing.Point(0, 710);
+            this.CientStatusStrip.Location = new System.Drawing.Point(0, 730);
             this.CientStatusStrip.Name = "CientStatusStrip";
             this.CientStatusStrip.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.CientStatusStrip.Size = new System.Drawing.Size(1013, 22);
@@ -751,13 +752,13 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1013, 732);
+            this.ClientSize = new System.Drawing.Size(1013, 752);
             this.Controls.Add(this.CientStatusStrip);
             this.Controls.Add(this.ClientTabControl);
             this.Controls.Add(this.topPanel);
             this.MainMenuStrip = this.menuStrip1;
-            this.MaximumSize = new System.Drawing.Size(1029, 770);
-            this.MinimumSize = new System.Drawing.Size(1029, 770);
+            this.MaximumSize = new System.Drawing.Size(1029, 790);
+            this.MinimumSize = new System.Drawing.Size(1029, 790);
             this.Name = "Client";
             this.Text = "Co-Residency Probe (Client)";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Client_FormClosing);
@@ -857,7 +858,7 @@
         private System.Windows.Forms.StatusStrip CientStatusStrip;
         private System.Windows.Forms.ToolStripStatusLabel ClientStatusToolStripStatusLabel;
         private System.Windows.Forms.ToolStripProgressBar ClientStatusToolStripProgressBar;
-        private System.Windows.Forms.Button AnalyzeDataButton;
+        private System.Windows.Forms.Button StartTimerButton;
     }
 }
 

@@ -17,6 +17,7 @@
     <Property Name="FileName" Type="varchar" MaxLength="200" Nullable="false" />
     <Property Name="Marked" Type="bit" Nullable="false" />
     <Property Name="Mean" Type="decimal" Precision="28" Scale="10" Nullable="false" />
+    <Property Name="TrimmedMean" Type="decimal" Precision="28" Scale="10" Nullable="false" />
   </EntityType>
   <EntityType Name="CapturePacket">
     <Key>
@@ -68,6 +69,7 @@ warning 6002: The table/view 'Packets.COWE.CumulativeInterval' does not have a p
     <Parameter Name="FileName" Type="varchar" Mode="In" />
     <Parameter Name="Marked" Type="bit" Mode="In" />
     <Parameter Name="Mean" Type="decimal" Mode="In" />
+    <Parameter Name="TrimmedMean" Type="decimal" Mode="In" />
     <Parameter Name="NewCaptureBatchId" Type="int" Mode="InOut" />
   </Function>
   <Function Name="CumulativeIntervalDelete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="COWE">

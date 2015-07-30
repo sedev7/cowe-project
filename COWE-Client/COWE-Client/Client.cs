@@ -73,6 +73,16 @@ namespace COWE.Client
 {
     public partial class Client : Form
     {
+        #region Delegates
+        //delegate void DisplayCaptureProgressCallback(Label l);
+        //private delegate void ReceivedParsedFileEventHandler(object sender, ReceivedParsedFileEventArgs e);
+        //private delegate void ReceivedParsedFileEventHandler(string msg);
+        #endregion
+
+        #region Events
+        //public event ReceivedParsedFileEventHandler ReceivedParsedFile;
+        #endregion
+
         #region Global Variables
 
         private AnalysisControl _AnalysisControl = null;
@@ -144,7 +154,7 @@ namespace COWE.Client
             InitializeProgressLabel();
             this.ClockButton.Visible = false;
             this.ProcessCaptureDataButton.Visible = true;
-            this.AnalyzeDataButton.Visible = false;
+            this.StartTimerButton.Visible = true;
             UpdateParseFilesServiceStatus();
             DatabaseResetCheckBox.Checked = true;
 
@@ -341,11 +351,12 @@ namespace COWE.Client
                                 // Packet capture started successfully
                                 DisplayProgressMessage("Capturing marked packet data...");
 
-                                // Start the timer (ms increments)
-                                _FlooderIntervalTimer = new System.Timers.Timer(_FlooderTimerInterval * 1000);
-                                _FlooderIntervalTimer.Elapsed += new ElapsedEventHandler(OnFlooderTimerElapsedEvent);
-                                _FlooderIntervalTimer.Start();
-                                StopWatchStart();
+                                //// Start the timer (ms increments)
+                                //_FlooderIntervalTimer = new System.Timers.Timer(_FlooderTimerInterval * 1000);
+                                //_FlooderIntervalTimer.Elapsed += new ElapsedEventHandler(OnFlooderTimerElapsedEvent);
+                                //_FlooderIntervalTimer.Start();
+                                //StopWatchStart();
+                                TimerStart(_FlooderTimerInterval);
                             }
                         }
                     }
@@ -504,33 +515,31 @@ namespace COWE.Client
                 }
             }
         }
-
-        delegate void DisplayCaptureProgressCallback(Label l);
-        
         private void DisplayCaptureProgress(Label l)
         {
             // Method to update the capture progress label
 
             if (this.ProgressLabel.InvokeRequired)
             {
-                // Use try-catch block to avoid cross-threading exception while debugging
-                try
-                {
-                    DisplayCaptureProgressCallback d = new DisplayCaptureProgressCallback(DisplayCaptureProgress);
-                    this.Invoke(d, new object[] { l });
-                }
-                catch (InvalidOperationException ioe)
-                { }
+                //    // Use try-catch block to avoid cross-threading exception while debugging
+                //    try
+                //    {
+                //        DisplayCaptureProgressCallback d = new DisplayCaptureProgressCallback(DisplayCaptureProgress);
+                //        this.Invoke(d, new object[] { l });
+                //    }
+                //    catch (InvalidOperationException ioe)
+                //    { }
+                //}
+                //else
+                //    try
+                //    {
+                //        string progress = string.Format("Capturing{0}marked packet data...", IsMarked ? " " : " un");
+                //        this.ProgressLabel.Text = progress;
+                //        IsMarked = IsMarked ? false : true;
+                //    }
+                //    catch (InvalidOperationException ioe)
+                //    { }
             }
-            else
-                try
-                {
-                    string progress = string.Format("Capturing{0}marked packet data...", IsMarked ? " " : " un");
-                    this.ProgressLabel.Text = progress;
-                    IsMarked = IsMarked ? false : true;
-                }
-                catch (InvalidOperationException ioe)
-                { }
         }
         private void OnFlooderTimerElapsedEvent(object sender, ElapsedEventArgs e)
         {
@@ -565,8 +574,23 @@ namespace COWE.Client
             MovePacketCaptureFile(currentCaptureFileName);
             //bgWorker.ReportProgress(0);
 
+            // Raise an event to notify the Analysis control that a capture file has been processed
+            //OnReceivedParsedFile(this, new ReceivedParsedFileEventArgs(currentCaptureFileName));
+            CurrentCaptureFile ccf = new CurrentCaptureFile(_CurrentCaptureFileName, IsMarked == true ? CaptureState.Marked : CaptureState.Unmarked);
+            ccf.RegisterWithCaptureFile(new CurrentCaptureFile.ReceivedParsedFileEventHandler(OnReceivedFileEvent));
+            ccf.ReceiveFile();
+            //if(ReceivedParsedFile != null)
+            //{
+            //    ReceivedParsedFile("received parsed file");
+            //}
+
             // Check the status of the ParseCaptureFiles service
             UpdateParseFilesServiceStatus();
+        }
+
+        private static void OnReceivedFileEvent(string msg)
+        {
+            AnalysisControl.OnReceivedFileEvent("received file");
         }
         private void StartParseFilesServiceButton_Click(object sender, EventArgs e)
         {
@@ -601,6 +625,7 @@ namespace COWE.Client
                         AnalysisMainPanel.Controls.Add(_AnalysisControl);
                         _AnalysisControl.BringToFront();
                     }
+                    
                     break;
             }
         }
@@ -815,6 +840,29 @@ namespace COWE.Client
                 StopParseCaptureFilesService();
             }
         }
+        private void StartTimerButton_Click(object sender, EventArgs e)
+        {
+            if (StartTimerButton.Text == "Start Timer")
+            {
+                TimerStart(Convert.ToInt32(FlooderIntervalTextBox.Text));
+                StartTimerButton.Text = "Stop Timer";
+            }
+            else
+            {
+                _FlooderIntervalTimer.Stop();
+                StopWatchStop();
+                StartTimerButton.Text = "Start Timer";
+            }
+
+
+        }
+        //private void OnReceivedParsedFile(object sender, ReceivedParsedFileEventArgs e)
+        //{
+        //    if(ReceivedParsedFile != null)
+        //    {
+        //        ReceivedParsedFile(sender, e);
+        //    }
+        //}
         #endregion
 
         #region Private Methods
@@ -1632,8 +1680,15 @@ namespace COWE.Client
                     break;
             }
         }
+        private void TimerStart(int _FlooderTimerInterval)
+        {
+            // Start the timer (ms increments)
+            _FlooderIntervalTimer = new System.Timers.Timer(_FlooderTimerInterval * 1000);
+            _FlooderIntervalTimer.Elapsed += new ElapsedEventHandler(OnFlooderTimerElapsedEvent);
+            _FlooderIntervalTimer.Start();
+            StopWatchStart();
+        }
         #endregion
 
-       
     }
 }

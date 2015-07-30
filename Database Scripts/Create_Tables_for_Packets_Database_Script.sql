@@ -102,7 +102,8 @@ CREATE TABLE [COWE].[CaptureBatch](
 	[CaptureBatchId] [int] IDENTITY(1,1) NOT NULL,
 	[FileName] [varchar](200) NOT NULL,
 	[Marked] [bit] NOT NULL,
-	[Mean] [decimal](8,8) NOT NULL,
+	[Mean] [decimal](28,10) NOT NULL,
+	[TrimmedMean] [decimal](28,10) NOT NULL DEFAULT 0,
  CONSTRAINT [AK_CaptureBatch_FileName] UNIQUE ([FileName]),
  CONSTRAINT [PK_CaptureBatch_CaptureBatchId] PRIMARY KEY CLUSTERED
  (

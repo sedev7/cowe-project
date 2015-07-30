@@ -17,6 +17,7 @@
       <Parameter Name="FileName" Mode="In" Type="String" />
       <Parameter Name="Marked" Mode="In" Type="Boolean" />
       <Parameter Name="Mean" Mode="In" Type="Decimal" />
+      <Parameter Name="TrimmedMean" Mode="In" Type="Decimal" />
       <Parameter Name="NewCaptureBatchId" Mode="InOut" Type="Int32" />
     </FunctionImport>
     <EntitySet Name="BatchIntervals" EntityType="COWE.PacketAnalysisModel.BatchInterval" />
@@ -63,6 +64,7 @@
     <Property Name="FileName" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
     <Property Name="Marked" Type="Boolean" Nullable="false" />
     <Property Name="Mean" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
+    <Property Name="TrimmedMean" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
     <NavigationProperty Name="BatchIntervals" Relationship="COWE.PacketAnalysisModel.FK_BatchInterval_CaptureBatch_CaptureBatchId" FromRole="CaptureBatch" ToRole="BatchInterval" />
     <NavigationProperty Name="CapturePackets" Relationship="COWE.PacketAnalysisModel.FK_CapturePacket_CaptureBatch_CaptureBatchId" FromRole="CaptureBatch" ToRole="CapturePacket" />
   </EntityType>

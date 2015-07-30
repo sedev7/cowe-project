@@ -43,6 +43,7 @@
     <EntitySetMapping Name="CaptureBatches">
       <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.CaptureBatch">
         <MappingFragment StoreEntitySet="CaptureBatch">
+          <ScalarProperty Name="TrimmedMean" ColumnName="TrimmedMean" />
           <ScalarProperty Name="Mean" ColumnName="Mean" />
           <ScalarProperty Name="Marked" ColumnName="Marked" />
           <ScalarProperty Name="FileName" ColumnName="FileName" />

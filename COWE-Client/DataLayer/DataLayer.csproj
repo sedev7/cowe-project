@@ -62,6 +62,11 @@
       <DependentUpon>PacketAnalysisModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="PacketAnalysisModel.Views.cs" />
+    <Compile Include="PacketAnalysisModel1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PacketAnalysisModel.edmx</DependentUpon>
+    </Compile>
     <Compile Include="PacketCaptureContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -72,7 +77,7 @@
     <None Include="packages.config" />
     <EntityDeploy Include="PacketAnalysisModel.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>PacketAnalysisModel.Designer.cs</LastGenOutput>
+      <LastGenOutput>PacketAnalysisModel1.Designer.cs</LastGenOutput>
     </EntityDeploy>
     <None Include="PacketAnalysisModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
