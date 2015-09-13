@@ -31,7 +31,10 @@ namespace COWE.DataLayer
         public virtual DbSet<CapturePacket> CapturePackets { get; set; }
         public virtual DbSet<BatchInterval> BatchIntervals { get; set; }
         public virtual DbSet<CumulativeInterval> CumulativeIntervals { get; set; }
+        public virtual DbSet<CumulativeProbabilityDistribution> CumulativeProbabilityDistributions { get; set; }
+        public virtual DbSet<Histogram> Histograms { get; set; }
         public virtual DbSet<CaptureBatch> CaptureBatches { get; set; }
+        public virtual DbSet<DisplayStatistic> DisplayStatistics { get; set; }
     
         public virtual int CaptureBatchInsert(string fileName, Nullable<bool> marked, Nullable<decimal> mean, Nullable<decimal> trimmedMean, ObjectParameter newCaptureBatchId)
         {
@@ -61,6 +64,215 @@ namespace COWE.DataLayer
                 new ObjectParameter("Marked", typeof(bool));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<decimal>>("CumulativeIntervalDelete", markedParameter, rowsDeleted);
+        }
+    
+        public virtual int TruncateAllIntervalTables()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("TruncateAllIntervalTables");
+        }
+    
+        public virtual int BatchStatisticsInsert(Nullable<int> intervalCount, Nullable<int> trimmedIntervalCount, Nullable<decimal> meanPacketsPerInterval, Nullable<decimal> standardDeviation, Nullable<int> minPacketsPerInterval, Nullable<int> maxPacketsPerInterval, Nullable<int> meanOfMeansPerInterval, Nullable<bool> marked, Nullable<int> statisticsType)
+        {
+            var intervalCountParameter = intervalCount.HasValue ?
+                new ObjectParameter("IntervalCount", intervalCount) :
+                new ObjectParameter("IntervalCount", typeof(int));
+    
+            var trimmedIntervalCountParameter = trimmedIntervalCount.HasValue ?
+                new ObjectParameter("TrimmedIntervalCount", trimmedIntervalCount) :
+                new ObjectParameter("TrimmedIntervalCount", typeof(int));
+    
+            var meanPacketsPerIntervalParameter = meanPacketsPerInterval.HasValue ?
+                new ObjectParameter("MeanPacketsPerInterval", meanPacketsPerInterval) :
+                new ObjectParameter("MeanPacketsPerInterval", typeof(decimal));
+    
+            var standardDeviationParameter = standardDeviation.HasValue ?
+                new ObjectParameter("StandardDeviation", standardDeviation) :
+                new ObjectParameter("StandardDeviation", typeof(decimal));
+    
+            var minPacketsPerIntervalParameter = minPacketsPerInterval.HasValue ?
+                new ObjectParameter("MinPacketsPerInterval", minPacketsPerInterval) :
+                new ObjectParameter("MinPacketsPerInterval", typeof(int));
+    
+            var maxPacketsPerIntervalParameter = maxPacketsPerInterval.HasValue ?
+                new ObjectParameter("MaxPacketsPerInterval", maxPacketsPerInterval) :
+                new ObjectParameter("MaxPacketsPerInterval", typeof(int));
+    
+            var meanOfMeansPerIntervalParameter = meanOfMeansPerInterval.HasValue ?
+                new ObjectParameter("MeanOfMeansPerInterval", meanOfMeansPerInterval) :
+                new ObjectParameter("MeanOfMeansPerInterval", typeof(int));
+    
+            var markedParameter = marked.HasValue ?
+                new ObjectParameter("Marked", marked) :
+                new ObjectParameter("Marked", typeof(bool));
+    
+            var statisticsTypeParameter = statisticsType.HasValue ?
+                new ObjectParameter("StatisticsType", statisticsType) :
+                new ObjectParameter("StatisticsType", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("BatchStatisticsInsert", intervalCountParameter, trimmedIntervalCountParameter, meanPacketsPerIntervalParameter, standardDeviationParameter, minPacketsPerIntervalParameter, maxPacketsPerIntervalParameter, meanOfMeansPerIntervalParameter, markedParameter, statisticsTypeParameter);
+        }
+    
+        public virtual int DisplayStatisticsInsert(Nullable<int> intervalCount, Nullable<int> trimmedIntervalCount, Nullable<decimal> meanPacketsPerInterval, Nullable<decimal> standardDeviation, Nullable<int> minPacketsPerInterval, Nullable<int> maxPacketsPerInterval, Nullable<decimal> meanOfMeans, Nullable<decimal> meanOfMeansStandardDeviation, Nullable<bool> marked, Nullable<int> batchType)
+        {
+            var intervalCountParameter = intervalCount.HasValue ?
+                new ObjectParameter("IntervalCount", intervalCount) :
+                new ObjectParameter("IntervalCount", typeof(int));
+    
+            var trimmedIntervalCountParameter = trimmedIntervalCount.HasValue ?
+                new ObjectParameter("TrimmedIntervalCount", trimmedIntervalCount) :
+                new ObjectParameter("TrimmedIntervalCount", typeof(int));
+    
+            var meanPacketsPerIntervalParameter = meanPacketsPerInterval.HasValue ?
+                new ObjectParameter("MeanPacketsPerInterval", meanPacketsPerInterval) :
+                new ObjectParameter("MeanPacketsPerInterval", typeof(decimal));
+    
+            var standardDeviationParameter = standardDeviation.HasValue ?
+                new ObjectParameter("StandardDeviation", standardDeviation) :
+                new ObjectParameter("StandardDeviation", typeof(decimal));
+    
+            var minPacketsPerIntervalParameter = minPacketsPerInterval.HasValue ?
+                new ObjectParameter("MinPacketsPerInterval", minPacketsPerInterval) :
+                new ObjectParameter("MinPacketsPerInterval", typeof(int));
+    
+            var maxPacketsPerIntervalParameter = maxPacketsPerInterval.HasValue ?
+                new ObjectParameter("MaxPacketsPerInterval", maxPacketsPerInterval) :
+                new ObjectParameter("MaxPacketsPerInterval", typeof(int));
+    
+            var meanOfMeansParameter = meanOfMeans.HasValue ?
+                new ObjectParameter("MeanOfMeans", meanOfMeans) :
+                new ObjectParameter("MeanOfMeans", typeof(decimal));
+    
+            var meanOfMeansStandardDeviationParameter = meanOfMeansStandardDeviation.HasValue ?
+                new ObjectParameter("MeanOfMeansStandardDeviation", meanOfMeansStandardDeviation) :
+                new ObjectParameter("MeanOfMeansStandardDeviation", typeof(decimal));
+    
+            var markedParameter = marked.HasValue ?
+                new ObjectParameter("Marked", marked) :
+                new ObjectParameter("Marked", typeof(bool));
+    
+            var batchTypeParameter = batchType.HasValue ?
+                new ObjectParameter("BatchType", batchType) :
+                new ObjectParameter("BatchType", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("DisplayStatisticsInsert", intervalCountParameter, trimmedIntervalCountParameter, meanPacketsPerIntervalParameter, standardDeviationParameter, minPacketsPerIntervalParameter, maxPacketsPerIntervalParameter, meanOfMeansParameter, meanOfMeansStandardDeviationParameter, markedParameter, batchTypeParameter);
+        }
+    
+        public virtual int DisplayStatisticsDelete(Nullable<bool> marked, Nullable<int> batchType)
+        {
+            var markedParameter = marked.HasValue ?
+                new ObjectParameter("Marked", marked) :
+                new ObjectParameter("Marked", typeof(bool));
+    
+            var batchTypeParameter = batchType.HasValue ?
+                new ObjectParameter("BatchType", batchType) :
+                new ObjectParameter("BatchType", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("DisplayStatisticsDelete", markedParameter, batchTypeParameter);
+        }
+    
+        public virtual int CumulativeProbabilityDistributionDelete(Nullable<int> captureState, Nullable<int> batchType)
+        {
+            var captureStateParameter = captureState.HasValue ?
+                new ObjectParameter("CaptureState", captureState) :
+                new ObjectParameter("CaptureState", typeof(int));
+    
+            var batchTypeParameter = batchType.HasValue ?
+                new ObjectParameter("BatchType", batchType) :
+                new ObjectParameter("BatchType", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("CumulativeProbabilityDistributionDelete", captureStateParameter, batchTypeParameter);
+        }
+    
+        public virtual int HistogramDelete(Nullable<int> captureState, Nullable<int> batchType)
+        {
+            var captureStateParameter = captureState.HasValue ?
+                new ObjectParameter("CaptureState", captureState) :
+                new ObjectParameter("CaptureState", typeof(int));
+    
+            var batchTypeParameter = batchType.HasValue ?
+                new ObjectParameter("BatchType", batchType) :
+                new ObjectParameter("BatchType", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("HistogramDelete", captureStateParameter, batchTypeParameter);
+        }
+    
+        public virtual int CumulativeProbabilityDistributionInsert(Nullable<int> interval, Nullable<decimal> probability, Nullable<int> captureState, Nullable<int> batchType)
+        {
+            var intervalParameter = interval.HasValue ?
+                new ObjectParameter("Interval", interval) :
+                new ObjectParameter("Interval", typeof(int));
+    
+            var probabilityParameter = probability.HasValue ?
+                new ObjectParameter("Probability", probability) :
+                new ObjectParameter("Probability", typeof(decimal));
+    
+            var captureStateParameter = captureState.HasValue ?
+                new ObjectParameter("CaptureState", captureState) :
+                new ObjectParameter("CaptureState", typeof(int));
+    
+            var batchTypeParameter = batchType.HasValue ?
+                new ObjectParameter("BatchType", batchType) :
+                new ObjectParameter("BatchType", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("CumulativeProbabilityDistributionInsert", intervalParameter, probabilityParameter, captureStateParameter, batchTypeParameter);
+        }
+    
+        public virtual int HistogramInsert(Nullable<int> interval, Nullable<decimal> probability, Nullable<int> captureState, Nullable<int> batchType)
+        {
+            var intervalParameter = interval.HasValue ?
+                new ObjectParameter("Interval", interval) :
+                new ObjectParameter("Interval", typeof(int));
+    
+            var probabilityParameter = probability.HasValue ?
+                new ObjectParameter("Probability", probability) :
+                new ObjectParameter("Probability", typeof(decimal));
+    
+            var captureStateParameter = captureState.HasValue ?
+                new ObjectParameter("CaptureState", captureState) :
+                new ObjectParameter("CaptureState", typeof(int));
+    
+            var batchTypeParameter = batchType.HasValue ?
+                new ObjectParameter("BatchType", batchType) :
+                new ObjectParameter("BatchType", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("HistogramInsert", intervalParameter, probabilityParameter, captureStateParameter, batchTypeParameter);
+        }
+    
+        public virtual int CaptureBatchUpdate_for_CaptureBatchId(Nullable<int> captureBatchId, string fileName, Nullable<bool> marked, Nullable<decimal> mean, Nullable<decimal> trimmedMean, Nullable<bool> parsed, Nullable<bool> singleStatistics, Nullable<bool> cumulativeStatistics)
+        {
+            var captureBatchIdParameter = captureBatchId.HasValue ?
+                new ObjectParameter("CaptureBatchId", captureBatchId) :
+                new ObjectParameter("CaptureBatchId", typeof(int));
+    
+            var fileNameParameter = fileName != null ?
+                new ObjectParameter("FileName", fileName) :
+                new ObjectParameter("FileName", typeof(string));
+    
+            var markedParameter = marked.HasValue ?
+                new ObjectParameter("Marked", marked) :
+                new ObjectParameter("Marked", typeof(bool));
+    
+            var meanParameter = mean.HasValue ?
+                new ObjectParameter("Mean", mean) :
+                new ObjectParameter("Mean", typeof(decimal));
+    
+            var trimmedMeanParameter = trimmedMean.HasValue ?
+                new ObjectParameter("TrimmedMean", trimmedMean) :
+                new ObjectParameter("TrimmedMean", typeof(decimal));
+    
+            var parsedParameter = parsed.HasValue ?
+                new ObjectParameter("Parsed", parsed) :
+                new ObjectParameter("Parsed", typeof(bool));
+    
+            var singleStatisticsParameter = singleStatistics.HasValue ?
+                new ObjectParameter("SingleStatistics", singleStatistics) :
+                new ObjectParameter("SingleStatistics", typeof(bool));
+    
+            var cumulativeStatisticsParameter = cumulativeStatistics.HasValue ?
+                new ObjectParameter("CumulativeStatistics", cumulativeStatistics) :
+                new ObjectParameter("CumulativeStatistics", typeof(bool));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("CaptureBatchUpdate_for_CaptureBatchId", captureBatchIdParameter, fileNameParameter, markedParameter, meanParameter, trimmedMeanParameter, parsedParameter, singleStatisticsParameter, cumulativeStatisticsParameter);
         }
     }
 }

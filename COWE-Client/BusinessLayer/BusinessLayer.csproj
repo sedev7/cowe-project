@@ -42,9 +42,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnalysisEngine.cs" />
+    <Compile Include="BatchIntervalEngine.cs" />
     <Compile Include="AnalyzeData.cs" />
     <Compile Include="CalculateProbability.cs" />
-    <Compile Include="Histogram.cs" />
+    <Compile Include="CalculateHistogram.cs" />
     <Compile Include="NewFileNotifier.cs" />
     <Compile Include="ProcessCapturePackets.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -15,6 +15,7 @@ namespace COWE.DataLayer
         public DbSet<CumulativeInterval> CumulativeIntervals { get; set; }
         public DbSet<CaptureBatch> CaptureBatches { get; set; }
         public DbSet<BatchInterval> BatchIntervals { get; set; }
+        public DbSet<DisplayStatistic> DisplayStatistics { get; set; }
 
         //protected override void OnModelCreating(DbModelBuilder modelBuilder)
         //{

@@ -12,8 +12,11 @@ namespace COWE.DataLayer
 {
     public class CaptureFileData
     {
+        #region Constructors
         public CaptureFileData() { }
+        #endregion
 
+        #region Public Methods
         public CurrentCaptureFile GetCurrentCaptureFile(string fileName)
         {
             CurrentCaptureFile ccf = null;
@@ -26,7 +29,8 @@ namespace COWE.DataLayer
                                       select b.CaptureBatchId).FirstOrDefault();
 
                 var marked = (from m in context.CapturePackets
-                              where m.CaptureBatchId == Convert.ToInt32(captureBatchId) 
+                              //where m.CaptureBatchId == Convert.ToInt32(captureBatchId) 
+                              where m.CaptureBatchId == captureBatchId 
                               select m.Marked).FirstOrDefault();
 
                 ccf = new CurrentCaptureFile(fileName, Convert.ToInt32(captureBatchId), marked == true? CaptureState.Marked : CaptureState.Unmarked);
@@ -75,6 +79,62 @@ namespace COWE.DataLayer
             return batchIds;
         }
 
+        public int GetLastBatchId()
+        {
+            int lastBatchId = 0;
+
+            using (var context = new PacketAnalysisEntity())
+            {
+                var batchId = (from b in context.CaptureBatches
+                               select b.CaptureBatchId).Max();
+
+                lastBatchId = Convert.ToInt32(batchId);
+            }
+            return lastBatchId;
+        }
+
+        public int GetBatchId(string fileName)
+        {
+            // Get BatchId for the file name that was passed in
+            int BatchId = 0;
+
+            using(var context = new PacketAnalysisEntity())
+            {
+                var batchId = (from b in context.CaptureBatches
+                               where b.FileName == fileName
+                               select b.CaptureBatchId).FirstOrDefault();
+
+                BatchId = Convert.ToInt32(batchId);
+            }
+            return BatchId;
+        }
+        public CurrentCaptureFile GetLastCaptureBatchRecord()
+        {
+            CurrentCaptureFile lastRecord = new CurrentCaptureFile();
+
+            using (var context = new PacketAnalysisEntity())
+            {
+                var batchId = (from b in context.CaptureBatches
+                               where b.Parsed == true
+                               select b.CaptureBatchId).Max();
+
+                var record = (from r in context.CaptureBatches
+                                  where r.CaptureBatchId == batchId
+                                  select new 
+                                  {
+                                      r.CaptureBatchId,
+                                      r.FileName,
+                                      r.Marked
+                                  }).FirstOrDefault();
+
+                lastRecord.CaptureBatchId = record.CaptureBatchId;
+                lastRecord.FileName = record.FileName;
+                lastRecord.Marked = record.Marked == true ? CaptureState.Marked : CaptureState.Unmarked;
+            }
+
+            return lastRecord;
+        }
+
         public bool UpdateBatchMean(int captureBatchId, decimal mean, decimal trimmedMean)
         {
             bool result = false;
@@ -88,6 +148,20 @@ namespace COWE.DataLayer
                 result = true;
             }
             return result;
+        }
+
+        public void UpdateCaptureBatchParseStatus(int captureBatchId)
+        {
+            using (var context = new PacketAnalysisEntity())
+            {
+                var captureBatch = (from b in context.CaptureBatches
+                                    where b.CaptureBatchId == captureBatchId
+                                    select b).Single();
+
+                captureBatch.Parsed = true;
+
+                context.SaveChanges();
+            }
         }
 
         public decimal CalculateMeanOfMeans(CaptureState captureState, bool trimmed)
@@ -164,10 +238,57 @@ namespace COWE.DataLayer
                 {
                     varianceSum += Convert.ToDecimal(Math.Pow(Convert.ToDouble(meanOfMeans - mean), 2));
                 }
-                variance = varianceSum / (means.Count - 1);
+                if (means.Count > 1)
+                {
+                    variance = varianceSum / (means.Count - 1);
+                }
+                else
+                {
+                    variance = varianceSum / (means.Count);
+                }
             }
 
             return stdDev = Convert.ToDecimal(Math.Sqrt(Convert.ToDouble(variance)));
         }
+        public int GetMeanCount()
+        {
+            int meanCount = 0;
+
+            using (var context = new PacketAnalysisEntity())
+            {
+                var count = (from c in context.CaptureBatches
+                         select c.Mean).Count();
+
+                meanCount = Convert.ToInt32(count);
+            }
+            return meanCount;
+        }
+        public decimal GetMean(CaptureState captureState, bool trimmed)
+        {
+            bool marked = captureState == CaptureState.Marked? true : false;
+            decimal mean = 0;
+
+            using (var context = new PacketAnalysisEntity())
+            {
+                if (trimmed)
+                {
+                    var x = (from m in context.CaptureBatches
+                             where m.Marked == marked
+                             select m.TrimmedMean).FirstOrDefault();
+
+                    mean = Convert.ToDecimal(x);
+                }
+                else
+                {
+                    var x = (from m in context.CaptureBatches
+                             where m.Marked == marked
+                             select m.TrimmedMean).FirstOrDefault();
+
+                    mean = Convert.ToDecimal(x);
+                }
+            }
+            return mean;
+        }
+        #endregion
     }
 }

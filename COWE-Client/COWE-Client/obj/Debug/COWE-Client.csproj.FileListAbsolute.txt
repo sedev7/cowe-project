@@ -32,12 +32,14 @@ C:\Jim's Folders\VS2013 Projects\CoResidencyProject\COWE-Client\COWE-Client\obj\
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\COWE-Client\COWE-Client\obj\Debug\COWE-Client.csproj.GenerateResource.Cache
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\COWE-Client\COWE-Client\obj\Debug\COWE-Client.exe
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\COWE-Client\COWE-Client\obj\Debug\COWE-Client.pdb
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\COWE-Client\obj\Debug\COWE-Client.exe
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\COWE-Client\obj\Debug\COWE-Client.csprojResolveAssemblyReference.cache
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\COWE-Client\obj\Debug\COWE.Client.AnalysisControl.resources
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\COWE-Client\obj\Debug\COWE.Client.Client.resources
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\COWE-Client\obj\Debug\COWE.Client.Properties.Resources.resources
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\COWE-Client\obj\Debug\COWE.Client.Resources.resources
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\COWE-Client\obj\Debug\COWE-Client.csproj.GenerateResource.Cache
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\COWE-Client\obj\Debug\COWE-Client.pdb
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\COWE-Client\bin\Debug\COWE-Client.exe.config
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\COWE-Client\bin\Debug\COWE-Client.exe
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\COWE-Client\bin\Debug\COWE-Client.pdb
@@ -64,5 +66,3 @@ C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\COWE-Client\bin\Debug\PcapDotNet.Base.xml
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\COWE-Client\bin\Debug\PcapDotNet.Packets.pdb
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\COWE-Client\bin\Debug\PcapDotNet.Packets.xml
-C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\COWE-Client\obj\Debug\COWE-Client.exe
-C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\COWE-Client\obj\Debug\COWE-Client.pdb

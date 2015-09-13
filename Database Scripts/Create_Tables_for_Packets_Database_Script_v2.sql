@@ -51,21 +51,29 @@ PRINT 'Dropping tables:';
 PRINT '  Dropping CapturePacket table...';
 IF  OBJECT_ID(N'[COWE].[CapturePacket]',N'U') IS NOT NULL
   DROP TABLE [COWE].[CapturePacket]
+ELSE
+  PRINT '   => Table not found!'
 GO
 
 PRINT '  Dropping BatchInterval table...';
 IF  OBJECT_ID(N'[COWE].[BatchInterval]',N'U') IS NOT NULL
   DROP TABLE [COWE].[BatchInterval];
+ELSE
+  PRINT '   => Table not found!'
 GO
 
 PRINT '  Dropping CaptureBatch table...';
 IF  OBJECT_ID(N'[COWE].[CaptureBatch]',N'U') IS NOT NULL
   DROP TABLE [COWE].[CaptureBatch];
+ELSE
+  PRINT '   => Table not found!'
 GO
 
 PRINT '  Dropping CumulativeIntervals table...';
 IF  OBJECT_ID(N'[COWE].[CumulativeInterval]',N'U') IS NOT NULL
   DROP TABLE [COWE].[CumulativeInterval];
+ELSE
+  PRINT '   => Table not found!'
 GO
 
 PRINT 'Done dropping tables';

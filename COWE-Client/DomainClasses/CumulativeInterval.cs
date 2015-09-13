@@ -10,7 +10,7 @@ namespace COWE.DomainClasses
 {
     public class CumulativeInterval
     {
-        public CumulativeInterval() { }
+        public int CumulativeIntervalId { get; private set; }
         public int CumulativeIntervalNumber { get; set; }
         public int PacketCount { get; set; }
         public bool Marked { get; set; }

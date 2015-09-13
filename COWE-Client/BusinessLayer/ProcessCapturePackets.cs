@@ -340,7 +340,8 @@ namespace COWE.BusinessLayer
             return success;
         }
 
-        public bool UpdateCumulativeIntervals(string dbConnectionString, BindingList<PacketInterval> intervalCounts, CaptureState marked)
+        //public bool UpdateCumulativeIntervals(string dbConnectionString, BindingList<PacketInterval> intervalCounts, CaptureState marked)
+        public bool UpdateCumulativeIntervals(string dbConnectionString, BindingList<PacketInterval> intervalCounts)
         {
             // Add the intervals to the cumulative intervals collection
             bool success = false;
@@ -511,6 +512,11 @@ namespace COWE.BusinessLayer
             return markedIntervals;
         }
 
+        public int GetLastCaptureBatchId()
+        {
+            CaptureFileData cfd = new CaptureFileData();
+            return cfd.GetLastBatchId();
+        }
         public BindingList<CurrentCaptureFile> GetLastCaptureBatchIds()
         {
             BindingList<CurrentCaptureFile> lastBatchIds = new BindingList<CurrentCaptureFile>();
@@ -562,6 +568,21 @@ namespace COWE.BusinessLayer
         {
             CaptureFileData cfd = new CaptureFileData();
             return cfd.CalculateStdDevForMeanOfMeans(captureState, trimmed);
+        }
+        public int GetMeanCount()
+        {
+            CaptureFileData cfd = new CaptureFileData();
+            return cfd.GetMeanCount();
+        }
+        public decimal GetMean(CaptureState captureState, bool trimmed)
+        {
+            CaptureFileData cfd = new CaptureFileData();
+            return cfd.GetMean(captureState, trimmed);
+        }
+        public int GetCaptureBatchId(string fileName)
+        {
+            CaptureFileData cfd = new CaptureFileData();
+            return cfd.GetBatchId(fileName);
         }
         #endregion
 
@@ -621,7 +642,14 @@ namespace COWE.BusinessLayer
 
         private DataTable CreateCumulativeIntervalDataTable()
         {
-            // Note: we are not using an identity column in this table
+            // Note: we are not using an identity column in this table - needed to add one for EF
+            DataColumn CumulativeIntervalIdDataColumn = new DataColumn("CumulativeIntervalId", typeof(int));
+            CumulativeIntervalIdDataColumn.Caption = "CumulativeIntervalId";
+            CumulativeIntervalIdDataColumn.ReadOnly = false;
+            CumulativeIntervalIdDataColumn.AllowDBNull = false;
+            CumulativeIntervalIdDataColumn.Unique = true;
+            CumulativeIntervalIdDataColumn.AutoIncrement = true;
+
             DataColumn CumulativeIntervalNumberDataColumn = new DataColumn("CumulativeIntervalNumber", typeof(int));
             CumulativeIntervalNumberDataColumn.Caption = "CumulativeIntervalNumber";
             CumulativeIntervalNumberDataColumn.ReadOnly = false;
@@ -642,7 +670,7 @@ namespace COWE.BusinessLayer
 
             // Add the columns to the DataTable
             DataTable dt = new DataTable();
-            dt.Columns.AddRange(new DataColumn[] { CumulativeIntervalNumberDataColumn, PacketCountDataColumn, MarkedDataColumn });
+            dt.Columns.AddRange(new DataColumn[] { CumulativeIntervalIdDataColumn, CumulativeIntervalNumberDataColumn, PacketCountDataColumn, MarkedDataColumn });
 
             // return the empty DataTable
             return dt;
@@ -654,7 +682,7 @@ namespace COWE.BusinessLayer
             foreach (CumulativeInterval ci in intervals)
             {
                 DataRow dr = dt.NewRow();
-                //dr["CumulativeIntervalId"] = ci.CumulativeIntervalId;
+                //dr["CumulativeIntervalId"] = null;
                 dr["CumulativeIntervalNumber"] = ci.CumulativeIntervalNumber;
                 dr["PacketCount"] = ci.PacketCount;
                 dr["Marked"] = ci.Marked;

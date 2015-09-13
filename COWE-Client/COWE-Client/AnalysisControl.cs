@@ -34,12 +34,14 @@ namespace COWE.Client
         
         SortedDictionary<int, decimal> _CumulativeMarkedProbabilities = new SortedDictionary<int, decimal>();
         SortedDictionary<int, decimal> _CumulativeUnmarkedProbabilities = new SortedDictionary<int, decimal>();
+
         #endregion
+
         #region Constructor
         public AnalysisControl()
         {
             InitializeComponent();
-            _CaptureFile.RegisterWithCaptureFile(new CurrentCaptureFile.ReceivedParsedFileEventHandler(OnReceivedFileEvent));
+            //_CaptureFile.RegisterWithCaptureFile(new CurrentCaptureFile.ReceivedParsedFileEventHandler(OnReceivedFileEvent));
         }
         #endregion
 
@@ -48,11 +50,11 @@ namespace COWE.Client
         {
             InitializeAnalysisDataGridView();
             InitializeChartTypeComboBox();
-            InitializeAnalysisMetricsGroupBox();
-            AnalysisIntervalSizeTextBox.Text = InterarrivalInterval.GetIntervalMilliSeconds().ToString();
-            HistogramBinSizeTextBox.Text = "5";
-            TrimIntervalsCheckBox.Checked = true;
-            TrimSmallestBinsToolTip.SetToolTip(TrimIntervalsCheckBox, "Trim any intervals with a packet count less then or equal to the histogram bin size");
+            //InitializeAnalysisMetricsGroupBox();
+            //AnalysisIntervalSizeTextBox.Text = InterarrivalInterval.GetIntervalMilliSeconds().ToString();
+            //HistogramBinSizeTextBox.Text = "5";
+            //TrimIntervalsCheckBox.Checked = true;
+            //TrimSmallestBinsToolTip.SetToolTip(TrimIntervalsCheckBox, "Trim any intervals with a packet count less then or equal to the histogram bin size");
             //RefreshData();
         }
         private void RefreshButton_Click(object sender, EventArgs e)
@@ -61,7 +63,7 @@ namespace COWE.Client
         }
         private void TrimIntervalsCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            _trimZeroPacketIntervals = TrimIntervalsCheckBox.Checked ? true : false;
+
         }
         private void AnalysisControl_VisibleChanged(object sender, EventArgs e)
         {
@@ -88,6 +90,11 @@ namespace COWE.Client
         {
             MessageBox.Show("[AnalysisControl] - received file event notification");
         }
+        #endregion
+
+        #region Properties
+        public bool TrimIntervals { get; set; }
+        public string HistogramBinSize { get; set; }
         #endregion
 
         #region Private Methods
@@ -280,12 +287,12 @@ namespace COWE.Client
             ChartTypeComboBox.SelectedIndex = 0;
             ChartTypeComboBox.Font = new Font("Microsoft Sans Serif", 10);
         }
-        private void InitializeAnalysisMetricsGroupBox()
-        {
-            // Set the font size for the GroupBox (but not for the controls it contains)
-            Font analysisMetricsFont = new Font("Microsoft Sans Serif", 8);
-            AnalysisMetricsGroupBox.Font = analysisMetricsFont;
-        }
+        //private void InitializeAnalysisMetricsGroupBox()
+        //{
+        //    // Set the font size for the GroupBox (but not for the controls it contains)
+        //    Font analysisMetricsFont = new Font("Microsoft Sans Serif", 8);
+        //    AnalysisMetricsGroupBox.Font = analysisMetricsFont;
+        //}
         private void RefreshSingleDataChart()
         {
             // Get the last marked and unmarked batches and add them to the graph
@@ -326,14 +333,14 @@ namespace COWE.Client
             SingleChart.Series["UnmarkedProbabilities"].ChartType = chartType == "Bar" ? SeriesChartType.Column : SeriesChartType.Line;
             SingleChart.Series["UnmarkedProbabilities"].IsVisibleInLegend = true;
             SingleChart.Series["UnmarkedProbabilities"].LegendText = "Unmarked";
-
+            
             foreach (CurrentCaptureFile file in lastBatchIds)
             {
                 BindingList<BatchIntervalMarked> batchIntervals = new BindingList<BatchIntervalMarked>();
                 
                 // Calculate probabilities
                 batchIntervals = pcp.GetMarkedBatchIntervals(file.CaptureBatchId);
-                int histogramBinSize = Convert.ToInt32(HistogramBinSizeTextBox.Text);
+                int histogramBinSize = Convert.ToInt32(HistogramBinSize);
                 SortedDictionary<int, decimal> probabilities = new CalculateProbability(batchIntervals).GetProbabilityByPacketRange(_trimZeroPacketIntervals, histogramBinSize);
 
                 if (file.Marked == CaptureState.Marked)
@@ -386,14 +393,16 @@ namespace COWE.Client
             BatchStatistics markedSingleStats = new BatchStatistics();
             BatchStatistics unmarkedSingleStats = new BatchStatistics();
 
-            markedSingleStats = GetBatchStatistics(markedBatchIntervals);
-            unmarkedSingleStats = GetBatchStatistics(unmarkedBatchIntervals);
+            // Get this data from DisplayStatistics table; except on refresh...
+            //AnalysisEngine ae = new AnalysisEngine();
+            //markedSingleStats = ae.GetBatchStatistics(markedBatchIntervals, CaptureState.Marked, BatchType.Single);
+            //unmarkedSingleStats = ae.GetBatchStatistics(unmarkedBatchIntervals, CaptureState.Unmarked, BatchType.Single);
 
             // Load up the table
             // Single unmarked column
             int row = 0;
             _AnalysisDataGridView.Rows[row++].Cells[1].Value = unmarkedSingleStats.IntervalCount;
-            _AnalysisDataGridView.Rows[row++].Cells[1].Value = TrimIntervalsCheckBox.Checked == true ? unmarkedSingleStats.IntervalCountTrimmed.ToString() : "N/A";
+            _AnalysisDataGridView.Rows[row++].Cells[1].Value = TrimIntervals == true ? unmarkedSingleStats.IntervalCountTrimmed.ToString() : "N/A";
             _AnalysisDataGridView.Rows[row++].Cells[1].Value = string.Format("{0:N2}", unmarkedSingleStats.PacketCountMean);
             _AnalysisDataGridView.Rows[row++].Cells[1].Value = string.Format("{0:N2}", unmarkedSingleStats.PacketCountStandardDeviation);
             _AnalysisDataGridView.Rows[row++].Cells[1].Value = unmarkedSingleStats.PacketCountMinimum;
@@ -405,7 +414,7 @@ namespace COWE.Client
             // Single marked column
             row = 0;
             _AnalysisDataGridView.Rows[row++].Cells[2].Value = markedSingleStats.IntervalCount;
-            _AnalysisDataGridView.Rows[row++].Cells[2].Value = TrimIntervalsCheckBox.Checked == true ? markedSingleStats.IntervalCountTrimmed.ToString() : "N/A";
+            _AnalysisDataGridView.Rows[row++].Cells[2].Value = TrimIntervals == true ? markedSingleStats.IntervalCountTrimmed.ToString() : "N/A";
             _AnalysisDataGridView.Rows[row++].Cells[2].Value = string.Format("{0:N2}", markedSingleStats.PacketCountMean);
             _AnalysisDataGridView.Rows[row++].Cells[2].Value = string.Format("{0:N2}", markedSingleStats.PacketCountStandardDeviation);
             _AnalysisDataGridView.Rows[row++].Cells[2].Value = markedSingleStats.PacketCountMinimum;
@@ -417,7 +426,7 @@ namespace COWE.Client
             // Single variance column
             row = 0;
             _AnalysisDataGridView.Rows[row++].Cells[3].Value = unmarkedSingleStats.IntervalCount - markedSingleStats.IntervalCount;
-            _AnalysisDataGridView.Rows[row++].Cells[3].Value = TrimIntervalsCheckBox.Checked == true ? (unmarkedSingleStats.IntervalCountTrimmed - markedSingleStats.IntervalCountTrimmed).ToString() : "N/A";
+            _AnalysisDataGridView.Rows[row++].Cells[3].Value = TrimIntervals == true ? (unmarkedSingleStats.IntervalCountTrimmed - markedSingleStats.IntervalCountTrimmed).ToString() : "N/A";
             _AnalysisDataGridView.Rows[row++].Cells[3].Value = string.Format("{0:N2}", (unmarkedSingleStats.PacketCountMean - markedSingleStats.PacketCountMean));
             _AnalysisDataGridView.Rows[row++].Cells[3].Value = string.Format("{0:N2}",(unmarkedSingleStats.PacketCountStandardDeviation - markedSingleStats.PacketCountStandardDeviation));
             _AnalysisDataGridView.Rows[row++].Cells[3].Value = unmarkedSingleStats.PacketCountMinimum - markedSingleStats.PacketCountMinimum;
@@ -426,109 +435,7 @@ namespace COWE.Client
             _AnalysisDataGridView.Rows[row++].Cells[3].Value = "N/A";
             _AnalysisDataGridView.Rows[row++].Cells[3].Value = "N/A";
         }
-        private BatchStatistics GetBatchStatistics(BindingList<BatchIntervalMarked> batchIntervals)
-        {
-            decimal batchIntervalsMean = 0;
-            decimal batchIntervalsTrimmedMean = 0;
 
-            // Trim zero packets from the batch interval
-            BindingList<BatchIntervalMarked> batchIntervalsTrimmed = new BindingList<BatchIntervalMarked>();
-            foreach (BatchIntervalMarked bim in batchIntervals)
-            {
-                if(bim.PacketCount > Convert.ToInt32(HistogramBinSizeTextBox.Text))
-                {
-                    batchIntervalsTrimmed.Add(bim);
-                }
-            }
-
-            // Calculate statistics for the batch
-            BatchStatistics bs = new BatchStatistics();
-            double varianceSum = 0;
-            double variance = 0;
-
-            if (_trimZeroPacketIntervals)
-            {
-                bs.IntervalCountTrimmed = batchIntervalsTrimmed.Count;
-                var maxValue = (from t in batchIntervalsTrimmed select t.PacketCount).Max();
-                var minValue = (from t in batchIntervalsTrimmed select t.PacketCount).Min();
-                var meanValue = (from t in batchIntervalsTrimmed select t.PacketCount).Average();
-
-                // Calculate standard deviation
-                var packets = (from t in batchIntervalsTrimmed select t.PacketCount).ToList();
-                var packetAverage = packets.Sum() / (double)batchIntervalsTrimmed.Count;
-                
-                foreach (var item in packets)
-                {
-                    double packetVariance = Math.Pow((Convert.ToDouble(item) - Convert.ToDouble(packetAverage)), 2);
-                    //double packetVariance = Math.Pow((Convert.ToDouble(item) - Convert.ToDouble(meanValue)), 2);
-                    varianceSum += packetVariance;
-                }
-                variance = (varianceSum / (bs.IntervalCountTrimmed - 1));
-                var stdDevValue = Math.Sqrt(variance);
-
-                bs.IntervalCount = (from t in batchIntervals select t).Count();
-                bs.PacketCountMaximum = maxValue;
-                bs.PacketCountMinimum = minValue;
-                bs.PacketCountMean = Convert.ToDecimal(meanValue);
-                bs.PacketCountStandardDeviation = Convert.ToDecimal(stdDevValue);
-
-                // Calculate both means for updating the capture batch intervals
-                batchIntervalsTrimmedMean = bs.PacketCountMean;
-                var untrimmedMean = (from t in batchIntervals select t.PacketCount).Average();
-                batchIntervalsMean = Convert.ToDecimal(untrimmedMean);
-            }
-            else
-            {
-                bs.IntervalCount = batchIntervals.Count;
-                var maxValue = (from t in batchIntervals select t.PacketCount).Max();
-                var minValue = (from t in batchIntervals select t.PacketCount).Min();
-                var meanValue = (from t in batchIntervals select t.PacketCount).Average();
-
-                // Calculate standard deviation
-                var packets = (from t in batchIntervals select t.PacketCount).ToList();
-                var packetAverage = packets.Sum() / (double)batchIntervals.Count;
-                
-
-                foreach (var item in packets)
-                {
-                    double packetVariance = Math.Pow((Convert.ToDouble(item) - Convert.ToDouble(packetAverage)), 2);
-                    //double packetVariance = Math.Pow((Convert.ToDouble(item) - Convert.ToDouble(meanValue)), 2);
-                    varianceSum += packetVariance;
-                }
-                variance = varianceSum / (bs.IntervalCount - 1);
-                var stdDevValue = Math.Sqrt(variance);
-
-                bs.PacketCountMaximum = maxValue;
-                bs.PacketCountMinimum = minValue;
-                bs.PacketCountMean = Convert.ToDecimal(meanValue);
-                bs.PacketCountStandardDeviation = Convert.ToDecimal(stdDevValue);
-
-                // Calculate both means for updating the capture batch intervals
-                batchIntervalsMean = bs.PacketCountMean;
-                var trimmedMean = (from t in batchIntervalsTrimmed select t.PacketCount).Average();
-                batchIntervalsTrimmedMean = Convert.ToDecimal(trimmedMean);
-            }
-
-            // Update the batch mean - only for single batches, not cumulative batches
-            var captureBatchId = (from c in batchIntervals select c.CaptureBatchId).FirstOrDefault();
-            if (captureBatchId != 0)
-            {
-                try
-                {
-                    ProcessCapturePackets pcp = new ProcessCapturePackets();
-                    //if (!pcp.UpdateBatchMean(Convert.ToInt32(captureBatchId), bs.PacketCountMean))
-                    if (!pcp.UpdateBatchMean(Convert.ToInt32(captureBatchId), batchIntervalsMean, batchIntervalsTrimmedMean))
-                    {
-                        MessageBox.Show("Error updating batch mean for CaptureBatchId " + captureBatchId, "Update Batch Mean", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error updating batch mean for CaptureBatchId " + captureBatchId + ": " + ex.Message, "Update Batch Mean", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-            return bs;
-        }
         private void RefreshCumulativeDataChart()
         {
             // Get the cumulative marked and unmarked batches and add them to the graph
@@ -601,7 +508,7 @@ namespace COWE.Client
                 }
             }
 
-            int histogramBinSize = Convert.ToInt32(HistogramBinSizeTextBox.Text);
+            int histogramBinSize = Convert.ToInt32(HistogramBinSize);
             //SortedDictionary<int, decimal> markedProbabilities = new CalculateProbability(markedBatchIntervals).GetProbabilityByPacketRange(_trimZeroPacketIntervals, histogramBinSize);
             //SortedDictionary<int, decimal> unmarkedProbabilities = new CalculateProbability(unmarkedBatchIntervals).GetProbabilityByPacketRange(_trimZeroPacketIntervals, histogramBinSize);
             _CumulativeMarkedProbabilities = new CalculateProbability(markedBatchIntervals).GetProbabilityByPacketRange(_trimZeroPacketIntervals, histogramBinSize);
@@ -663,17 +570,19 @@ namespace COWE.Client
             decimal unmarkedMeanOfMeans = 0;
             decimal unmarkedStdDevMeanOfMeans = 0;
 
+            AnalysisEngine ae = new AnalysisEngine();
+
             if(markedBatchIntervals.Count > 0)
             {
-                markedCumulativeStats = GetBatchStatistics(markedBatchIntervals);
-                markedMeanOfMeans = pcp.CalculateMeanOfMeans(CaptureState.Marked, TrimIntervalsCheckBox.Checked ? true : false);
-                markedStdDevMeanOfMeans = pcp.CalculateStdDevForMeanOfMeans(CaptureState.Marked, TrimIntervalsCheckBox.Checked ? true : false);
+                markedCumulativeStats = ae.CalculateBatchStatistics(markedBatchIntervals,CaptureState.Marked, BatchType.Cumulative);
+                markedMeanOfMeans = pcp.CalculateMeanOfMeans(CaptureState.Marked, TrimIntervals ? true : false);
+                markedStdDevMeanOfMeans = pcp.CalculateStdDevForMeanOfMeans(CaptureState.Marked, TrimIntervals ? true : false);
 
                 // Load up the table
                 // Cumulative marked column
                 int row = 0;
                 _AnalysisDataGridView.Rows[row++].Cells[5].Value = markedCumulativeStats.IntervalCount;
-                _AnalysisDataGridView.Rows[row++].Cells[5].Value = TrimIntervalsCheckBox.Checked == true ? markedCumulativeStats.IntervalCountTrimmed.ToString() : "N/A";
+                _AnalysisDataGridView.Rows[row++].Cells[5].Value = TrimIntervals == true ? markedCumulativeStats.IntervalCountTrimmed.ToString() : "N/A";
                 _AnalysisDataGridView.Rows[row++].Cells[5].Value = string.Format("{0:N2}", markedCumulativeStats.PacketCountMean);
                 _AnalysisDataGridView.Rows[row++].Cells[5].Value = string.Format("{0:N2}", markedCumulativeStats.PacketCountStandardDeviation);
                 _AnalysisDataGridView.Rows[row++].Cells[5].Value = markedCumulativeStats.PacketCountMinimum;
@@ -685,15 +594,15 @@ namespace COWE.Client
 
             if (unmarkedBatchIntervals.Count > 0)
             {
-                unmarkedCumulativeStats = GetBatchStatistics(unmarkedBatchIntervals);
-                unmarkedMeanOfMeans = pcp.CalculateMeanOfMeans(CaptureState.Unmarked, TrimIntervalsCheckBox.Checked ? true : false);
-                unmarkedStdDevMeanOfMeans = pcp.CalculateStdDevForMeanOfMeans(CaptureState.Unmarked, TrimIntervalsCheckBox.Checked ? true : false);
+                unmarkedCumulativeStats = ae.CalculateBatchStatistics(unmarkedBatchIntervals, CaptureState.Marked, BatchType.Cumulative);
+                unmarkedMeanOfMeans = pcp.CalculateMeanOfMeans(CaptureState.Unmarked, TrimIntervals ? true : false);
+                unmarkedStdDevMeanOfMeans = pcp.CalculateStdDevForMeanOfMeans(CaptureState.Unmarked, TrimIntervals ? true : false);
 
                 // Load up the table
                 // Cumulative unmarked column
                 int row = 0;
                 _AnalysisDataGridView.Rows[row++].Cells[4].Value = unmarkedCumulativeStats.IntervalCount;
-                _AnalysisDataGridView.Rows[row++].Cells[4].Value = TrimIntervalsCheckBox.Checked == true ? unmarkedCumulativeStats.IntervalCountTrimmed.ToString() : "N/A";
+                _AnalysisDataGridView.Rows[row++].Cells[4].Value = TrimIntervals == true ? unmarkedCumulativeStats.IntervalCountTrimmed.ToString() : "N/A";
                 _AnalysisDataGridView.Rows[row++].Cells[4].Value = string.Format("{0:N2}", unmarkedCumulativeStats.PacketCountMean);
                 _AnalysisDataGridView.Rows[row++].Cells[4].Value = string.Format("{0:N2}", unmarkedCumulativeStats.PacketCountStandardDeviation);
                 _AnalysisDataGridView.Rows[row++].Cells[4].Value = unmarkedCumulativeStats.PacketCountMinimum;
@@ -709,7 +618,7 @@ namespace COWE.Client
                 // Cumulative variance column
                 int row = 0;
                 _AnalysisDataGridView.Rows[row++].Cells[6].Value = unmarkedCumulativeStats.IntervalCount - markedCumulativeStats.IntervalCount;
-                _AnalysisDataGridView.Rows[row++].Cells[6].Value = TrimIntervalsCheckBox.Checked == true ? (unmarkedCumulativeStats.IntervalCountTrimmed - markedCumulativeStats.IntervalCountTrimmed).ToString() : "N/A";
+                _AnalysisDataGridView.Rows[row++].Cells[6].Value = TrimIntervals == true ? (unmarkedCumulativeStats.IntervalCountTrimmed - markedCumulativeStats.IntervalCountTrimmed).ToString() : "N/A";
                 _AnalysisDataGridView.Rows[row++].Cells[6].Value = string.Format("{0:N2}", (unmarkedCumulativeStats.PacketCountMean - markedCumulativeStats.PacketCountMean));
                 _AnalysisDataGridView.Rows[row++].Cells[6].Value = string.Format("{0:N2}", (unmarkedCumulativeStats.PacketCountStandardDeviation - markedCumulativeStats.PacketCountStandardDeviation));
                 _AnalysisDataGridView.Rows[row++].Cells[6].Value = unmarkedCumulativeStats.PacketCountMinimum - markedCumulativeStats.PacketCountMinimum;
@@ -724,12 +633,12 @@ namespace COWE.Client
             _KsStatistics.MarkedStdDev = markedStdDevMeanOfMeans;
             //_KsStatistics.MarkedMean = markedCumulativeStats.PacketCountMean;
             //_KsStatistics.MarkedStdDev = markedCumulativeStats.PacketCountStandardDeviation;
-            _KsStatistics.MarkedIntervalCount = TrimIntervalsCheckBox.Checked == true ? markedCumulativeStats.IntervalCountTrimmed : markedCumulativeStats.IntervalCount;
+            _KsStatistics.MarkedIntervalCount = TrimIntervals == true ? markedCumulativeStats.IntervalCountTrimmed : markedCumulativeStats.IntervalCount;
             _KsStatistics.UnmarkedMean = unmarkedMeanOfMeans;
             _KsStatistics.UnmarkedStdDev = unmarkedStdDevMeanOfMeans;
             //_KsStatistics.UnmarkedMean = unmarkedCumulativeStats.PacketCountMean;
             //_KsStatistics.UnmarkedStdDev = unmarkedCumulativeStats.PacketCountStandardDeviation;
-            _KsStatistics.UnmarkedIntervalCount = TrimIntervalsCheckBox.Checked == true ? unmarkedCumulativeStats.IntervalCountTrimmed : unmarkedCumulativeStats.IntervalCount;
+            _KsStatistics.UnmarkedIntervalCount = TrimIntervals == true ? unmarkedCumulativeStats.IntervalCountTrimmed : unmarkedCumulativeStats.IntervalCount;
             
         }
         private void RefreshCumulativeProbabilityChart()

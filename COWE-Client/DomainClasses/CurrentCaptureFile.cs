@@ -36,10 +36,16 @@ namespace COWE.DomainClasses
         public delegate void ReceivedParsedFileEventHandler(string msg);
         #endregion
 
+        #region Events
+        public event ReceivedParsedFileEventHandler ReceivedParsedFile;
+        #endregion
+
         #region Private Variables
         // Define a member variable of this delegate
-        private ReceivedParsedFileEventHandler listOfHandlers;
-
+        //private ReceivedParsedFileEventHandler listOfHandlers;
+        #endregion
+        #region Public Variables
+        //public ReceivedParsedFileEventHandler listOfHandlers;
         #endregion
 
         #region Properties
@@ -50,22 +56,22 @@ namespace COWE.DomainClasses
 
         #region Methods
         // Add registration function for the caller
-        public void RegisterWithCaptureFile(ReceivedParsedFileEventHandler methodToCall)
-        {
-            listOfHandlers = methodToCall;
-        }
+        //public void RegisterWithCaptureFile(ReceivedParsedFileEventHandler methodToCall)
+        //{
+        //    listOfHandlers = methodToCall;
+        //}
         #endregion
         public void ReceiveFile()
         {
-            //if (ReceivedParsedFile != null)
-            //{
-            //    ReceivedParsedFile("received file");
-            //}
-
-            if (listOfHandlers != null)
+            if (ReceivedParsedFile != null)
             {
-                listOfHandlers("received file");
+                ReceivedParsedFile("Received parsed file");
             }
+
+            //if (listOfHandlers != null)
+            //{
+            //    listOfHandlers("received file");
+            //}
         }
     }
 }

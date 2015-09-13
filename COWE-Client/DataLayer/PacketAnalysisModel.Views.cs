@@ -11,7 +11,7 @@ using System.Data.Entity.Infrastructure.MappingViews;
 
 [assembly: DbMappingViewCacheTypeAttribute(
     typeof(COWE.DataLayer.PacketAnalysisEntity),
-    typeof(Edm_EntityMappingGeneratedViews.ViewsForBaseEntitySetse6b0e5b11e58e82c5378a472c2f2ceda3d722cce7d51ff3265f789eeb79b9413))]
+    typeof(Edm_EntityMappingGeneratedViews.ViewsForBaseEntitySets6be6157f3ee2c22940da2d46de026e3a1b067610e7d7d0a250318096fd7c451a))]
 
 namespace Edm_EntityMappingGeneratedViews
 {
@@ -23,14 +23,14 @@ namespace Edm_EntityMappingGeneratedViews
     /// Implements a mapping view cache.
     /// </summary>
     [GeneratedCode("Entity Framework Power Tools", "0.9.0.0")]
-    internal sealed class ViewsForBaseEntitySetse6b0e5b11e58e82c5378a472c2f2ceda3d722cce7d51ff3265f789eeb79b9413 : DbMappingViewCache
+    internal sealed class ViewsForBaseEntitySets6be6157f3ee2c22940da2d46de026e3a1b067610e7d7d0a250318096fd7c451a : DbMappingViewCache
     {
         /// <summary>
         /// Gets a hash value computed over the mapping closure.
         /// </summary>
         public override string MappingHashValue
         {
-            get { return "e6b0e5b11e58e82c5378a472c2f2ceda3d722cce7d51ff3265f789eeb79b9413"; }
+            get { return "6be6157f3ee2c22940da2d46de026e3a1b067610e7d7d0a250318096fd7c451a"; }
         }
 
         /// <summary>
@@ -87,6 +87,36 @@ namespace Edm_EntityMappingGeneratedViews
                 return GetView7();
             }
 
+            if (extentName == "PacketAnalysisModelStoreContainer.CumulativeProbabilityDistribution")
+            {
+                return GetView8();
+            }
+
+            if (extentName == "PacketAnalysisEntity.CumulativeProbabilityDistributions")
+            {
+                return GetView9();
+            }
+
+            if (extentName == "PacketAnalysisModelStoreContainer.Histogram")
+            {
+                return GetView10();
+            }
+
+            if (extentName == "PacketAnalysisEntity.Histograms")
+            {
+                return GetView11();
+            }
+
+            if (extentName == "PacketAnalysisModelStoreContainer.DisplayStatistic")
+            {
+                return GetView12();
+            }
+
+            if (extentName == "PacketAnalysisEntity.DisplayStatistics")
+            {
+                return GetView13();
+            }
+
             return null;
         }
 
@@ -139,7 +169,7 @@ namespace Edm_EntityMappingGeneratedViews
         {
             return new DbMappingView(@"
     SELECT VALUE -- Constructing CaptureBatch
-        [PacketAnalysisModel.Store.CaptureBatch](T1.CaptureBatch_CaptureBatchId, T1.CaptureBatch_FileName, T1.CaptureBatch_Marked, T1.CaptureBatch_Mean, T1.CaptureBatch_TrimmedMean)
+        [PacketAnalysisModel.Store.CaptureBatch](T1.CaptureBatch_CaptureBatchId, T1.CaptureBatch_FileName, T1.CaptureBatch_Marked, T1.CaptureBatch_Mean, T1.CaptureBatch_TrimmedMean, T1.CaptureBatch_Parsed, T1.CaptureBatch_SingleStatistics, T1.CaptureBatch_CumulativeStatistics)
     FROM (
         SELECT 
             T.CaptureBatchId AS CaptureBatch_CaptureBatchId, 
@@ -147,6 +177,9 @@ namespace Edm_EntityMappingGeneratedViews
             T.Marked AS CaptureBatch_Marked, 
             T.Mean AS CaptureBatch_Mean, 
             T.TrimmedMean AS CaptureBatch_TrimmedMean, 
+            T.Parsed AS CaptureBatch_Parsed, 
+            T.SingleStatistics AS CaptureBatch_SingleStatistics, 
+            T.CumulativeStatistics AS CaptureBatch_CumulativeStatistics, 
             True AS _from0
         FROM PacketAnalysisEntity.CaptureBatches AS T
     ) AS T1");
@@ -201,7 +234,7 @@ namespace Edm_EntityMappingGeneratedViews
         {
             return new DbMappingView(@"
     SELECT VALUE -- Constructing CaptureBatches
-        [COWE.PacketAnalysisModel.CaptureBatch](T1.CaptureBatch_CaptureBatchId, T1.CaptureBatch_FileName, T1.CaptureBatch_Marked, T1.CaptureBatch_Mean, T1.CaptureBatch_TrimmedMean)
+        [COWE.PacketAnalysisModel.CaptureBatch](T1.CaptureBatch_CaptureBatchId, T1.CaptureBatch_FileName, T1.CaptureBatch_Marked, T1.CaptureBatch_Mean, T1.CaptureBatch_TrimmedMean, T1.CaptureBatch_Parsed, T1.CaptureBatch_SingleStatistics, T1.CaptureBatch_CumulativeStatistics)
     FROM (
         SELECT 
             T.CaptureBatchId AS CaptureBatch_CaptureBatchId, 
@@ -209,6 +242,9 @@ namespace Edm_EntityMappingGeneratedViews
             T.Marked AS CaptureBatch_Marked, 
             T.Mean AS CaptureBatch_Mean, 
             T.TrimmedMean AS CaptureBatch_TrimmedMean, 
+            T.Parsed AS CaptureBatch_Parsed, 
+            T.SingleStatistics AS CaptureBatch_SingleStatistics, 
+            T.CumulativeStatistics AS CaptureBatch_CumulativeStatistics, 
             True AS _from0
         FROM PacketAnalysisModelStoreContainer.CaptureBatch AS T
     ) AS T1");
@@ -222,9 +258,10 @@ namespace Edm_EntityMappingGeneratedViews
         {
             return new DbMappingView(@"
     SELECT VALUE -- Constructing CumulativeInterval
-        [PacketAnalysisModel.Store.CumulativeInterval](T1.CumulativeInterval_CumulativeIntervalNumber, T1.CumulativeInterval_PacketCount, T1.CumulativeInterval_Marked)
+        [PacketAnalysisModel.Store.CumulativeInterval](T1.CumulativeInterval_CumulativeIntervalId, T1.CumulativeInterval_CumulativeIntervalNumber, T1.CumulativeInterval_PacketCount, T1.CumulativeInterval_Marked)
     FROM (
         SELECT 
+            T.CumulativeIntervalId AS CumulativeInterval_CumulativeIntervalId, 
             T.CumulativeIntervalNumber AS CumulativeInterval_CumulativeIntervalNumber, 
             T.PacketCount AS CumulativeInterval_PacketCount, 
             T.Marked AS CumulativeInterval_Marked, 
@@ -241,14 +278,153 @@ namespace Edm_EntityMappingGeneratedViews
         {
             return new DbMappingView(@"
     SELECT VALUE -- Constructing CumulativeIntervals
-        [COWE.PacketAnalysisModel.CumulativeInterval](T1.CumulativeInterval_CumulativeIntervalNumber, T1.CumulativeInterval_PacketCount, T1.CumulativeInterval_Marked)
+        [COWE.PacketAnalysisModel.CumulativeInterval](T1.CumulativeInterval_CumulativeIntervalId, T1.CumulativeInterval_CumulativeIntervalNumber, T1.CumulativeInterval_PacketCount, T1.CumulativeInterval_Marked)
     FROM (
         SELECT 
+            T.CumulativeIntervalId AS CumulativeInterval_CumulativeIntervalId, 
             T.CumulativeIntervalNumber AS CumulativeInterval_CumulativeIntervalNumber, 
             T.PacketCount AS CumulativeInterval_PacketCount, 
             T.Marked AS CumulativeInterval_Marked, 
             True AS _from0
         FROM PacketAnalysisModelStoreContainer.CumulativeInterval AS T
+    ) AS T1");
+        }
+
+        /// <summary>
+        /// Gets the view for PacketAnalysisModelStoreContainer.CumulativeProbabilityDistribution.
+        /// </summary>
+        /// <returns>The mapping view.</returns>
+        private static DbMappingView GetView8()
+        {
+            return new DbMappingView(@"
+    SELECT VALUE -- Constructing CumulativeProbabilityDistribution
+        [PacketAnalysisModel.Store.CumulativeProbabilityDistribution](T1.CumulativeProbabilityDistribution_CumulativeProbabilityDistributionId, T1.CumulativeProbabilityDistribution_Interval, T1.CumulativeProbabilityDistribution_Probability, T1.CumulativeProbabilityDistribution_CaptureState, T1.CumulativeProbabilityDistribution_BatchType)
+    FROM (
+        SELECT 
+            T.CumulativeProbabilityDistributionId AS CumulativeProbabilityDistribution_CumulativeProbabilityDistributionId, 
+            T.Interval AS CumulativeProbabilityDistribution_Interval, 
+            T.Probability AS CumulativeProbabilityDistribution_Probability, 
+            T.CaptureState AS CumulativeProbabilityDistribution_CaptureState, 
+            T.BatchType AS CumulativeProbabilityDistribution_BatchType, 
+            True AS _from0
+        FROM PacketAnalysisEntity.CumulativeProbabilityDistributions AS T
+    ) AS T1");
+        }
+
+        /// <summary>
+        /// Gets the view for PacketAnalysisEntity.CumulativeProbabilityDistributions.
+        /// </summary>
+        /// <returns>The mapping view.</returns>
+        private static DbMappingView GetView9()
+        {
+            return new DbMappingView(@"
+    SELECT VALUE -- Constructing CumulativeProbabilityDistributions
+        [COWE.PacketAnalysisModel.CumulativeProbabilityDistribution](T1.CumulativeProbabilityDistribution_CumulativeProbabilityDistributionId, T1.CumulativeProbabilityDistribution_Interval, T1.CumulativeProbabilityDistribution_Probability, T1.CumulativeProbabilityDistribution_CaptureState, T1.CumulativeProbabilityDistribution_BatchType)
+    FROM (
+        SELECT 
+            T.CumulativeProbabilityDistributionId AS CumulativeProbabilityDistribution_CumulativeProbabilityDistributionId, 
+            T.Interval AS CumulativeProbabilityDistribution_Interval, 
+            T.Probability AS CumulativeProbabilityDistribution_Probability, 
+            T.CaptureState AS CumulativeProbabilityDistribution_CaptureState, 
+            T.BatchType AS CumulativeProbabilityDistribution_BatchType, 
+            True AS _from0
+        FROM PacketAnalysisModelStoreContainer.CumulativeProbabilityDistribution AS T
+    ) AS T1");
+        }
+
+        /// <summary>
+        /// Gets the view for PacketAnalysisModelStoreContainer.Histogram.
+        /// </summary>
+        /// <returns>The mapping view.</returns>
+        private static DbMappingView GetView10()
+        {
+            return new DbMappingView(@"
+    SELECT VALUE -- Constructing Histogram
+        [PacketAnalysisModel.Store.Histogram](T1.Histogram_HistogramId, T1.Histogram_Interval, T1.Histogram_Probability, T1.Histogram_CaptureState, T1.Histogram_BatchType)
+    FROM (
+        SELECT 
+            T.HistogramId AS Histogram_HistogramId, 
+            T.Interval AS Histogram_Interval, 
+            T.Probability AS Histogram_Probability, 
+            T.CaptureState AS Histogram_CaptureState, 
+            T.BatchType AS Histogram_BatchType, 
+            True AS _from0
+        FROM PacketAnalysisEntity.Histograms AS T
+    ) AS T1");
+        }
+
+        /// <summary>
+        /// Gets the view for PacketAnalysisEntity.Histograms.
+        /// </summary>
+        /// <returns>The mapping view.</returns>
+        private static DbMappingView GetView11()
+        {
+            return new DbMappingView(@"
+    SELECT VALUE -- Constructing Histograms
+        [COWE.PacketAnalysisModel.Histogram](T1.Histogram_HistogramId, T1.Histogram_Interval, T1.Histogram_Probability, T1.Histogram_CaptureState, T1.Histogram_BatchType)
+    FROM (
+        SELECT 
+            T.HistogramId AS Histogram_HistogramId, 
+            T.Interval AS Histogram_Interval, 
+            T.Probability AS Histogram_Probability, 
+            T.CaptureState AS Histogram_CaptureState, 
+            T.BatchType AS Histogram_BatchType, 
+            True AS _from0
+        FROM PacketAnalysisModelStoreContainer.Histogram AS T
+    ) AS T1");
+        }
+
+        /// <summary>
+        /// Gets the view for PacketAnalysisModelStoreContainer.DisplayStatistic.
+        /// </summary>
+        /// <returns>The mapping view.</returns>
+        private static DbMappingView GetView12()
+        {
+            return new DbMappingView(@"
+    SELECT VALUE -- Constructing DisplayStatistic
+        [PacketAnalysisModel.Store.DisplayStatistic](T1.DisplayStatistic_DisplayStatisticId, T1.DisplayStatistic_IntervalCount, T1.DisplayStatistic_TrimmedIntervalCount, T1.DisplayStatistic_MeanPacketsPerInterval, T1.DisplayStatistic_StandardDeviation, T1.DisplayStatistic_MinPacketsPerInterval, T1.DisplayStatistic_MaxPacketsPerInterval, T1.DisplayStatistic_MeanOfMeans, T1.DisplayStatistic_MeanOfMeansStandardDeviation, T1.DisplayStatistic_Marked, T1.DisplayStatistic_BatchType)
+    FROM (
+        SELECT 
+            T.DisplayStatisticId AS DisplayStatistic_DisplayStatisticId, 
+            T.IntervalCount AS DisplayStatistic_IntervalCount, 
+            T.TrimmedIntervalCount AS DisplayStatistic_TrimmedIntervalCount, 
+            T.MeanPacketsPerInterval AS DisplayStatistic_MeanPacketsPerInterval, 
+            T.StandardDeviation AS DisplayStatistic_StandardDeviation, 
+            T.MinPacketsPerInterval AS DisplayStatistic_MinPacketsPerInterval, 
+            T.MaxPacketsPerInterval AS DisplayStatistic_MaxPacketsPerInterval, 
+            T.MeanOfMeans AS DisplayStatistic_MeanOfMeans, 
+            T.MeanOfMeansStandardDeviation AS DisplayStatistic_MeanOfMeansStandardDeviation, 
+            T.Marked AS DisplayStatistic_Marked, 
+            T.BatchType AS DisplayStatistic_BatchType, 
+            True AS _from0
+        FROM PacketAnalysisEntity.DisplayStatistics AS T
+    ) AS T1");
+        }
+
+        /// <summary>
+        /// Gets the view for PacketAnalysisEntity.DisplayStatistics.
+        /// </summary>
+        /// <returns>The mapping view.</returns>
+        private static DbMappingView GetView13()
+        {
+            return new DbMappingView(@"
+    SELECT VALUE -- Constructing DisplayStatistics
+        [COWE.PacketAnalysisModel.DisplayStatistic](T1.DisplayStatistic_DisplayStatisticId, T1.DisplayStatistic_IntervalCount, T1.DisplayStatistic_TrimmedIntervalCount, T1.DisplayStatistic_MeanPacketsPerInterval, T1.DisplayStatistic_StandardDeviation, T1.DisplayStatistic_MinPacketsPerInterval, T1.DisplayStatistic_MaxPacketsPerInterval, T1.DisplayStatistic_MeanOfMeans, T1.DisplayStatistic_MeanOfMeansStandardDeviation, T1.DisplayStatistic_Marked, T1.DisplayStatistic_BatchType)
+    FROM (
+        SELECT 
+            T.DisplayStatisticId AS DisplayStatistic_DisplayStatisticId, 
+            T.IntervalCount AS DisplayStatistic_IntervalCount, 
+            T.TrimmedIntervalCount AS DisplayStatistic_TrimmedIntervalCount, 
+            T.MeanPacketsPerInterval AS DisplayStatistic_MeanPacketsPerInterval, 
+            T.StandardDeviation AS DisplayStatistic_StandardDeviation, 
+            T.MinPacketsPerInterval AS DisplayStatistic_MinPacketsPerInterval, 
+            T.MaxPacketsPerInterval AS DisplayStatistic_MaxPacketsPerInterval, 
+            T.MeanOfMeans AS DisplayStatistic_MeanOfMeans, 
+            T.MeanOfMeansStandardDeviation AS DisplayStatistic_MeanOfMeansStandardDeviation, 
+            T.Marked AS DisplayStatistic_Marked, 
+            T.BatchType AS DisplayStatistic_BatchType, 
+            True AS _from0
+        FROM PacketAnalysisModelStoreContainer.DisplayStatistic AS T
     ) AS T1");
         }
     }

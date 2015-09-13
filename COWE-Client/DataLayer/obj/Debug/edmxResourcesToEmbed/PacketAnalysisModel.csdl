@@ -20,11 +20,61 @@
       <Parameter Name="TrimmedMean" Mode="In" Type="Decimal" />
       <Parameter Name="NewCaptureBatchId" Mode="InOut" Type="Int32" />
     </FunctionImport>
-    <EntitySet Name="BatchIntervals" EntityType="COWE.PacketAnalysisModel.BatchInterval" />
-    <EntitySet Name="CumulativeIntervals" EntityType="COWE.PacketAnalysisModel.CumulativeInterval" />
     <FunctionImport Name="CumulativeIntervalDelete" ReturnType="Collection(Decimal)">
       <Parameter Name="Marked" Mode="In" Type="Boolean" />
       <Parameter Name="RowsDeleted" Mode="InOut" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="TruncateAllIntervalTables" />
+    <FunctionImport Name="BatchStatisticsInsert">
+      <Parameter Name="IntervalCount" Mode="In" Type="Int32" />
+      <Parameter Name="TrimmedIntervalCount" Mode="In" Type="Int32" />
+      <Parameter Name="MeanPacketsPerInterval" Mode="In" Type="Decimal" />
+      <Parameter Name="StandardDeviation" Mode="In" Type="Decimal" />
+      <Parameter Name="MinPacketsPerInterval" Mode="In" Type="Int32" />
+      <Parameter Name="MaxPacketsPerInterval" Mode="In" Type="Int32" />
+      <Parameter Name="MeanOfMeansPerInterval" Mode="In" Type="Int32" />
+      <Parameter Name="Marked" Mode="In" Type="Boolean" />
+      <Parameter Name="StatisticsType" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="DisplayStatisticsInsert">
+      <Parameter Name="IntervalCount" Mode="In" Type="Int32" />
+      <Parameter Name="TrimmedIntervalCount" Mode="In" Type="Int32" />
+      <Parameter Name="MeanPacketsPerInterval" Mode="In" Type="Decimal" />
+      <Parameter Name="StandardDeviation" Mode="In" Type="Decimal" />
+      <Parameter Name="MinPacketsPerInterval" Mode="In" Type="Int32" />
+      <Parameter Name="MaxPacketsPerInterval" Mode="In" Type="Int32" />
+      <Parameter Name="MeanOfMeans" Mode="In" Type="Decimal" />
+      <Parameter Name="MeanOfMeansStandardDeviation" Mode="In" Type="Decimal" />
+      <Parameter Name="Marked" Mode="In" Type="Boolean" />
+      <Parameter Name="BatchType" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <EntitySet Name="BatchIntervals" EntityType="COWE.PacketAnalysisModel.BatchInterval" />
+    <FunctionImport Name="DisplayStatisticsDelete">
+      <Parameter Name="Marked" Mode="In" Type="Boolean" />
+      <Parameter Name="BatchType" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <EntitySet Name="CumulativeIntervals" EntityType="COWE.PacketAnalysisModel.CumulativeInterval" />
+    <EntitySet Name="CumulativeProbabilityDistributions" EntityType="COWE.PacketAnalysisModel.CumulativeProbabilityDistribution" />
+    <EntitySet Name="Histograms" EntityType="COWE.PacketAnalysisModel.Histogram" />
+    <FunctionImport Name="CumulativeProbabilityDistributionDelete">
+      <Parameter Name="CaptureState" Mode="In" Type="Int32" />
+      <Parameter Name="BatchType" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="HistogramDelete">
+      <Parameter Name="CaptureState" Mode="In" Type="Int32" />
+      <Parameter Name="BatchType" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="CumulativeProbabilityDistributionInsert">
+      <Parameter Name="Interval" Mode="In" Type="Int32" />
+      <Parameter Name="Probability" Mode="In" Type="Decimal" />
+      <Parameter Name="CaptureState" Mode="In" Type="Int32" />
+      <Parameter Name="BatchType" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="HistogramInsert">
+      <Parameter Name="Interval" Mode="In" Type="Int32" />
+      <Parameter Name="Probability" Mode="In" Type="Decimal" />
+      <Parameter Name="CaptureState" Mode="In" Type="Int32" />
+      <Parameter Name="BatchType" Mode="In" Type="Int32" />
     </FunctionImport>
     <EntitySet Name="CaptureBatches" EntityType="COWE.PacketAnalysisModel.CaptureBatch" />
     <AssociationSet Name="FK_BatchInterval_CaptureBatch_CaptureBatchId" Association="COWE.PacketAnalysisModel.FK_BatchInterval_CaptureBatch_CaptureBatchId">
@@ -35,6 +85,17 @@
       <End Role="CaptureBatch" EntitySet="CaptureBatches" />
       <End Role="CapturePacket" EntitySet="CapturePackets" />
     </AssociationSet>
+    <FunctionImport Name="CaptureBatchUpdate_for_CaptureBatchId">
+      <Parameter Name="CaptureBatchId" Mode="In" Type="Int32" />
+      <Parameter Name="FileName" Mode="In" Type="String" />
+      <Parameter Name="Marked" Mode="In" Type="Boolean" />
+      <Parameter Name="Mean" Mode="In" Type="Decimal" />
+      <Parameter Name="TrimmedMean" Mode="In" Type="Decimal" />
+      <Parameter Name="Parsed" Mode="In" Type="Boolean" />
+      <Parameter Name="SingleStatistics" Mode="In" Type="Boolean" />
+      <Parameter Name="CumulativeStatistics" Mode="In" Type="Boolean" />
+    </FunctionImport>
+    <EntitySet Name="DisplayStatistics" EntityType="COWE.PacketAnalysisModel.DisplayStatistic" />
   </EntityContainer>
   <EntityType Name="BatchInterval">
     <Key>
@@ -48,13 +109,32 @@
   </EntityType>
   <EntityType Name="CumulativeInterval">
     <Key>
-      <PropertyRef Name="CumulativeIntervalNumber" />
-      <PropertyRef Name="PacketCount" />
-      <PropertyRef Name="Marked" />
+      <PropertyRef Name="CumulativeIntervalId" />
     </Key>
+    <Property Name="CumulativeIntervalId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="CumulativeIntervalNumber" Type="Int32" Nullable="false" />
     <Property Name="PacketCount" Type="Int32" Nullable="false" />
     <Property Name="Marked" Type="Boolean" Nullable="false" />
+  </EntityType>
+  <EntityType Name="CumulativeProbabilityDistribution">
+    <Key>
+      <PropertyRef Name="CumulativeProbabilityDistributionId" />
+    </Key>
+    <Property Name="CumulativeProbabilityDistributionId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Interval" Type="Int32" Nullable="false" />
+    <Property Name="Probability" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+    <Property Name="CaptureState" Type="Int32" Nullable="false" />
+    <Property Name="BatchType" Type="Int32" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Histogram">
+    <Key>
+      <PropertyRef Name="HistogramId" />
+    </Key>
+    <Property Name="HistogramId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Interval" Type="Int32" Nullable="false" />
+    <Property Name="Probability" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+    <Property Name="CaptureState" Type="Int32" Nullable="false" />
+    <Property Name="BatchType" Type="Int32" Nullable="false" />
   </EntityType>
   <EntityType Name="CaptureBatch">
     <Key>
@@ -65,6 +145,9 @@
     <Property Name="Marked" Type="Boolean" Nullable="false" />
     <Property Name="Mean" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
     <Property Name="TrimmedMean" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
+    <Property Name="Parsed" Type="Boolean" Nullable="false" />
+    <Property Name="SingleStatistics" Type="Boolean" Nullable="false" />
+    <Property Name="CumulativeStatistics" Type="Boolean" Nullable="false" />
     <NavigationProperty Name="BatchIntervals" Relationship="COWE.PacketAnalysisModel.FK_BatchInterval_CaptureBatch_CaptureBatchId" FromRole="CaptureBatch" ToRole="BatchInterval" />
     <NavigationProperty Name="CapturePackets" Relationship="COWE.PacketAnalysisModel.FK_CapturePacket_CaptureBatch_CaptureBatchId" FromRole="CaptureBatch" ToRole="CapturePacket" />
   </EntityType>
@@ -92,4 +175,20 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <EntityType Name="DisplayStatistic">
+    <Key>
+      <PropertyRef Name="DisplayStatisticId" />
+    </Key>
+    <Property Name="DisplayStatisticId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="IntervalCount" Type="Int32" Nullable="false" />
+    <Property Name="TrimmedIntervalCount" Type="Int32" Nullable="false" />
+    <Property Name="MeanPacketsPerInterval" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
+    <Property Name="StandardDeviation" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
+    <Property Name="MinPacketsPerInterval" Type="Int32" Nullable="false" />
+    <Property Name="MaxPacketsPerInterval" Type="Int32" Nullable="false" />
+    <Property Name="MeanOfMeans" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
+    <Property Name="MeanOfMeansStandardDeviation" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
+    <Property Name="Marked" Type="Boolean" Nullable="false" />
+    <Property Name="BatchType" Type="Int32" Nullable="false" />
+  </EntityType>
 </Schema>

@@ -18,5 +18,7 @@ namespace COWE.DomainClasses
         public decimal PacketCountStandardDeviation { get; set; }
         public int PacketCountMinimum { get; set; }
         public int PacketCountMaximum { get; set; }
+        public decimal MeanOfMeans { get; set; }
+        public decimal MeanOfMeansStandardDeviation { get; set; }
     }
 }

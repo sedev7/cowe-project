@@ -29,17 +29,17 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend6 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.AnalysisDataGridView = new System.Windows.Forms.DataGridView();
             this.SingleChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.CumulativeChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
@@ -49,14 +49,9 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.AnalysisMetricsGroupBox = new System.Windows.Forms.GroupBox();
-            this.HistogramBinSizeTextBox = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.ChartTypeComboBox = new System.Windows.Forms.ComboBox();
-            this.TrimIntervalsCheckBox = new System.Windows.Forms.CheckBox();
             this.RefreshButton = new System.Windows.Forms.Button();
-            this.AnalysisIntervalSizeTextBox = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.panel4 = new System.Windows.Forms.Panel();
             this.panel5 = new System.Windows.Forms.Panel();
             this.TrimSmallestBinsToolTip = new System.Windows.Forms.ToolTip(this.components);
@@ -78,69 +73,69 @@
             this.AnalysisDataGridView.AllowUserToAddRows = false;
             this.AnalysisDataGridView.AllowUserToDeleteRows = false;
             this.AnalysisDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle1.Padding = new System.Windows.Forms.Padding(2, 4, 2, 4);
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.AnalysisDataGridView.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle3.Padding = new System.Windows.Forms.Padding(2, 4, 2, 4);
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.AnalysisDataGridView.DefaultCellStyle = dataGridViewCellStyle3;
             this.AnalysisDataGridView.Location = new System.Drawing.Point(2, 3);
             this.AnalysisDataGridView.Name = "AnalysisDataGridView";
-            dataGridViewCellStyle2.Padding = new System.Windows.Forms.Padding(2);
-            this.AnalysisDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle4.Padding = new System.Windows.Forms.Padding(2);
+            this.AnalysisDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle4;
             this.AnalysisDataGridView.Size = new System.Drawing.Size(410, 146);
             this.AnalysisDataGridView.TabIndex = 0;
             // 
             // SingleChart
             // 
-            chartArea1.Name = "ChartArea1";
-            this.SingleChart.ChartAreas.Add(chartArea1);
+            chartArea4.Name = "ChartArea1";
+            this.SingleChart.ChartAreas.Add(chartArea4);
             this.SingleChart.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend1.Name = "Legend1";
-            this.SingleChart.Legends.Add(legend1);
+            legend4.Name = "Legend1";
+            this.SingleChart.Legends.Add(legend4);
             this.SingleChart.Location = new System.Drawing.Point(0, 0);
             this.SingleChart.Name = "SingleChart";
-            series1.ChartArea = "ChartArea1";
-            series1.Legend = "Legend1";
-            series1.Name = "Series1";
-            this.SingleChart.Series.Add(series1);
+            series4.ChartArea = "ChartArea1";
+            series4.Legend = "Legend1";
+            series4.Name = "Series1";
+            this.SingleChart.Series.Add(series4);
             this.SingleChart.Size = new System.Drawing.Size(242, 219);
             this.SingleChart.TabIndex = 1;
             this.SingleChart.Text = "chart1";
             // 
             // CumulativeChart
             // 
-            chartArea2.Name = "ChartArea1";
-            this.CumulativeChart.ChartAreas.Add(chartArea2);
+            chartArea5.Name = "ChartArea1";
+            this.CumulativeChart.ChartAreas.Add(chartArea5);
             this.CumulativeChart.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend2.Name = "Legend1";
-            this.CumulativeChart.Legends.Add(legend2);
+            legend5.Name = "Legend1";
+            this.CumulativeChart.Legends.Add(legend5);
             this.CumulativeChart.Location = new System.Drawing.Point(0, 0);
             this.CumulativeChart.Name = "CumulativeChart";
-            series2.ChartArea = "ChartArea1";
-            series2.Legend = "Legend1";
-            series2.Name = "Series1";
-            this.CumulativeChart.Series.Add(series2);
+            series5.ChartArea = "ChartArea1";
+            series5.Legend = "Legend1";
+            series5.Name = "Series1";
+            this.CumulativeChart.Series.Add(series5);
             this.CumulativeChart.Size = new System.Drawing.Size(242, 219);
             this.CumulativeChart.TabIndex = 2;
             this.CumulativeChart.Text = "chart2";
             // 
             // CdfChart
             // 
-            chartArea3.Name = "ChartArea1";
-            this.CdfChart.ChartAreas.Add(chartArea3);
+            chartArea6.Name = "ChartArea1";
+            this.CdfChart.ChartAreas.Add(chartArea6);
             this.CdfChart.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend3.Name = "Legend1";
-            this.CdfChart.Legends.Add(legend3);
+            legend6.Name = "Legend1";
+            this.CdfChart.Legends.Add(legend6);
             this.CdfChart.Location = new System.Drawing.Point(0, 0);
             this.CdfChart.Name = "CdfChart";
-            series3.ChartArea = "ChartArea1";
-            series3.Legend = "Legend1";
-            series3.Name = "Series1";
-            this.CdfChart.Series.Add(series3);
+            series6.ChartArea = "ChartArea1";
+            series6.Legend = "Legend1";
+            series6.Name = "Series1";
+            this.CdfChart.Series.Add(series6);
             this.CdfChart.Size = new System.Drawing.Size(242, 219);
             this.CdfChart.TabIndex = 3;
             this.CdfChart.Text = "chart3";
@@ -182,45 +177,22 @@
             // 
             // AnalysisMetricsGroupBox
             // 
-            this.AnalysisMetricsGroupBox.Controls.Add(this.HistogramBinSizeTextBox);
-            this.AnalysisMetricsGroupBox.Controls.Add(this.label3);
             this.AnalysisMetricsGroupBox.Controls.Add(this.label2);
             this.AnalysisMetricsGroupBox.Controls.Add(this.ChartTypeComboBox);
-            this.AnalysisMetricsGroupBox.Controls.Add(this.TrimIntervalsCheckBox);
             this.AnalysisMetricsGroupBox.Controls.Add(this.RefreshButton);
-            this.AnalysisMetricsGroupBox.Controls.Add(this.AnalysisIntervalSizeTextBox);
-            this.AnalysisMetricsGroupBox.Controls.Add(this.label1);
             this.AnalysisMetricsGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.AnalysisMetricsGroupBox.Location = new System.Drawing.Point(0, 0);
             this.AnalysisMetricsGroupBox.Name = "AnalysisMetricsGroupBox";
             this.AnalysisMetricsGroupBox.Size = new System.Drawing.Size(117, 205);
             this.AnalysisMetricsGroupBox.TabIndex = 1;
             this.AnalysisMetricsGroupBox.TabStop = false;
-            this.AnalysisMetricsGroupBox.Text = "Analysis Metrics";
-            // 
-            // HistogramBinSizeTextBox
-            // 
-            this.HistogramBinSizeTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.HistogramBinSizeTextBox.Location = new System.Drawing.Point(87, 45);
-            this.HistogramBinSizeTextBox.Name = "HistogramBinSizeTextBox";
-            this.HistogramBinSizeTextBox.Size = new System.Drawing.Size(27, 22);
-            this.HistogramBinSizeTextBox.TabIndex = 7;
-            this.HistogramBinSizeTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // label3
-            // 
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(5, 48);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(109, 35);
-            this.label3.TabIndex = 6;
-            this.label3.Text = "Hist Bin Size\r\n(packets/interval)";
+            this.AnalysisMetricsGroupBox.Text = "Chart Controls";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(7, 115);
+            this.label2.Location = new System.Drawing.Point(6, 40);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(77, 16);
             this.label2.TabIndex = 5;
@@ -229,53 +201,21 @@
             // ChartTypeComboBox
             // 
             this.ChartTypeComboBox.FormattingEnabled = true;
-            this.ChartTypeComboBox.Location = new System.Drawing.Point(8, 132);
+            this.ChartTypeComboBox.Location = new System.Drawing.Point(7, 57);
             this.ChartTypeComboBox.Name = "ChartTypeComboBox";
             this.ChartTypeComboBox.Size = new System.Drawing.Size(103, 21);
             this.ChartTypeComboBox.TabIndex = 4;
             // 
-            // TrimIntervalsCheckBox
-            // 
-            this.TrimIntervalsCheckBox.AutoSize = true;
-            this.TrimIntervalsCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.TrimIntervalsCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.TrimIntervalsCheckBox.Location = new System.Drawing.Point(4, 88);
-            this.TrimIntervalsCheckBox.Name = "TrimIntervalsCheckBox";
-            this.TrimIntervalsCheckBox.Size = new System.Drawing.Size(138, 20);
-            this.TrimIntervalsCheckBox.TabIndex = 3;
-            this.TrimIntervalsCheckBox.Text = "Trim Smallest Bins";
-            this.TrimIntervalsCheckBox.UseVisualStyleBackColor = true;
-            this.TrimIntervalsCheckBox.CheckedChanged += new System.EventHandler(this.TrimIntervalsCheckBox_CheckedChanged);
-            // 
             // RefreshButton
             // 
             this.RefreshButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.RefreshButton.Location = new System.Drawing.Point(25, 166);
+            this.RefreshButton.Location = new System.Drawing.Point(27, 104);
             this.RefreshButton.Name = "RefreshButton";
             this.RefreshButton.Size = new System.Drawing.Size(68, 24);
             this.RefreshButton.TabIndex = 2;
             this.RefreshButton.Text = "Refresh";
             this.RefreshButton.UseVisualStyleBackColor = true;
             this.RefreshButton.Click += new System.EventHandler(this.RefreshButton_Click);
-            // 
-            // AnalysisIntervalSizeTextBox
-            // 
-            this.AnalysisIntervalSizeTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.AnalysisIntervalSizeTextBox.Location = new System.Drawing.Point(86, 17);
-            this.AnalysisIntervalSizeTextBox.Name = "AnalysisIntervalSizeTextBox";
-            this.AnalysisIntervalSizeTextBox.Size = new System.Drawing.Size(27, 22);
-            this.AnalysisIntervalSizeTextBox.TabIndex = 1;
-            this.AnalysisIntervalSizeTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(5, 20);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(109, 16);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Interval Size (ms)";
             // 
             // panel4
             // 
@@ -330,17 +270,12 @@
         private System.Windows.Forms.DataVisualization.Charting.Chart CdfChart;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox AnalysisMetricsGroupBox;
-        private System.Windows.Forms.TextBox AnalysisIntervalSizeTextBox;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button RefreshButton;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel5;
         private System.Windows.Forms.Panel panel4;
-        private System.Windows.Forms.CheckBox TrimIntervalsCheckBox;
-        private System.Windows.Forms.TextBox HistogramBinSizeTextBox;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ComboBox ChartTypeComboBox;
         private System.Windows.Forms.ToolTip TrimSmallestBinsToolTip;

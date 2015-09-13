@@ -28,8 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.topPanel = new System.Windows.Forms.Panel();
+            this.AnalysisMetricsGroupBox = new System.Windows.Forms.GroupBox();
+            this.HistogramBinSizeTextBox = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.TrimIntervalsCheckBox = new System.Windows.Forms.CheckBox();
+            this.AnalysisIntervalSizeTextBox = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.label3 = new System.Windows.Forms.Label();
             this.IpAddressLabel = new System.Windows.Forms.Label();
@@ -92,7 +99,9 @@
             this.CientStatusStrip = new System.Windows.Forms.StatusStrip();
             this.ClientStatusToolStripProgressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.ClientStatusToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.TrimSmallestBinsToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.topPanel.SuspendLayout();
+            this.AnalysisMetricsGroupBox.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.bottonPanel.SuspendLayout();
@@ -117,6 +126,7 @@
             // 
             this.topPanel.BackColor = System.Drawing.SystemColors.Control;
             this.topPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.topPanel.Controls.Add(this.AnalysisMetricsGroupBox);
             this.topPanel.Controls.Add(this.groupBox3);
             this.topPanel.Controls.Add(this.label1);
             this.topPanel.Controls.Add(this.menuStrip1);
@@ -126,6 +136,72 @@
             this.topPanel.Size = new System.Drawing.Size(1013, 138);
             this.topPanel.TabIndex = 0;
             // 
+            // AnalysisMetricsGroupBox
+            // 
+            this.AnalysisMetricsGroupBox.Controls.Add(this.HistogramBinSizeTextBox);
+            this.AnalysisMetricsGroupBox.Controls.Add(this.label5);
+            this.AnalysisMetricsGroupBox.Controls.Add(this.TrimIntervalsCheckBox);
+            this.AnalysisMetricsGroupBox.Controls.Add(this.AnalysisIntervalSizeTextBox);
+            this.AnalysisMetricsGroupBox.Controls.Add(this.label4);
+            this.AnalysisMetricsGroupBox.Location = new System.Drawing.Point(848, 27);
+            this.AnalysisMetricsGroupBox.Name = "AnalysisMetricsGroupBox";
+            this.AnalysisMetricsGroupBox.Size = new System.Drawing.Size(158, 104);
+            this.AnalysisMetricsGroupBox.TabIndex = 6;
+            this.AnalysisMetricsGroupBox.TabStop = false;
+            this.AnalysisMetricsGroupBox.Text = "Analysis Metrics";
+            // 
+            // HistogramBinSizeTextBox
+            // 
+            this.HistogramBinSizeTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.HistogramBinSizeTextBox.Location = new System.Drawing.Point(124, 45);
+            this.HistogramBinSizeTextBox.Name = "HistogramBinSizeTextBox";
+            this.HistogramBinSizeTextBox.Size = new System.Drawing.Size(27, 22);
+            this.HistogramBinSizeTextBox.TabIndex = 7;
+            this.HistogramBinSizeTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.HistogramBinSizeTextBox.TextChanged += new System.EventHandler(this.HistogramBinSizeTextBox_TextChanged);
+            // 
+            // label5
+            // 
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Location = new System.Drawing.Point(5, 40);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(129, 35);
+            this.label5.TabIndex = 6;
+            this.label5.Text = "Histogram Bin Size\r\n(packets/interval)";
+            // 
+            // TrimIntervalsCheckBox
+            // 
+            this.TrimIntervalsCheckBox.AutoSize = true;
+            this.TrimIntervalsCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.TrimIntervalsCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TrimIntervalsCheckBox.Location = new System.Drawing.Point(4, 76);
+            this.TrimIntervalsCheckBox.Name = "TrimIntervalsCheckBox";
+            this.TrimIntervalsCheckBox.Size = new System.Drawing.Size(141, 20);
+            this.TrimIntervalsCheckBox.TabIndex = 3;
+            this.TrimIntervalsCheckBox.Text = "Trim Smallest Bins ";
+            this.TrimIntervalsCheckBox.UseVisualStyleBackColor = true;
+            this.TrimIntervalsCheckBox.CheckedChanged += new System.EventHandler(this.TrimIntervalsCheckBox_CheckedChanged);
+            // 
+            // AnalysisIntervalSizeTextBox
+            // 
+            this.AnalysisIntervalSizeTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AnalysisIntervalSizeTextBox.Location = new System.Drawing.Point(124, 17);
+            this.AnalysisIntervalSizeTextBox.Name = "AnalysisIntervalSizeTextBox";
+            this.AnalysisIntervalSizeTextBox.Size = new System.Drawing.Size(27, 22);
+            this.AnalysisIntervalSizeTextBox.TabIndex = 1;
+            this.AnalysisIntervalSizeTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.AnalysisIntervalSizeTextBox.TextChanged += new System.EventHandler(this.AnalysisIntervalSizeTextBox_TextChanged);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(5, 20);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(109, 16);
+            this.label4.TabIndex = 0;
+            this.label4.Text = "Interval Size (ms)";
+            // 
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.label3);
@@ -133,7 +209,7 @@
             this.groupBox3.Controls.Add(this.NetworkInterfaceComboBox);
             this.groupBox3.Controls.Add(this.label2);
             this.groupBox3.Controls.Add(this.SelectedNicLabel);
-            this.groupBox3.Location = new System.Drawing.Point(684, 29);
+            this.groupBox3.Location = new System.Drawing.Point(543, 27);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(301, 104);
             this.groupBox3.TabIndex = 5;
@@ -497,6 +573,7 @@
             this.FlooderIntervalTextBox.TabIndex = 6;
             this.FlooderIntervalTextBox.Text = "120";
             this.FlooderIntervalTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.FlooderIntervalTextBox.TextChanged += new System.EventHandler(this.FlooderIntervalTextBox_TextChanged);
             // 
             // FlooderTargetGroupBox
             // 
@@ -529,6 +606,7 @@
             this.TargetPortTextBox.TabIndex = 3;
             this.TargetPortTextBox.Text = "65536";
             this.TargetPortTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.TargetPortTextBox.TextChanged += new System.EventHandler(this.TargetPortTextBox_TextChanged);
             // 
             // DatabaseResetGroupBox
             // 
@@ -610,8 +688,8 @@
             this.FlooderStatusDataGridView.Location = new System.Drawing.Point(68, 116);
             this.FlooderStatusDataGridView.Name = "FlooderStatusDataGridView";
             this.FlooderStatusDataGridView.ReadOnly = true;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FlooderStatusDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FlooderStatusDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle3;
             this.FlooderStatusDataGridView.Size = new System.Drawing.Size(887, 153);
             this.FlooderStatusDataGridView.TabIndex = 0;
             this.FlooderStatusDataGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.FlooderStatusDataGridView_CellContentClick);
@@ -765,6 +843,8 @@
             this.Load += new System.EventHandler(this.Client_Load);
             this.topPanel.ResumeLayout(false);
             this.topPanel.PerformLayout();
+            this.AnalysisMetricsGroupBox.ResumeLayout(false);
+            this.AnalysisMetricsGroupBox.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
@@ -859,6 +939,13 @@
         private System.Windows.Forms.ToolStripStatusLabel ClientStatusToolStripStatusLabel;
         private System.Windows.Forms.ToolStripProgressBar ClientStatusToolStripProgressBar;
         private System.Windows.Forms.Button StartTimerButton;
+        private System.Windows.Forms.GroupBox AnalysisMetricsGroupBox;
+        private System.Windows.Forms.TextBox HistogramBinSizeTextBox;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.CheckBox TrimIntervalsCheckBox;
+        private System.Windows.Forms.TextBox AnalysisIntervalSizeTextBox;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.ToolTip TrimSmallestBinsToolTip;
     }
 }
 
