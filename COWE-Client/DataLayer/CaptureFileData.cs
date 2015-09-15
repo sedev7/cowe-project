@@ -170,6 +170,8 @@ namespace COWE.DataLayer
             bool _trimmed = trimmed;
             decimal meanOfMeans = 0;
             decimal sumOfMeans = 0;
+            int meansCount = 0;
+
             List<decimal> means = new List<decimal>();
 
             using (var context = new PacketAnalysisEntity())
@@ -187,12 +189,26 @@ namespace COWE.DataLayer
                              select m.Mean).ToList();
                 }
 
+                meansCount = means.Count;
+
                 foreach (var mean in means)
                 {
-                    sumOfMeans += mean;
+                    // Only include means that are greater than zero (i.e., don't 
+                    // include batch means for batches where mean has not yet  been
+                    // calculated) - note: this should only happen when testing
+                    // (i.e., multiple capture batch files, each being processed serially)
+                    if (mean > 0)
+                    {
+                        sumOfMeans += mean;
+                    }
+                    else
+                    {
+                        // Mean is zero, don't include it
+                        meansCount--;
+                    }
                 }
 
-                meanOfMeans = sumOfMeans / means.Count;
+                meanOfMeans = sumOfMeans / (meansCount <= 1 ? 1 : meansCount);
             }
 
             return meanOfMeans;
@@ -254,10 +270,15 @@ namespace COWE.DataLayer
         {
             int meanCount = 0;
 
+            // Get count of files with mean already calculated (i.e., mean must be greater
+            // than zero, as opposed to files in CaptureBatch for which a mean has not yet
+            // been calculated) - note: this should only happen when testing (i.e., multiple
+            // capture batch files, each being processed serially)
             using (var context = new PacketAnalysisEntity())
             {
                 var count = (from c in context.CaptureBatches
-                         select c.Mean).Count();
+                             where c.Mean > 0
+                             select c.Mean).Count();
 
                 meanCount = Convert.ToInt32(count);
             }

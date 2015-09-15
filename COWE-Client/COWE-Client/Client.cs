@@ -678,7 +678,7 @@ namespace COWE.Client
                     BatchIntervalEngine biEngine = new BatchIntervalEngine(DbConnectionString, _ParsedFilesPath, captureFileName, 5, InterarrivalInterval.GetIntervalMilliSeconds());
                     biEngine.ProcessNewBatchIntervals();
 
-                    AnalysisEngine analysisEngine = new AnalysisEngine(AnalysisConfiguration.TrimSmallPackets, AnalysisConfiguration.HistogramBinSize, captureFileName);
+                    AnalysisEngine analysisEngine = new AnalysisEngine(AnalysisConfiguration.TrimSmallPackets, AnalysisConfiguration.HistogramBinSize, captureFileName, file.Marked);
                     analysisEngine.CalculateSingleBatchStatistics();
                     analysisEngine.CalculateCumulativeBatchStatistics();
 

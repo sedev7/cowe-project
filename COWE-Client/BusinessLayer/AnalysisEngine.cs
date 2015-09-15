@@ -16,6 +16,7 @@ namespace COWE.BusinessLayer
         bool _TrimZeroPacketIntervals = false;
         int _HistogramBinSize = 0;
         string _CaptureFileName = string.Empty;
+        CaptureState _CaptureState = CaptureState.Unknown;
 
         public AnalysisEngine() { }
 
@@ -25,11 +26,12 @@ namespace COWE.BusinessLayer
             this._TrimZeroPacketIntervals = trimZeroPacketIntervals;
         }
 
-        public AnalysisEngine(bool trimZeroPacketIntervals, int histogramBinSize, string captureFileName)
+        public AnalysisEngine(bool trimZeroPacketIntervals, int histogramBinSize, string captureFileName, CaptureState captureState)
         {
             this._HistogramBinSize = histogramBinSize;
             this._TrimZeroPacketIntervals = trimZeroPacketIntervals;
             this._CaptureFileName = captureFileName;
+            this._CaptureState = captureState;
         }
 
         /*******************************************************************************************
@@ -55,7 +57,8 @@ namespace COWE.BusinessLayer
             //lastBatchId = pcp.GetLastCaptureBatchId();
             CurrentCaptureFile captureFile = new CurrentCaptureFile();
             CaptureFileData cfd = new CaptureFileData();
-            captureFile = cfd.GetLastCaptureBatchRecord();
+            //captureFile = cfd.GetLastCaptureBatchRecord();
+            captureFile = cfd.GetCurrentCaptureFile(_CaptureFileName);
 
             BindingList<BatchIntervalMarked> batchIntervals = new BindingList<BatchIntervalMarked>();
 
@@ -159,19 +162,19 @@ namespace COWE.BusinessLayer
              *        - Have to calculate CumulativeStats first, then update MeanOfMeans and StdDev
              */
 
-            if (markedBatchIntervals.Count > 0)
+            if (_CaptureState == CaptureState.Marked && markedBatchIntervals.Count > 0)
             {
                 markedCumulativeStats = CalculateBatchStatistics(markedBatchIntervals, CaptureState.Marked, BatchType.Cumulative);
             }
 
-            if (unmarkedBatchIntervals.Count > 0)
+            if (_CaptureState == CaptureState.Unmarked && unmarkedBatchIntervals.Count > 0)
             {
                 unmarkedCumulativeStats = CalculateBatchStatistics(unmarkedBatchIntervals, CaptureState.Unmarked, BatchType.Cumulative);
             }
 
             if (pcp.GetMeanCount() > 1)
             {
-                if (markedBatchIntervals.Count > 0)
+                if (_CaptureState == CaptureState.Marked && markedBatchIntervals.Count > 0)
                 {
                     //markedMeanOfMeans = pcp.CalculateMeanOfMeans(CaptureState.Marked, AnalysisConfiguration.TrimSmallPackets ? true : false);
                     markedCumulativeStats.MeanOfMeans = pcp.CalculateMeanOfMeans(CaptureState.Marked, AnalysisConfiguration.TrimSmallPackets ? true : false);
@@ -180,7 +183,7 @@ namespace COWE.BusinessLayer
                     SaveDisplayStatistics(markedCumulativeStats, pcp.GetCaptureBatchId(_CaptureFileName), CaptureState.Marked, BatchType.Cumulative, true);
                 }
 
-                if (unmarkedBatchIntervals.Count > 0)
+                if (_CaptureState == CaptureState.Unmarked && unmarkedBatchIntervals.Count > 0)
                 {
                     //unmarkedMeanOfMeans = pcp.CalculateMeanOfMeans(CaptureState.Unmarked, AnalysisConfiguration.TrimSmallPackets ? true : false);
                     unmarkedCumulativeStats.MeanOfMeans = pcp.CalculateMeanOfMeans(CaptureState.Unmarked, AnalysisConfiguration.TrimSmallPackets ? true : false);
@@ -192,7 +195,7 @@ namespace COWE.BusinessLayer
             else
             {
                 // Only one batch - use the mean and standard deviation from the first batch
-                if (markedBatchIntervals.Count > 0)
+                if (_CaptureState == CaptureState.Marked && markedBatchIntervals.Count > 0)
                 {
                     //markedMeanOfMeans = pcp.GetMean(CaptureState.Marked, _TrimZeroPacketIntervals);
                     //markedMeanOfMeans = markedCumulativeStats.PacketCountMean;
@@ -202,7 +205,7 @@ namespace COWE.BusinessLayer
                     SaveDisplayStatistics(markedCumulativeStats, pcp.GetCaptureBatchId(_CaptureFileName), CaptureState.Marked, BatchType.Cumulative, true);
                 }
 
-                if (unmarkedBatchIntervals.Count > 0)
+                if (_CaptureState == CaptureState.Unmarked && unmarkedBatchIntervals.Count > 0)
                 {
                     //unmarkedMeanOfMeans = pcp.GetMean(CaptureState.Unmarked, _TrimZeroPacketIntervals);
                     //unmarkedMeanOfMeans = unmarkedCumulativeStats.PacketCountMean;
@@ -326,7 +329,7 @@ namespace COWE.BusinessLayer
             captureFile = pcp.GetCurrentCaptureFile(_CaptureFileName);
             int captureBatchId = captureFile.CaptureBatchId;
 
-            if (captureBatchId != 0)
+            if (batchType == BatchType.Single && captureBatchId != 0)
             {
                 try
                 {
