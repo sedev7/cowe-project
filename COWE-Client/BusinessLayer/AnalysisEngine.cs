@@ -16,6 +16,8 @@ namespace COWE.BusinessLayer
         bool _TrimZeroPacketIntervals = false;
         int _HistogramBinSize = 0;
         string _CaptureFileName = string.Empty;
+
+        BatchType _BatchType = BatchType.Unknown;
         CaptureState _CaptureState = CaptureState.Unknown;
 
         public AnalysisEngine() { }
@@ -59,6 +61,9 @@ namespace COWE.BusinessLayer
             CaptureFileData cfd = new CaptureFileData();
             //captureFile = cfd.GetLastCaptureBatchRecord();
             captureFile = cfd.GetCurrentCaptureFile(_CaptureFileName);
+
+            // Set the global variable
+            _CaptureState = captureFile.Marked;
 
             BindingList<BatchIntervalMarked> batchIntervals = new BindingList<BatchIntervalMarked>();
 
@@ -248,7 +253,7 @@ namespace COWE.BusinessLayer
             BindingList<BatchIntervalMarked> batchIntervalsTrimmed = new BindingList<BatchIntervalMarked>();
             foreach (BatchIntervalMarked bim in batchIntervals)
             {
-                if (bim.PacketCount > Convert.ToInt32(AnalysisConfiguration.HistogramBinSize))
+                if (bim.PacketCount > AnalysisConfiguration.HistogramBinSize)
                 {
                     batchIntervalsTrimmed.Add(bim);
                 }
@@ -389,6 +394,131 @@ namespace COWE.BusinessLayer
                     }
                     break;
             }
+        }
+
+        /*********************************************************************************************
+         * 
+         * Need to split this into two methods according to BatchType, then call the method below and
+         * pass in BatchType and BatchIntervals (single or cumulative).  Are batch intervals the same type???
+         * 
+         *********************************************************************************************/
+
+        public void CalculateSingleHistogramData()
+        {
+            ProcessCapturePackets pcp = new ProcessCapturePackets();
+            BindingList<BatchIntervalMarked> batchIntervals = new BindingList<BatchIntervalMarked>();
+
+            // Get the batch intervals
+            CurrentCaptureFile captureFile = new CurrentCaptureFile();
+            captureFile = pcp.GetCurrentCaptureFile(_CaptureFileName);
+            batchIntervals = pcp.GetMarkedBatchIntervals(captureFile.CaptureBatchId);
+
+            switch (_CaptureState)
+            {
+                case CaptureState.Marked:
+                    CalculateHistogramDataByType(batchIntervals, BatchType.Single, CaptureState.Marked);
+                    break;
+                case CaptureState.Unmarked:
+                    CalculateHistogramDataByType(batchIntervals, BatchType.Single, CaptureState.Unmarked);
+                    break;
+            }
+        }
+
+        public void CalculateCumulativeHistogramData()
+        {
+            // Delete existing cumulative histogram data - it will be replaced with new data
+            HistogramData hd = new HistogramData(BatchType.Cumulative, _CaptureState);
+            hd.DeleteCumulativeHistogramData();
+
+            ProcessCapturePackets pcp = new ProcessCapturePackets();
+            BindingList<BatchIntervalMarked> batchIntervals = new BindingList<BatchIntervalMarked>();
+
+            // Get the batch intervals
+            BindingList<BatchIntervalMarked> unmarkedBatchIntervals = new BindingList<BatchIntervalMarked>();
+            BindingList<BatchIntervalMarked> markedBatchIntervals = new BindingList<BatchIntervalMarked>();
+            BindingList<CumulativeInterval> cumulativeIntervals = new BindingList<CumulativeInterval>();
+            cumulativeIntervals = pcp.GetCumulativeIntervals();
+
+            foreach (CumulativeInterval ci in cumulativeIntervals)
+            {
+                if (ci.Marked)
+                {
+                    BatchIntervalMarked bim = new BatchIntervalMarked();
+                    bim.BatchIntervalId = 0;
+                    bim.CaptureBatchId = 0;
+                    bim.IntervalNumber = ci.CumulativeIntervalNumber;
+                    bim.Marked = CaptureState.Marked;
+                    bim.PacketCount = ci.PacketCount;
+                    markedBatchIntervals.Add(bim);
+                }
+                else
+                {
+                    BatchIntervalMarked bim = new BatchIntervalMarked();
+                    bim.BatchIntervalId = 0;
+                    bim.CaptureBatchId = 0;
+                    bim.IntervalNumber = ci.CumulativeIntervalNumber;
+                    bim.Marked = CaptureState.Unmarked;
+                    bim.PacketCount = ci.PacketCount;
+                    unmarkedBatchIntervals.Add(bim);
+                }
+            }
+
+            switch (_CaptureState)
+            {
+                case CaptureState.Marked:
+                    CalculateHistogramDataByType(markedBatchIntervals, BatchType.Cumulative, CaptureState.Marked);
+                    break;
+                case CaptureState.Unmarked:
+                    CalculateHistogramDataByType(unmarkedBatchIntervals, BatchType.Cumulative, CaptureState.Unmarked);
+                    break;
+            }
+        }
+       
+        private void CalculateHistogramDataByType(BindingList<BatchIntervalMarked> batchIntervalsCollection, BatchType batchType, CaptureState captureState)
+        {
+            //ProcessCapturePackets pcp = new ProcessCapturePackets();
+            BindingList<BatchIntervalMarked> batchIntervals = new BindingList<BatchIntervalMarked>();
+            batchIntervals = batchIntervalsCollection;
+
+            //CurrentCaptureFile captureFile = new CurrentCaptureFile();
+            //captureFile = pcp.GetCurrentCaptureFile(_CaptureFileName);
+
+            // Get batch intervals
+            //batchIntervals = pcp.GetMarkedBatchIntervals(captureFile.CaptureBatchId);
+            ////CalculateHistogram histogram = new CalculateHistogram();
+            ////Dictionary<int, int> histValues = new Dictionary<int, int>();
+
+            ////BindingList<CapturePacket> capturePackets = new BindingList<CapturePacket>();
+            ////capturePackets = pcp.GetCapturePackets(_CaptureFileName);
+            ////histValues = histogram.CalculateHistogramValues(capturePackets);
+
+            //Dictionary<int, decimal> probabilities = new CalculateProbability(histValues).GetProbabilityValues();
+            //SortedDictionary<int, decimal> probabilities = new CalculateProbability(markedIntervals).GetProbabilityByPacketRange();
+
+            SortedDictionary<int, decimal> histogramProbabilities = new SortedDictionary<int, decimal>();
+            //SortedDictionary<int, decimal> _CumulativeUnmarkedProbabilities = new SortedDictionary<int, decimal>();
+
+            int histogramBinSize = AnalysisConfiguration.HistogramBinSize;
+            //SortedDictionary<int, decimal> markedProbabilities = new CalculateProbability(markedBatchIntervals).GetProbabilityByPacketRange(_trimZeroPacketIntervals, histogramBinSize);
+            //SortedDictionary<int, decimal> unmarkedProbabilities = new CalculateProbability(unmarkedBatchIntervals).GetProbabilityByPacketRange(_trimZeroPacketIntervals, histogramBinSize);
+            histogramProbabilities = new CalculateProbability(batchIntervals).GetProbabilityByPacketRange(_TrimZeroPacketIntervals, histogramBinSize);
+            //_CumulativeUnmarkedProbabilities = new CalculateProbability(unmarkedBatchIntervals).GetProbabilityByPacketRange(_trimZeroPacketIntervals, histogramBinSize);
+
+            // Convert histogram probabilities to Histogram type collection
+            BindingList<Histogram> histogramProbabilityData = new BindingList<Histogram>();
+            foreach (KeyValuePair<int, decimal> data in histogramProbabilities)
+            {
+                Histogram h = new Histogram();
+                h.Interval = data.Key;
+                h.Probability = data.Value;
+                h.BatchType = Convert.ToInt32(batchType);
+                h.CaptureState = Convert.ToInt32(captureState);
+                histogramProbabilityData.Add(h);
+            }
+
+            // Save histogram data
+            HistogramData hd = new HistogramData(histogramProbabilityData);
+            hd.InsertHistogramData();
         }
     }
 }

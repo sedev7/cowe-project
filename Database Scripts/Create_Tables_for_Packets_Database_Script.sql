@@ -289,7 +289,7 @@ PRINT '  Creating Histogram table...';
 CREATE TABLE [COWE].[Histogram](
 	[HistogramId] [int] IDENTITY(1,1) NOT NULL,
 	[Interval] [int] NOT NULL,
-	[Probability] [decimal] NOT NULL,
+	[Probability] [decimal](28,10) NOT NULL,
 	[CaptureState] [int] NOT NULL,		-- Marked, Unmarked
 	[BatchType] [int] NOT NULL			-- Single, Cumulative
  CONSTRAINT [PK_Histogram_HistogramId] PRIMARY KEY CLUSTERED 

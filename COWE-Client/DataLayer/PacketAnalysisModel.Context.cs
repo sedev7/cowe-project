@@ -32,9 +32,9 @@ namespace COWE.DataLayer
         public virtual DbSet<BatchInterval> BatchIntervals { get; set; }
         public virtual DbSet<CumulativeInterval> CumulativeIntervals { get; set; }
         public virtual DbSet<CumulativeProbabilityDistribution> CumulativeProbabilityDistributions { get; set; }
-        public virtual DbSet<Histogram> Histograms { get; set; }
         public virtual DbSet<CaptureBatch> CaptureBatches { get; set; }
         public virtual DbSet<DisplayStatistic> DisplayStatistics { get; set; }
+        public virtual DbSet<Histogram> Histograms { get; set; }
     
         public virtual int CaptureBatchInsert(string fileName, Nullable<bool> marked, Nullable<decimal> mean, Nullable<decimal> trimmedMean, ObjectParameter newCaptureBatchId)
         {

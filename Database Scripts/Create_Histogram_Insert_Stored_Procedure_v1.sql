@@ -3,9 +3,6 @@
 -- J. Savage  08-29-2015
 -- COWE Thesis/Research Project (CISE)
 --
--- v1 09-17-2015:
---  - Add out parameter to return new HistogramId value
---
 -- v1 08-29-2015:
 --  - First version
 --
@@ -49,11 +46,11 @@ PRINT 'Creating procedure [HistogramInsert]...'
 GO
 
 CREATE PROCEDURE [COWE].[HistogramInsert]
-	@Interval int
-	,@Probability decimal (28,10)
-	,@CaptureState int
-	,@BatchType int
-	--,@NewHistogramId int out
+	@Interval int,
+	@Probability decimal (28,10),
+	@CaptureState int,
+	@BatchType int
+
 AS 
 
 BEGIN
@@ -66,9 +63,6 @@ SET ROWCOUNT 0
 		INSERT INTO [COWE].[Histogram] (Interval, Probability, CaptureState, BatchType)
 		VALUES (@Interval,	@Probability, @CaptureState, @BatchType);
 		COMMIT;
-
-		---- Return the new HistogramId value
-		--SELECT SCOPE_IDENTITY() AS NewHistogramId WHERE @@ROWCOUNT > 0;
 
 	END TRY
 

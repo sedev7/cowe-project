@@ -78,7 +78,7 @@
           </Key>
           <Property Name="HistogramId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Interval" Type="int" Nullable="false" />
-          <Property Name="Probability" Type="decimal" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="Probability" Type="decimal" Precision="28" Scale="10" Nullable="false" />
           <Property Name="CaptureState" Type="int" Nullable="false" />
           <Property Name="BatchType" Type="int" Nullable="false" />
         </EntityType>
@@ -240,7 +240,6 @@
           </FunctionImport>
           <EntitySet Name="CumulativeIntervals" EntityType="COWE.PacketAnalysisModel.CumulativeInterval" />
           <EntitySet Name="CumulativeProbabilityDistributions" EntityType="COWE.PacketAnalysisModel.CumulativeProbabilityDistribution" />
-          <EntitySet Name="Histograms" EntityType="COWE.PacketAnalysisModel.Histogram" />
           <FunctionImport Name="CumulativeProbabilityDistributionDelete">
             <Parameter Name="CaptureState" Mode="In" Type="Int32" />
             <Parameter Name="BatchType" Mode="In" Type="Int32" />
@@ -281,6 +280,7 @@
             <Parameter Name="CumulativeStatistics" Mode="In" Type="Boolean" />
           </FunctionImport>
           <EntitySet Name="DisplayStatistics" EntityType="COWE.PacketAnalysisModel.DisplayStatistic" />
+          <EntitySet Name="Histograms" EntityType="COWE.PacketAnalysisModel.Histogram" />
           </EntityContainer>
         <EntityType Name="BatchInterval">
           <Key>
@@ -306,16 +306,6 @@
             <PropertyRef Name="CumulativeProbabilityDistributionId" />
           </Key>
           <Property Name="CumulativeProbabilityDistributionId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Interval" Type="Int32" Nullable="false" />
-          <Property Name="Probability" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <Property Name="CaptureState" Type="Int32" Nullable="false" />
-          <Property Name="BatchType" Type="Int32" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Histogram">
-          <Key>
-            <PropertyRef Name="HistogramId" />
-          </Key>
-          <Property Name="HistogramId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Interval" Type="Int32" Nullable="false" />
           <Property Name="Probability" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="CaptureState" Type="Int32" Nullable="false" />
@@ -374,6 +364,16 @@
           <Property Name="MeanOfMeans" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
           <Property Name="MeanOfMeansStandardDeviation" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
           <Property Name="Marked" Type="Boolean" Nullable="false" />
+          <Property Name="BatchType" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Histogram">
+          <Key>
+            <PropertyRef Name="HistogramId" />
+          </Key>
+          <Property Name="HistogramId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Interval" Type="Int32" Nullable="false" />
+          <Property Name="Probability" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
+          <Property Name="CaptureState" Type="Int32" Nullable="false" />
           <Property Name="BatchType" Type="Int32" Nullable="false" />
         </EntityType>
         </Schema>
@@ -435,31 +435,6 @@
                   <ScalarProperty Name="CaptureState" ParameterName="CaptureState" />
                 </DeleteFunction>
                 <InsertFunction FunctionName="PacketAnalysisModel.Store.CumulativeProbabilityDistributionInsert">
-                  <ScalarProperty Name="BatchType" ParameterName="BatchType" />
-                  <ScalarProperty Name="CaptureState" ParameterName="CaptureState" />
-                  <ScalarProperty Name="Probability" ParameterName="Probability" />
-                  <ScalarProperty Name="Interval" ParameterName="Interval" />
-                </InsertFunction>
-              </ModificationFunctionMapping>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Histograms">
-            <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.Histogram">
-              <MappingFragment StoreEntitySet="Histogram">
-                <ScalarProperty Name="BatchType" ColumnName="BatchType" />
-                <ScalarProperty Name="CaptureState" ColumnName="CaptureState" />
-                <ScalarProperty Name="Probability" ColumnName="Probability" />
-                <ScalarProperty Name="Interval" ColumnName="Interval" />
-                <ScalarProperty Name="HistogramId" ColumnName="HistogramId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-            <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.Histogram">
-              <ModificationFunctionMapping>
-                <DeleteFunction FunctionName="PacketAnalysisModel.Store.HistogramDelete">
-                  <ScalarProperty Name="BatchType" ParameterName="BatchType" />
-                  <ScalarProperty Name="CaptureState" ParameterName="CaptureState" />
-                </DeleteFunction>
-                <InsertFunction FunctionName="PacketAnalysisModel.Store.HistogramInsert">
                   <ScalarProperty Name="BatchType" ParameterName="BatchType" />
                   <ScalarProperty Name="CaptureState" ParameterName="CaptureState" />
                   <ScalarProperty Name="Probability" ParameterName="Probability" />
@@ -542,6 +517,17 @@
                   <ScalarProperty Name="Marked" ParameterName="Marked" />
                 </DeleteFunction>
               </ModificationFunctionMapping>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Histograms">
+            <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.Histogram">
+              <MappingFragment StoreEntitySet="Histogram">
+                <ScalarProperty Name="BatchType" ColumnName="BatchType" />
+                <ScalarProperty Name="CaptureState" ColumnName="CaptureState" />
+                <ScalarProperty Name="Probability" ColumnName="Probability" />
+                <ScalarProperty Name="Interval" ColumnName="Interval" />
+                <ScalarProperty Name="HistogramId" ColumnName="HistogramId" />
+              </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
         </EntityContainerMapping>

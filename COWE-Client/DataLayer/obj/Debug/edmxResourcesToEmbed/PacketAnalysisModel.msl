@@ -62,31 +62,6 @@
         </ModificationFunctionMapping>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <EntitySetMapping Name="Histograms">
-      <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.Histogram">
-        <MappingFragment StoreEntitySet="Histogram">
-          <ScalarProperty Name="BatchType" ColumnName="BatchType" />
-          <ScalarProperty Name="CaptureState" ColumnName="CaptureState" />
-          <ScalarProperty Name="Probability" ColumnName="Probability" />
-          <ScalarProperty Name="Interval" ColumnName="Interval" />
-          <ScalarProperty Name="HistogramId" ColumnName="HistogramId" />
-        </MappingFragment>
-      </EntityTypeMapping>
-      <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.Histogram">
-        <ModificationFunctionMapping>
-          <DeleteFunction FunctionName="PacketAnalysisModel.Store.HistogramDelete">
-            <ScalarProperty Name="BatchType" ParameterName="BatchType" />
-            <ScalarProperty Name="CaptureState" ParameterName="CaptureState" />
-          </DeleteFunction>
-          <InsertFunction FunctionName="PacketAnalysisModel.Store.HistogramInsert">
-            <ScalarProperty Name="BatchType" ParameterName="BatchType" />
-            <ScalarProperty Name="CaptureState" ParameterName="CaptureState" />
-            <ScalarProperty Name="Probability" ParameterName="Probability" />
-            <ScalarProperty Name="Interval" ParameterName="Interval" />
-          </InsertFunction>
-        </ModificationFunctionMapping>
-      </EntityTypeMapping>
-    </EntitySetMapping>
     <FunctionImportMapping FunctionImportName="CumulativeProbabilityDistributionDelete" FunctionName="PacketAnalysisModel.Store.CumulativeProbabilityDistributionDelete" />
     <FunctionImportMapping FunctionImportName="HistogramDelete" FunctionName="PacketAnalysisModel.Store.HistogramDelete" />
     <FunctionImportMapping FunctionImportName="CumulativeProbabilityDistributionInsert" FunctionName="PacketAnalysisModel.Store.CumulativeProbabilityDistributionInsert" />
@@ -161,6 +136,17 @@
             <ScalarProperty Name="Marked" ParameterName="Marked" />
           </DeleteFunction>
         </ModificationFunctionMapping>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Histograms">
+      <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.Histogram">
+        <MappingFragment StoreEntitySet="Histogram">
+          <ScalarProperty Name="BatchType" ColumnName="BatchType" />
+          <ScalarProperty Name="CaptureState" ColumnName="CaptureState" />
+          <ScalarProperty Name="Probability" ColumnName="Probability" />
+          <ScalarProperty Name="Interval" ColumnName="Interval" />
+          <ScalarProperty Name="HistogramId" ColumnName="HistogramId" />
+        </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
   </EntityContainerMapping>

@@ -9,11 +9,11 @@
         <EntityTypeShape EntityType="COWE.PacketAnalysisModel.BatchInterval" Width="1.5" PointX="3" PointY="0.75" />
         <EntityTypeShape EntityType="COWE.PacketAnalysisModel.CumulativeInterval" Width="2" PointX="3" PointY="3.75" />
         <EntityTypeShape EntityType="COWE.PacketAnalysisModel.CumulativeProbabilityDistribution" Width="2.5" PointX="5.125" PointY="0.75" />
-        <EntityTypeShape EntityType="COWE.PacketAnalysisModel.Histogram" Width="1.5" PointX="7.875" PointY="0.75" />
         <EntityTypeShape EntityType="COWE.PacketAnalysisModel.CaptureBatch" Width="1.5" PointX="0.75" PointY="0.5" />
         <AssociationConnector Association="COWE.PacketAnalysisModel.FK_BatchInterval_CaptureBatch_CaptureBatchId" />
         <AssociationConnector Association="COWE.PacketAnalysisModel.FK_CapturePacket_CaptureBatch_CaptureBatchId" />
         <EntityTypeShape EntityType="COWE.PacketAnalysisModel.DisplayStatistic" Width="1.5" PointX="6.375" PointY="3.75" />
+        <EntityTypeShape EntityType="COWE.PacketAnalysisModel.Histogram" Width="1.5" PointX="8.625" PointY="0.75" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

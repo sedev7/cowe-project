@@ -73,7 +73,7 @@
     </Key>
     <Property Name="HistogramId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Interval" Type="int" Nullable="false" />
-    <Property Name="Probability" Type="decimal" Precision="18" Scale="0" Nullable="false" />
+    <Property Name="Probability" Type="decimal" Precision="28" Scale="10" Nullable="false" />
     <Property Name="CaptureState" Type="int" Nullable="false" />
     <Property Name="BatchType" Type="int" Nullable="false" />
   </EntityType>

@@ -16,8 +16,14 @@ GO
 /*                                                                            */
 /******************************************************************************/
 
+PRINT 'Dropping Procedure [DisplayStatisticsInsert]...'
 IF OBJECT_ID(N'[COWE].[DisplayStatisticsInsert]', N'P') IS NOT NULL
-	DROP PROCEDURE [COWE].[DisplayStatisticsInsert];
+	BEGIN
+		DROP PROCEDURE [COWE].[DisplayStatisticsInsert];
+		PRINT '  Procedure successfully dropped'
+	END
+ELSE
+	PRINT '  => Procedure not found!'
 GO
 
 SET ANSI_NULLS ON
@@ -35,6 +41,8 @@ GO
 /*                                                                            */
 /******************************************************************************/
 
+PRINT 'Creating procedure [DisplayStatisticsInsert]...'
+GO
 CREATE PROCEDURE [COWE].[DisplayStatisticsInsert]
 	@IntervalCount int,
 	@TrimmedIntervalCount int,
@@ -73,4 +81,6 @@ SET ROWCOUNT 0
 
 	END CATCH
 END
+GO
+PRINT '  Procedure successfully created'
 GO

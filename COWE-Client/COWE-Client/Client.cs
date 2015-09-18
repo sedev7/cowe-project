@@ -681,6 +681,8 @@ namespace COWE.Client
                     AnalysisEngine analysisEngine = new AnalysisEngine(AnalysisConfiguration.TrimSmallPackets, AnalysisConfiguration.HistogramBinSize, captureFileName, file.Marked);
                     analysisEngine.CalculateSingleBatchStatistics();
                     analysisEngine.CalculateCumulativeBatchStatistics();
+                    analysisEngine.CalculateSingleHistogramData();
+                    analysisEngine.CalculateCumulativeHistogramData();
 
                     biEngine = null;
                     analysisEngine = null;

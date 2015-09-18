@@ -33,19 +33,23 @@ namespace COWE.DataLayer
             {
                 foreach (Histogram h in this._Histogram)
                 {
-                    context.Histograms.Add(h);    
+                    context.Histograms.Add(h);
+                    //context.SaveChanges();
                 }
                 
                 context.SaveChanges();
             }
         }
 
-        public void DeleteHistogramData()
+        public void DeleteCumulativeHistogramData()
         {
+            int batchType = Convert.ToInt32(this._BatchType);
+            int captureState = Convert.ToInt32(this._CaptureState);
+
             using (var context = new PacketAnalysisEntity())
             {
                 var deleteHistogram = (from h in context.Histograms
-                                       where h.BatchType == Convert.ToInt32(this._BatchType) && h.CaptureState == Convert.ToInt32(this._CaptureState)
+                                       where h.BatchType == batchType && h.CaptureState == captureState
                                        select h).ToList();
 
                 foreach (Histogram h in deleteHistogram)

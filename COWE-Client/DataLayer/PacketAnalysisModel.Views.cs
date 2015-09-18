@@ -11,7 +11,7 @@ using System.Data.Entity.Infrastructure.MappingViews;
 
 [assembly: DbMappingViewCacheTypeAttribute(
     typeof(COWE.DataLayer.PacketAnalysisEntity),
-    typeof(Edm_EntityMappingGeneratedViews.ViewsForBaseEntitySets6be6157f3ee2c22940da2d46de026e3a1b067610e7d7d0a250318096fd7c451a))]
+    typeof(Edm_EntityMappingGeneratedViews.ViewsForBaseEntitySetsbb208a1e647b0f44bf92d04690e376250c868097e9c5e2c0124741a7863271bc))]
 
 namespace Edm_EntityMappingGeneratedViews
 {
@@ -23,14 +23,14 @@ namespace Edm_EntityMappingGeneratedViews
     /// Implements a mapping view cache.
     /// </summary>
     [GeneratedCode("Entity Framework Power Tools", "0.9.0.0")]
-    internal sealed class ViewsForBaseEntitySets6be6157f3ee2c22940da2d46de026e3a1b067610e7d7d0a250318096fd7c451a : DbMappingViewCache
+    internal sealed class ViewsForBaseEntitySetsbb208a1e647b0f44bf92d04690e376250c868097e9c5e2c0124741a7863271bc : DbMappingViewCache
     {
         /// <summary>
         /// Gets a hash value computed over the mapping closure.
         /// </summary>
         public override string MappingHashValue
         {
-            get { return "6be6157f3ee2c22940da2d46de026e3a1b067610e7d7d0a250318096fd7c451a"; }
+            get { return "bb208a1e647b0f44bf92d04690e376250c868097e9c5e2c0124741a7863271bc"; }
         }
 
         /// <summary>
@@ -97,22 +97,22 @@ namespace Edm_EntityMappingGeneratedViews
                 return GetView9();
             }
 
-            if (extentName == "PacketAnalysisModelStoreContainer.Histogram")
+            if (extentName == "PacketAnalysisModelStoreContainer.DisplayStatistic")
             {
                 return GetView10();
             }
 
-            if (extentName == "PacketAnalysisEntity.Histograms")
+            if (extentName == "PacketAnalysisEntity.DisplayStatistics")
             {
                 return GetView11();
             }
 
-            if (extentName == "PacketAnalysisModelStoreContainer.DisplayStatistic")
+            if (extentName == "PacketAnalysisModelStoreContainer.Histogram")
             {
                 return GetView12();
             }
 
-            if (extentName == "PacketAnalysisEntity.DisplayStatistics")
+            if (extentName == "PacketAnalysisEntity.Histograms")
             {
                 return GetView13();
             }
@@ -333,52 +333,10 @@ namespace Edm_EntityMappingGeneratedViews
         }
 
         /// <summary>
-        /// Gets the view for PacketAnalysisModelStoreContainer.Histogram.
-        /// </summary>
-        /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView10()
-        {
-            return new DbMappingView(@"
-    SELECT VALUE -- Constructing Histogram
-        [PacketAnalysisModel.Store.Histogram](T1.Histogram_HistogramId, T1.Histogram_Interval, T1.Histogram_Probability, T1.Histogram_CaptureState, T1.Histogram_BatchType)
-    FROM (
-        SELECT 
-            T.HistogramId AS Histogram_HistogramId, 
-            T.Interval AS Histogram_Interval, 
-            T.Probability AS Histogram_Probability, 
-            T.CaptureState AS Histogram_CaptureState, 
-            T.BatchType AS Histogram_BatchType, 
-            True AS _from0
-        FROM PacketAnalysisEntity.Histograms AS T
-    ) AS T1");
-        }
-
-        /// <summary>
-        /// Gets the view for PacketAnalysisEntity.Histograms.
-        /// </summary>
-        /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView11()
-        {
-            return new DbMappingView(@"
-    SELECT VALUE -- Constructing Histograms
-        [COWE.PacketAnalysisModel.Histogram](T1.Histogram_HistogramId, T1.Histogram_Interval, T1.Histogram_Probability, T1.Histogram_CaptureState, T1.Histogram_BatchType)
-    FROM (
-        SELECT 
-            T.HistogramId AS Histogram_HistogramId, 
-            T.Interval AS Histogram_Interval, 
-            T.Probability AS Histogram_Probability, 
-            T.CaptureState AS Histogram_CaptureState, 
-            T.BatchType AS Histogram_BatchType, 
-            True AS _from0
-        FROM PacketAnalysisModelStoreContainer.Histogram AS T
-    ) AS T1");
-        }
-
-        /// <summary>
         /// Gets the view for PacketAnalysisModelStoreContainer.DisplayStatistic.
         /// </summary>
         /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView12()
+        private static DbMappingView GetView10()
         {
             return new DbMappingView(@"
     SELECT VALUE -- Constructing DisplayStatistic
@@ -405,7 +363,7 @@ namespace Edm_EntityMappingGeneratedViews
         /// Gets the view for PacketAnalysisEntity.DisplayStatistics.
         /// </summary>
         /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView13()
+        private static DbMappingView GetView11()
         {
             return new DbMappingView(@"
     SELECT VALUE -- Constructing DisplayStatistics
@@ -425,6 +383,48 @@ namespace Edm_EntityMappingGeneratedViews
             T.BatchType AS DisplayStatistic_BatchType, 
             True AS _from0
         FROM PacketAnalysisModelStoreContainer.DisplayStatistic AS T
+    ) AS T1");
+        }
+
+        /// <summary>
+        /// Gets the view for PacketAnalysisModelStoreContainer.Histogram.
+        /// </summary>
+        /// <returns>The mapping view.</returns>
+        private static DbMappingView GetView12()
+        {
+            return new DbMappingView(@"
+    SELECT VALUE -- Constructing Histogram
+        [PacketAnalysisModel.Store.Histogram](T1.Histogram_HistogramId, T1.Histogram_Interval, T1.Histogram_Probability, T1.Histogram_CaptureState, T1.Histogram_BatchType)
+    FROM (
+        SELECT 
+            T.HistogramId AS Histogram_HistogramId, 
+            T.Interval AS Histogram_Interval, 
+            T.Probability AS Histogram_Probability, 
+            T.CaptureState AS Histogram_CaptureState, 
+            T.BatchType AS Histogram_BatchType, 
+            True AS _from0
+        FROM PacketAnalysisEntity.Histograms AS T
+    ) AS T1");
+        }
+
+        /// <summary>
+        /// Gets the view for PacketAnalysisEntity.Histograms.
+        /// </summary>
+        /// <returns>The mapping view.</returns>
+        private static DbMappingView GetView13()
+        {
+            return new DbMappingView(@"
+    SELECT VALUE -- Constructing Histograms
+        [COWE.PacketAnalysisModel.Histogram](T1.Histogram_HistogramId, T1.Histogram_Interval, T1.Histogram_Probability, T1.Histogram_CaptureState, T1.Histogram_BatchType)
+    FROM (
+        SELECT 
+            T.HistogramId AS Histogram_HistogramId, 
+            T.Interval AS Histogram_Interval, 
+            T.Probability AS Histogram_Probability, 
+            T.CaptureState AS Histogram_CaptureState, 
+            T.BatchType AS Histogram_BatchType, 
+            True AS _from0
+        FROM PacketAnalysisModelStoreContainer.Histogram AS T
     ) AS T1");
         }
     }
