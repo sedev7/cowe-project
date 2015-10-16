@@ -32,6 +32,8 @@
  *  - Add timer flooder for run-time.
  *  
  * TO DO:
+ *  - Add the flooder Id (PID) to the database tables (need to track by flooder instance)? 
+ *    This might be a future enhancement - can only run one flooder instance at a time for now.
  *  - Get the client ip address to use for packet capture
  *  x Reset UI when socket connection fails (i.e., throws exception).
  *  x Add Flooder class.
@@ -209,7 +211,9 @@ namespace COWE.Client
             AnalysisIntervalSizeTextBox.Text = InterarrivalInterval.GetIntervalMilliSeconds().ToString();
             HistogramBinSizeTextBox.Text = "5";
             TrimIntervalsCheckBox.Checked = true;
-            TrimSmallestBinsToolTip.SetToolTip(TrimIntervalsCheckBox, "Trim any intervals with a packet count less then or equal to the histogram bin size");
+            TrimSmallestBinsToolTip.SetToolTip(TrimIntervalsCheckBox, "Trim any intervals with a packet count less than or equal to the histogram bin size");
+            KsTestRadioButton.Checked = true;
+
             // Start the background worker thread for the new file notifier
             bgWorker.RunWorkerAsync();
         }
@@ -678,7 +682,7 @@ namespace COWE.Client
                     BatchIntervalEngine biEngine = new BatchIntervalEngine(DbConnectionString, _ParsedFilesPath, captureFileName, 5, InterarrivalInterval.GetIntervalMilliSeconds());
                     biEngine.ProcessNewBatchIntervals();
 
-                    AnalysisEngine analysisEngine = new AnalysisEngine(AnalysisConfiguration.TrimSmallPackets, AnalysisConfiguration.HistogramBinSize, captureFileName, file.Marked);
+                    AnalysisEngine analysisEngine = new AnalysisEngine(AnalysisConfiguration.TrimSmallPackets, AnalysisConfiguration.HistogramBinSize, AnalysisConfiguration.HypothesisTest, captureFileName, file.Marked);
                     analysisEngine.CalculateSingleBatchStatistics();
                     analysisEngine.CalculateCumulativeBatchStatistics();
                     analysisEngine.CalculateSingleHistogramData();
@@ -871,7 +875,7 @@ namespace COWE.Client
                         {
                             foundNic = true;
                             IpAddressLabel.Text = pni.IpAddress;
-                            SelectedNicLabel.Text = pni.PcapDescription;
+                            SelectedNicLabel.Text = pni.PcapDescription.Length > 20 ? pni.PcapDescription.Substring(0,26) : pni.PcapDescription;
                             _SelectedNetworkInterface = pni;
                             break;
                         }
@@ -946,6 +950,20 @@ namespace COWE.Client
         private void FlooderIntervalTextBox_TextChanged(object sender, EventArgs e)
         {
             _FlooderIntervalNew = FlooderIntervalTextBox.Text;
+        }
+        private void KsTestRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            if (KsTestRadioButton.Checked)
+            {
+                AnalysisConfiguration.HypothesisTest = HypothesisTest.KsTest;
+            }
+        }
+        private void MeansTestRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            if (MeansTestRadioButton.Checked)
+            {
+                AnalysisConfiguration.HypothesisTest = HypothesisTest.MeansTest;
+            }
         }
         private void TargetPortTextBox_TextChanged(object sender, EventArgs e)
         {
@@ -1851,6 +1869,8 @@ namespace COWE.Client
             AnalysisMetricsGroupBox.Font = analysisMetricsFont;
         }
         #endregion
+
+
 
     }
 }

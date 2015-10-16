@@ -30,7 +30,7 @@ TRUNCATE TABLE COWE.CumulativeInterval;
 TRUNCATE TABLE COWE.DisplayStatistic;
 TRUNCATE TABLE COWE.Histogram;
 TRUNCATE TABLE COWE.CumulativeProbabilityDistribution;
-UPDATE COWE.CaptureBatch SET Mean = 0, TrimmedMean = 0, SingleStatistics = 0, CumulativeStatistics = 0 WHERE CaptureBatchId = 1;
+UPDATE COWE.CaptureBatch SET Mean = 0, TrimmedMean = 0, SingleStatistics = 0, CumulativeStatistics = 0 WHERE CaptureBatchId in (6,7,8,9);
 --TRUNCATE TABLE COWE.CapturePacket;
 */
 

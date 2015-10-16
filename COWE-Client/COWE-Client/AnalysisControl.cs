@@ -26,6 +26,8 @@ namespace COWE.Client
 
         const double _alpha = 0.05;       // Hypothesis test significance level
         const decimal _zvalue = 1.65M;    // Z value for (1-_alpha), from standard normal distribution table
+                                          // (note: one-tailed test because we are looking at the distribution 
+                                          // for the difference of the means)
         
         int _MaxGridDisplayRows = 8;
         int _MaxGridHeight = 300;

@@ -11,15 +11,20 @@ using COWE.Enumerations;
 
 namespace COWE.BusinessLayer
 {
+   
     public class AnalysisEngine
     {
+        #region Global Variables
         bool _TrimZeroPacketIntervals = false;
         int _HistogramBinSize = 0;
         string _CaptureFileName = string.Empty;
 
         BatchType _BatchType = BatchType.Unknown;
         CaptureState _CaptureState = CaptureState.Unknown;
+        HypothesisTest _HypothesisTest = HypothesisTest.Unknown;
+        #endregion
 
+        #region Constructors
         public AnalysisEngine() { }
 
         public AnalysisEngine(bool trimZeroPacketIntervals, int histogramBinSize)
@@ -28,14 +33,17 @@ namespace COWE.BusinessLayer
             this._TrimZeroPacketIntervals = trimZeroPacketIntervals;
         }
 
-        public AnalysisEngine(bool trimZeroPacketIntervals, int histogramBinSize, string captureFileName, CaptureState captureState)
+        public AnalysisEngine(bool trimZeroPacketIntervals, int histogramBinSize, HypothesisTest hypothesisTest, string captureFileName, CaptureState captureState)
         {
             this._HistogramBinSize = histogramBinSize;
             this._TrimZeroPacketIntervals = trimZeroPacketIntervals;
             this._CaptureFileName = captureFileName;
             this._CaptureState = captureState;
+            this._HypothesisTest = hypothesisTest;
         }
+        #endregion
 
+        #region Public Methods
         /*******************************************************************************************
          *
          * Need to update cumulative intervals, but need to know if file has already been parsed
@@ -223,6 +231,7 @@ namespace COWE.BusinessLayer
 
 
             // public bool GetHypothesisTestResult()
+            // NOTE: use _HypothesisTest variable to determine which test result to return
             //if (markedBatchIntervals.Count > 0 && unmarkedBatchIntervals.Count > 0)
             //{
             //    // Cumulative variance column
@@ -473,7 +482,9 @@ namespace COWE.BusinessLayer
                     break;
             }
         }
-       
+        #endregion
+
+        #region Private Methods
         private void CalculateHistogramDataByType(BindingList<BatchIntervalMarked> batchIntervalsCollection, BatchType batchType, CaptureState captureState)
         {
             //ProcessCapturePackets pcp = new ProcessCapturePackets();
@@ -520,5 +531,6 @@ namespace COWE.BusinessLayer
             HistogramData hd = new HistogramData(histogramProbabilityData);
             hd.InsertHistogramData();
         }
+        #endregion
     }
 }

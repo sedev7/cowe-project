@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CaptureState.cs" />
+    <Compile Include="HypothesisTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="BatchType.cs" />
   </ItemGroup>
