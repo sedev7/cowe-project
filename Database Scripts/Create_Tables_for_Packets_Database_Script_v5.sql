@@ -6,13 +6,6 @@
 --
 -- Create all tables and database structures for COWE project.
 --
--- v6 10-24-2015:
---  - Rename Histogram table to SingleHistogram.
---  - Add CaptureBatchId FK to SingleHistogram table.
---  - Add CumulativeHistogram table.
---  - Remove BatchState column from both histogram tables - no longer needed.
---  - Remove BatchState column from CumulativeProbabilityDistribution table - no longer needed.
---
 -- v5 09-07-2015:
 --  - Add columns for parse and statistics (single and cumulative) flags to CaptureBatch table.
 --  - Add column for MeanOfMeansStandardDeviation in DisplayStatistic table.
@@ -62,16 +55,6 @@ PRINT 'Dropping [COWE].[FK_CapturePacket$CaptureBatch.CaptureBatchId]...';
 IF OBJECT_ID(N'[COWE].[FK_CapturePacket$CaptureBatch.CaptureBatchId]',N'F') IS NOT NULL
   BEGIN
     ALTER TABLE [COWE].[CapturePacket] DROP CONSTRAINT [FK_CapturePacket$CaptureBatch.CaptureBatchId];
-	PRINT '  Constraint successfully dropped'
-  END
-ELSE
-  PRINT '   => Constraint not found!'
-GO
-
-PRINT 'Dropping [COWE].[FK_SingleHistogram$CaptureBatch.CaptureBatchId]...';
-IF OBJECT_ID(N'[COWE].[FK_SingleHistogram$CaptureBatch.CaptureBatchId]',N'F') IS NOT NULL
-  BEGIN
-    ALTER TABLE [COWE].[SingleHistogram] DROP CONSTRAINT [FK_SingleHistogram$CaptureBatch.CaptureBatchId];
 	PRINT '  Constraint successfully dropped'
   END
 ELSE
@@ -138,20 +121,10 @@ ELSE
   PRINT '   => Table not found!'
 GO
 
-PRINT '  Dropping SingleHistogram table...';
-IF  OBJECT_ID(N'[COWE].[SingleHistogram]',N'U') IS NOT NULL
+PRINT '  Dropping Histogram table...';
+IF  OBJECT_ID(N'[COWE].[Histogram]',N'U') IS NOT NULL
   BEGIN
-    DROP TABLE [COWE].[SingleHistogram]
-	PRINT '  Table successfully dropped'
-  END
-ELSE
-  PRINT '   => Table not found!'
-GO
-
-PRINT '  Dropping CumulativeHistogram table...';
-IF  OBJECT_ID(N'[COWE].[CumulativeHistogram]',N'U') IS NOT NULL
-  BEGIN
-    DROP TABLE [COWE].[CumulativeHistogram]
+    DROP TABLE [COWE].[Histogram]
 	PRINT '  Table successfully dropped'
   END
 ELSE
@@ -297,7 +270,7 @@ CREATE TABLE [COWE].[DisplayStatistic](
 	[MeanOfMeans] [decimal](28,10) NOT NULL,
 	[MeanOfMeansStandardDeviation] [decimal](28,10) NOT NULL,
 	[Marked] [bit] NOT NULL,
-	[BatchType] [int] NOT NULL		-- Single, Cumulative
+	[BatchType] [int] NOT NULL
  CONSTRAINT [PK_DisplayStatistic_DisplayStatisticId] PRIMARY KEY CLUSTERED 
 (
 	[DisplayStatisticId] ASC
@@ -308,43 +281,23 @@ GO
 
 /************************************************************************/
 /*                                                                      */
-/*                    CREATE SingleHistogram TABLE                      */
+/*                       CREATE Histogram TABLE                         */
 /*                                                                      */
 /************************************************************************/
 
-PRINT '  Creating SingleHistogram table...';
-CREATE TABLE [COWE].[SingleHistogram](
-	[SingleHistogramId] [int] IDENTITY(1,1) NOT NULL,
-	[CaptureBatchId] [int] NOT NULL,
+PRINT '  Creating Histogram table...';
+CREATE TABLE [COWE].[Histogram](
+	[HistogramId] [int] IDENTITY(1,1) NOT NULL,
 	[Interval] [int] NOT NULL,
 	[Probability] [decimal](28,10) NOT NULL,
 	[CaptureState] [int] NOT NULL,		-- Marked, Unmarked
- CONSTRAINT [PK_SingleHistogram_HistogramId] PRIMARY KEY CLUSTERED 
+	[BatchType] [int] NOT NULL			-- Single, Cumulative
+ CONSTRAINT [PK_Histogram_HistogramId] PRIMARY KEY CLUSTERED 
 (
-	[SingleHistogramId] ASC
+	[HistogramId] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
-) ON [PRIMARY];
-GO
-ALTER TABLE [COWE].[SingleHistogram] ADD CONSTRAINT [FK_SingleHistogram$CaptureBatch.CaptureBatchId] FOREIGN KEY (CaptureBatchId) REFERENCES [COWE].[CaptureBatch] (CaptureBatchId);
-GO
-
-/************************************************************************/
-/*                                                                      */
-/*                 CREATE CumulativeHistogram TABLE                     */
-/*                                                                      */
-/************************************************************************/
-
-PRINT '  Creating CumulativeHistogram table...';
-CREATE TABLE [COWE].[CumulativeHistogram](
-	[CumulativeHistogramId] [int] IDENTITY(1,1) NOT NULL,
-	[Interval] [int] NOT NULL,
-	[Probability] [decimal](28,10) NOT NULL,
-	[CaptureState] [int] NOT NULL,		-- Marked, Unmarked
- CONSTRAINT [PK_CumulativeHistogram_HistogramId] PRIMARY KEY CLUSTERED 
-(
-	[CumulativeHistogramId] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
-) ON [PRIMARY];
+) ON [PRIMARY]
+;
 GO
 
 /************************************************************************/
@@ -357,8 +310,9 @@ PRINT '  Creating CumulativeProbabilityDistribution table...';
 CREATE TABLE [COWE].[CumulativeProbabilityDistribution](
 	[CumulativeProbabilityDistributionId] [int] IDENTITY(1,1) NOT NULL,
 	[Interval] [int] NOT NULL,
-	[Probability] [decimal](28,10) NOT NULL,
+	[Probability] [decimal] NOT NULL,
 	[CaptureState] [int] NOT NULL,		-- Marked, Unmarked
+	[BatchType] [int] NOT NULL			-- Single, Cumulative
  CONSTRAINT [PK_CumulativeProbabilityDistribution_CumulativeProbabilityDistributionId] PRIMARY KEY CLUSTERED 
 (
 	[CumulativeProbabilityDistributionId] ASC

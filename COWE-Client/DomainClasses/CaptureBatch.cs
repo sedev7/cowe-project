@@ -22,5 +22,6 @@ namespace COWE.DomainClasses
         public bool CumulativeStatistics { get; set; }
         public virtual ICollection<BatchInterval> BatchIntervals { get; set; }
         public virtual ICollection<CapturePacket> CapturePackets { get; set; }
+        public virtual ICollection<SingleHistogram> SingleHistograms { get; set; }
     }
 }

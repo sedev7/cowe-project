@@ -37,31 +37,6 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <EntitySetMapping Name="CumulativeProbabilityDistributions">
-      <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.CumulativeProbabilityDistribution">
-        <MappingFragment StoreEntitySet="CumulativeProbabilityDistribution">
-          <ScalarProperty Name="BatchType" ColumnName="BatchType" />
-          <ScalarProperty Name="CaptureState" ColumnName="CaptureState" />
-          <ScalarProperty Name="Probability" ColumnName="Probability" />
-          <ScalarProperty Name="Interval" ColumnName="Interval" />
-          <ScalarProperty Name="CumulativeProbabilityDistributionId" ColumnName="CumulativeProbabilityDistributionId" />
-        </MappingFragment>
-      </EntityTypeMapping>
-      <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.CumulativeProbabilityDistribution">
-        <ModificationFunctionMapping>
-          <DeleteFunction FunctionName="PacketAnalysisModel.Store.CumulativeProbabilityDistributionDelete">
-            <ScalarProperty Name="BatchType" ParameterName="BatchType" />
-            <ScalarProperty Name="CaptureState" ParameterName="CaptureState" />
-          </DeleteFunction>
-          <InsertFunction FunctionName="PacketAnalysisModel.Store.CumulativeProbabilityDistributionInsert">
-            <ScalarProperty Name="BatchType" ParameterName="BatchType" />
-            <ScalarProperty Name="CaptureState" ParameterName="CaptureState" />
-            <ScalarProperty Name="Probability" ParameterName="Probability" />
-            <ScalarProperty Name="Interval" ParameterName="Interval" />
-          </InsertFunction>
-        </ModificationFunctionMapping>
-      </EntityTypeMapping>
-    </EntitySetMapping>
     <FunctionImportMapping FunctionImportName="CumulativeProbabilityDistributionDelete" FunctionName="PacketAnalysisModel.Store.CumulativeProbabilityDistributionDelete" />
     <FunctionImportMapping FunctionImportName="HistogramDelete" FunctionName="PacketAnalysisModel.Store.HistogramDelete" />
     <FunctionImportMapping FunctionImportName="CumulativeProbabilityDistributionInsert" FunctionName="PacketAnalysisModel.Store.CumulativeProbabilityDistributionInsert" />
@@ -138,14 +113,34 @@
         </ModificationFunctionMapping>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <EntitySetMapping Name="Histograms">
-      <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.Histogram">
-        <MappingFragment StoreEntitySet="Histogram">
-          <ScalarProperty Name="BatchType" ColumnName="BatchType" />
+    <EntitySetMapping Name="CumulativeHistograms">
+      <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.CumulativeHistogram">
+        <MappingFragment StoreEntitySet="CumulativeHistogram">
           <ScalarProperty Name="CaptureState" ColumnName="CaptureState" />
           <ScalarProperty Name="Probability" ColumnName="Probability" />
           <ScalarProperty Name="Interval" ColumnName="Interval" />
-          <ScalarProperty Name="HistogramId" ColumnName="HistogramId" />
+          <ScalarProperty Name="CumulativeHistogramId" ColumnName="CumulativeHistogramId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="SingleHistograms">
+      <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.SingleHistogram">
+        <MappingFragment StoreEntitySet="SingleHistogram">
+          <ScalarProperty Name="CaptureState" ColumnName="CaptureState" />
+          <ScalarProperty Name="Probability" ColumnName="Probability" />
+          <ScalarProperty Name="Interval" ColumnName="Interval" />
+          <ScalarProperty Name="CaptureBatchId" ColumnName="CaptureBatchId" />
+          <ScalarProperty Name="SingleHistogramId" ColumnName="SingleHistogramId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="CumulativeProbabilityDistributions">
+      <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.CumulativeProbabilityDistribution">
+        <MappingFragment StoreEntitySet="CumulativeProbabilityDistribution">
+          <ScalarProperty Name="CaptureState" ColumnName="CaptureState" />
+          <ScalarProperty Name="Probability" ColumnName="Probability" />
+          <ScalarProperty Name="Interval" ColumnName="Interval" />
+          <ScalarProperty Name="CumulativeProbabilityDistributionId" ColumnName="CumulativeProbabilityDistributionId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

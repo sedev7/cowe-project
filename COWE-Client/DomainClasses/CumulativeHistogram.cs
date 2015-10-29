@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace COWE.DomainClasses
 {
-    public class Histogram
+    public class CumulativeHistogram
     {
-        public int HistogramId { get; private set; }
+        public int CumulativeHistogramId { get; private set; }
         public int Interval { get; set; }
         public decimal Probability { get; set; }
         public int CaptureState { get; set; }

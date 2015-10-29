@@ -525,12 +525,12 @@ namespace COWE.BusinessLayer
             var batch = cfd.GetBatchIds();
 
             var lastMarkedBatchId = (from m in batch
-                                     where m.Marked == CaptureState.Marked
+                                     where m.CaptureState == CaptureState.Marked
                                      orderby m.CaptureBatchId descending
                                      select m).First();
 
             var lastUnmarkedBatchId = (from m in batch
-                                     where m.Marked == CaptureState.Unmarked
+                                     where m.CaptureState == CaptureState.Unmarked
                                      orderby m.CaptureBatchId descending
                                      select m).First();
 
@@ -583,6 +583,20 @@ namespace COWE.BusinessLayer
         {
             CaptureFileData cfd = new CaptureFileData();
             return cfd.GetBatchId(fileName);
+        }
+        /***************************************************************
+         * 
+         * TO DO:
+         * - Add CaptureBatchId FK reference to Histogram table
+         * - Include captureState, CaptureBatchId and BatchType in the parameters
+         * 
+         ***************************************************************/
+        public BindingList<SingleHistogram> GetSingleHistogramProbabilityData(int captureBatchId)
+        {
+            BindingList<SingleHistogram> probabilities = new BindingList<SingleHistogram>();
+            SingleHistogramData shd = new SingleHistogramData();
+            probabilities = shd.GetSingleHistogramData(captureBatchId);
+            return probabilities;
         }
         #endregion
 

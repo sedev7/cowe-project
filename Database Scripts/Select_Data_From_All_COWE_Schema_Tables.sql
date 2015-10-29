@@ -12,8 +12,11 @@ select * from COWE.CaptureBatch;
 select * from COWE.CapturePacket;
 select * from COWE.CumulativeInterval;
 select * from COWE.DisplayStatistic;
-select * from COWE.Histogram;
+select * from COWE.SingleHistogram;
+select * from COWE.CumulativeHistogram;
 select * from COWE.CumulativeProbabilityDistribution;
+
+--select * from cowe.SingleHistogram order by BatchType;
 
 /*
 -- Clean out tables
@@ -21,6 +24,7 @@ delete from COWE.BatchInterval;
 delete from COWE.CumulativeInterval;
 delete from COWE.CaptureBatch;
 delete from COWE.CapturePacket;
+delete from COWE.SingleHistogram;
 */
 
 /*
@@ -28,10 +32,12 @@ delete from COWE.CapturePacket;
 TRUNCATE TABLE COWE.BatchInterval;
 TRUNCATE TABLE COWE.CumulativeInterval;
 TRUNCATE TABLE COWE.DisplayStatistic;
-TRUNCATE TABLE COWE.Histogram;
+TRUNCATE TABLE COWE.SingleHistogram;
+TRUNCATE TABLE COWE.CumulativeHistogram;
 TRUNCATE TABLE COWE.CumulativeProbabilityDistribution;
 UPDATE COWE.CaptureBatch SET Mean = 0, TrimmedMean = 0, SingleStatistics = 0, CumulativeStatistics = 0 WHERE CaptureBatchId in (6,7,8,9);
 --TRUNCATE TABLE COWE.CapturePacket;
+--TRUNCATE TABLE COWE.CaptureBatch;
 */
 
 

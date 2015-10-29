@@ -71,7 +71,7 @@ namespace COWE.DataLayer
                     CurrentCaptureFile ccf = new CurrentCaptureFile();
                     ccf.FileName = item.FileName;
                     ccf.CaptureBatchId = item.CaptureBatchId;
-                    ccf.Marked = item.Marked == true ? CaptureState.Marked : CaptureState.Unmarked;
+                    ccf.CaptureState = item.Marked == true ? CaptureState.Marked : CaptureState.Unmarked;
                     batchIds.Add(ccf);
                 }
             }
@@ -129,7 +129,7 @@ namespace COWE.DataLayer
 
                 lastRecord.CaptureBatchId = record.CaptureBatchId;
                 lastRecord.FileName = record.FileName;
-                lastRecord.Marked = record.Marked == true ? CaptureState.Marked : CaptureState.Unmarked;
+                lastRecord.CaptureState = record.Marked == true ? CaptureState.Marked : CaptureState.Unmarked;
             }
 
             return lastRecord;

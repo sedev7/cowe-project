@@ -32,6 +32,15 @@
     <Property Name="TimeStamp" Type="datetime" Nullable="false" />
     <Property Name="Marked" Type="bit" Nullable="false" />
   </EntityType>
+  <EntityType Name="CumulativeHistogram">
+    <Key>
+      <PropertyRef Name="CumulativeHistogramId" />
+    </Key>
+    <Property Name="CumulativeHistogramId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Interval" Type="int" Nullable="false" />
+    <Property Name="Probability" Type="decimal" Precision="28" Scale="10" Nullable="false" />
+    <Property Name="CaptureState" Type="int" Nullable="false" />
+  </EntityType>
   <EntityType Name="CumulativeInterval">
     <Key>
       <PropertyRef Name="CumulativeIntervalId" />
@@ -49,7 +58,6 @@
     <Property Name="Interval" Type="int" Nullable="false" />
     <Property Name="Probability" Type="decimal" Precision="18" Scale="0" Nullable="false" />
     <Property Name="CaptureState" Type="int" Nullable="false" />
-    <Property Name="BatchType" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="DisplayStatistic">
     <Key>
@@ -67,15 +75,15 @@
     <Property Name="Marked" Type="bit" Nullable="false" />
     <Property Name="BatchType" Type="int" Nullable="false" />
   </EntityType>
-  <EntityType Name="Histogram">
+  <EntityType Name="SingleHistogram">
     <Key>
-      <PropertyRef Name="HistogramId" />
+      <PropertyRef Name="SingleHistogramId" />
     </Key>
-    <Property Name="HistogramId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="SingleHistogramId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="CaptureBatchId" Type="int" Nullable="false" />
     <Property Name="Interval" Type="int" Nullable="false" />
     <Property Name="Probability" Type="decimal" Precision="28" Scale="10" Nullable="false" />
     <Property Name="CaptureState" Type="int" Nullable="false" />
-    <Property Name="BatchType" Type="int" Nullable="false" />
   </EntityType>
   <Association Name="FK_BatchInterval$CaptureBatch_CaptureBatchId">
     <End Role="CaptureBatch" Type="Self.CaptureBatch" Multiplicity="1" />
@@ -97,6 +105,18 @@
         <PropertyRef Name="CaptureBatchId" />
       </Principal>
       <Dependent Role="CapturePacket">
+        <PropertyRef Name="CaptureBatchId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SingleHistogram$CaptureBatch_CaptureBatchId">
+    <End Role="CaptureBatch" Type="Self.CaptureBatch" Multiplicity="1" />
+    <End Role="SingleHistogram" Type="Self.SingleHistogram" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CaptureBatch">
+        <PropertyRef Name="CaptureBatchId" />
+      </Principal>
+      <Dependent Role="SingleHistogram">
         <PropertyRef Name="CaptureBatchId" />
       </Dependent>
     </ReferentialConstraint>
@@ -163,10 +183,11 @@
     <EntitySet Name="BatchInterval" EntityType="Self.BatchInterval" Schema="COWE" store:Type="Tables" />
     <EntitySet Name="CaptureBatch" EntityType="Self.CaptureBatch" Schema="COWE" store:Type="Tables" />
     <EntitySet Name="CapturePacket" EntityType="Self.CapturePacket" Schema="COWE" store:Type="Tables" />
+    <EntitySet Name="CumulativeHistogram" EntityType="Self.CumulativeHistogram" Schema="COWE" store:Type="Tables" />
     <EntitySet Name="CumulativeInterval" EntityType="Self.CumulativeInterval" Schema="COWE" store:Type="Tables" />
     <EntitySet Name="CumulativeProbabilityDistribution" EntityType="Self.CumulativeProbabilityDistribution" Schema="COWE" store:Type="Tables" />
     <EntitySet Name="DisplayStatistic" EntityType="Self.DisplayStatistic" Schema="COWE" store:Type="Tables" />
-    <EntitySet Name="Histogram" EntityType="Self.Histogram" Schema="COWE" store:Type="Tables" />
+    <EntitySet Name="SingleHistogram" EntityType="Self.SingleHistogram" Schema="COWE" store:Type="Tables" />
     <AssociationSet Name="FK_BatchInterval$CaptureBatch_CaptureBatchId" Association="Self.FK_BatchInterval$CaptureBatch_CaptureBatchId">
       <End Role="CaptureBatch" EntitySet="CaptureBatch" />
       <End Role="BatchInterval" EntitySet="BatchInterval" />
@@ -174,6 +195,10 @@
     <AssociationSet Name="FK_CapturePacket$CaptureBatch_CaptureBatchId" Association="Self.FK_CapturePacket$CaptureBatch_CaptureBatchId">
       <End Role="CaptureBatch" EntitySet="CaptureBatch" />
       <End Role="CapturePacket" EntitySet="CapturePacket" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SingleHistogram$CaptureBatch_CaptureBatchId" Association="Self.FK_SingleHistogram$CaptureBatch_CaptureBatchId">
+      <End Role="CaptureBatch" EntitySet="CaptureBatch" />
+      <End Role="SingleHistogram" EntitySet="SingleHistogram" />
     </AssociationSet>
   </EntityContainer>
 </Schema>

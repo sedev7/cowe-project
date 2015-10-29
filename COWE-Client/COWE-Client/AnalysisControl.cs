@@ -343,9 +343,10 @@ namespace COWE.Client
                 // Calculate probabilities
                 batchIntervals = pcp.GetMarkedBatchIntervals(file.CaptureBatchId);
                 int histogramBinSize = Convert.ToInt32(HistogramBinSize);
+                //SortedDictionary<int, decimal> probabilities = new CalculateProbability(batchIntervals).GetProbabilityByPacketRange(_trimZeroPacketIntervals, histogramBinSize);
                 SortedDictionary<int, decimal> probabilities = new CalculateProbability(batchIntervals).GetProbabilityByPacketRange(_trimZeroPacketIntervals, histogramBinSize);
 
-                if (file.Marked == CaptureState.Marked)
+                if (file.CaptureState == CaptureState.Marked)
                 {
                     SingleChart.Series["MarkedProbabilities"].Color = Color.CornflowerBlue;
 
@@ -378,11 +379,11 @@ namespace COWE.Client
 
             foreach (CurrentCaptureFile file in lastBatchIds)
             {
-                if (file.Marked == CaptureState.Marked)
+                if (file.CaptureState == CaptureState.Marked)
                 {
                     markedBatchIntervals = pcp.GetMarkedBatchIntervals(file.CaptureBatchId);
                 }
-                else if(file.Marked == CaptureState.Unmarked)
+                else if(file.CaptureState == CaptureState.Unmarked)
                 {
                     unmarkedBatchIntervals = pcp.GetMarkedBatchIntervals(file.CaptureBatchId);
                 }

@@ -54,7 +54,6 @@
       <Parameter Name="BatchType" Mode="In" Type="Int32" />
     </FunctionImport>
     <EntitySet Name="CumulativeIntervals" EntityType="COWE.PacketAnalysisModel.CumulativeInterval" />
-    <EntitySet Name="CumulativeProbabilityDistributions" EntityType="COWE.PacketAnalysisModel.CumulativeProbabilityDistribution" />
     <FunctionImport Name="CumulativeProbabilityDistributionDelete">
       <Parameter Name="CaptureState" Mode="In" Type="Int32" />
       <Parameter Name="BatchType" Mode="In" Type="Int32" />
@@ -95,7 +94,13 @@
       <Parameter Name="CumulativeStatistics" Mode="In" Type="Boolean" />
     </FunctionImport>
     <EntitySet Name="DisplayStatistics" EntityType="COWE.PacketAnalysisModel.DisplayStatistic" />
-    <EntitySet Name="Histograms" EntityType="COWE.PacketAnalysisModel.Histogram" />
+    <EntitySet Name="CumulativeHistograms" EntityType="COWE.PacketAnalysisModel.CumulativeHistogram" />
+    <EntitySet Name="SingleHistograms" EntityType="COWE.PacketAnalysisModel.SingleHistogram" />
+    <AssociationSet Name="FK_SingleHistogram_CaptureBatch_CaptureBatchId" Association="COWE.PacketAnalysisModel.FK_SingleHistogram_CaptureBatch_CaptureBatchId">
+      <End Role="CaptureBatch" EntitySet="CaptureBatches" />
+      <End Role="SingleHistogram" EntitySet="SingleHistograms" />
+    </AssociationSet>
+    <EntitySet Name="CumulativeProbabilityDistributions" EntityType="COWE.PacketAnalysisModel.CumulativeProbabilityDistribution" />
   </EntityContainer>
   <EntityType Name="BatchInterval">
     <Key>
@@ -116,16 +121,6 @@
     <Property Name="PacketCount" Type="Int32" Nullable="false" />
     <Property Name="Marked" Type="Boolean" Nullable="false" />
   </EntityType>
-  <EntityType Name="CumulativeProbabilityDistribution">
-    <Key>
-      <PropertyRef Name="CumulativeProbabilityDistributionId" />
-    </Key>
-    <Property Name="CumulativeProbabilityDistributionId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="Interval" Type="Int32" Nullable="false" />
-    <Property Name="Probability" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-    <Property Name="CaptureState" Type="Int32" Nullable="false" />
-    <Property Name="BatchType" Type="Int32" Nullable="false" />
-  </EntityType>
   <EntityType Name="CaptureBatch">
     <Key>
       <PropertyRef Name="CaptureBatchId" />
@@ -140,6 +135,7 @@
     <Property Name="CumulativeStatistics" Type="Boolean" Nullable="false" />
     <NavigationProperty Name="BatchIntervals" Relationship="COWE.PacketAnalysisModel.FK_BatchInterval_CaptureBatch_CaptureBatchId" FromRole="CaptureBatch" ToRole="BatchInterval" />
     <NavigationProperty Name="CapturePackets" Relationship="COWE.PacketAnalysisModel.FK_CapturePacket_CaptureBatch_CaptureBatchId" FromRole="CaptureBatch" ToRole="CapturePacket" />
+    <NavigationProperty Name="SingleHistograms" Relationship="COWE.PacketAnalysisModel.FK_SingleHistogram_CaptureBatch_CaptureBatchId" FromRole="CaptureBatch" ToRole="SingleHistogram" />
   </EntityType>
   <Association Name="FK_BatchInterval_CaptureBatch_CaptureBatchId">
     <End Type="COWE.PacketAnalysisModel.CaptureBatch" Role="CaptureBatch" Multiplicity="1" />
@@ -181,14 +177,45 @@
     <Property Name="Marked" Type="Boolean" Nullable="false" />
     <Property Name="BatchType" Type="Int32" Nullable="false" />
   </EntityType>
-  <EntityType Name="Histogram">
+  <EntityType Name="CumulativeHistogram">
     <Key>
-      <PropertyRef Name="HistogramId" />
+      <PropertyRef Name="CumulativeHistogramId" />
     </Key>
-    <Property Name="HistogramId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="CumulativeHistogramId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="Interval" Type="Int32" Nullable="false" />
     <Property Name="Probability" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
     <Property Name="CaptureState" Type="Int32" Nullable="false" />
-    <Property Name="BatchType" Type="Int32" Nullable="false" />
+  </EntityType>
+  <EntityType Name="SingleHistogram">
+    <Key>
+      <PropertyRef Name="SingleHistogramId" />
+    </Key>
+    <Property Name="SingleHistogramId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="CaptureBatchId" Type="Int32" Nullable="false" />
+    <Property Name="Interval" Type="Int32" Nullable="false" />
+    <Property Name="Probability" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
+    <Property Name="CaptureState" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="CaptureBatch" Relationship="COWE.PacketAnalysisModel.FK_SingleHistogram_CaptureBatch_CaptureBatchId" FromRole="SingleHistogram" ToRole="CaptureBatch" />
+  </EntityType>
+  <Association Name="FK_SingleHistogram_CaptureBatch_CaptureBatchId">
+    <End Type="COWE.PacketAnalysisModel.CaptureBatch" Role="CaptureBatch" Multiplicity="1" />
+    <End Type="COWE.PacketAnalysisModel.SingleHistogram" Role="SingleHistogram" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CaptureBatch">
+        <PropertyRef Name="CaptureBatchId" />
+      </Principal>
+      <Dependent Role="SingleHistogram">
+        <PropertyRef Name="CaptureBatchId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="CumulativeProbabilityDistribution">
+    <Key>
+      <PropertyRef Name="CumulativeProbabilityDistributionId" />
+    </Key>
+    <Property Name="CumulativeProbabilityDistributionId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Interval" Type="Int32" Nullable="false" />
+    <Property Name="Probability" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+    <Property Name="CaptureState" Type="Int32" Nullable="false" />
   </EntityType>
 </Schema>

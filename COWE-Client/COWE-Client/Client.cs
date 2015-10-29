@@ -681,12 +681,14 @@ namespace COWE.Client
                     //string captureFileName = "CaptureFile635674934252530702u.pcap";
                     BatchIntervalEngine biEngine = new BatchIntervalEngine(DbConnectionString, _ParsedFilesPath, captureFileName, 5, InterarrivalInterval.GetIntervalMilliSeconds());
                     biEngine.ProcessNewBatchIntervals();
-
-                    AnalysisEngine analysisEngine = new AnalysisEngine(AnalysisConfiguration.TrimSmallPackets, AnalysisConfiguration.HistogramBinSize, AnalysisConfiguration.HypothesisTest, captureFileName, file.Marked);
+                    
+                    //AnalysisEngine analysisEngine = new AnalysisEngine(AnalysisConfiguration.TrimSmallPackets, AnalysisConfiguration.HistogramBinSize, AnalysisConfiguration.HypothesisTest, captureFileName, file.CaptureState);
+                    AnalysisEngine analysisEngine = new AnalysisEngine(AnalysisConfiguration.TrimSmallPackets, AnalysisConfiguration.HistogramBinSize, AnalysisConfiguration.HypothesisTest, captureFileName, file);
                     analysisEngine.CalculateSingleBatchStatistics();
                     analysisEngine.CalculateCumulativeBatchStatistics();
                     analysisEngine.CalculateSingleHistogramData();
                     analysisEngine.CalculateCumulativeHistogramData();
+                    analysisEngine.CalculateCumulativeProbabilityDistribution(file.CaptureState);
 
                     biEngine = null;
                     analysisEngine = null;

@@ -49,11 +49,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BatchIntervalData.cs" />
+    <Compile Include="CumulativeHistogramData.cs" />
     <Compile Include="CumulativeProbabilityDistributionData.cs" />
     <Compile Include="DisplayStatisticsData.cs" />
     <Compile Include="CaptureFileData.cs" />
     <Compile Include="CumulativeIntervalData.cs" />
-    <Compile Include="HistogramData.cs" />
+    <Compile Include="SingleHistogramData.cs" />
     <Compile Include="PacketAnalysisModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

@@ -11,7 +11,7 @@ using System.Data.Entity.Infrastructure.MappingViews;
 
 [assembly: DbMappingViewCacheTypeAttribute(
     typeof(COWE.DataLayer.PacketAnalysisEntity),
-    typeof(Edm_EntityMappingGeneratedViews.ViewsForBaseEntitySetsbb208a1e647b0f44bf92d04690e376250c868097e9c5e2c0124741a7863271bc))]
+    typeof(Edm_EntityMappingGeneratedViews.ViewsForBaseEntitySetse7c3fd045642602b62fce64008fdb1854b3ace5a0d03c0aef7b027aa0f826594))]
 
 namespace Edm_EntityMappingGeneratedViews
 {
@@ -23,14 +23,14 @@ namespace Edm_EntityMappingGeneratedViews
     /// Implements a mapping view cache.
     /// </summary>
     [GeneratedCode("Entity Framework Power Tools", "0.9.0.0")]
-    internal sealed class ViewsForBaseEntitySetsbb208a1e647b0f44bf92d04690e376250c868097e9c5e2c0124741a7863271bc : DbMappingViewCache
+    internal sealed class ViewsForBaseEntitySetse7c3fd045642602b62fce64008fdb1854b3ace5a0d03c0aef7b027aa0f826594 : DbMappingViewCache
     {
         /// <summary>
         /// Gets a hash value computed over the mapping closure.
         /// </summary>
         public override string MappingHashValue
         {
-            get { return "bb208a1e647b0f44bf92d04690e376250c868097e9c5e2c0124741a7863271bc"; }
+            get { return "e7c3fd045642602b62fce64008fdb1854b3ace5a0d03c0aef7b027aa0f826594"; }
         }
 
         /// <summary>
@@ -62,37 +62,37 @@ namespace Edm_EntityMappingGeneratedViews
                 return GetView2();
             }
 
-            if (extentName == "PacketAnalysisEntity.CapturePackets")
+            if (extentName == "PacketAnalysisModelStoreContainer.SingleHistogram")
             {
                 return GetView3();
             }
 
-            if (extentName == "PacketAnalysisEntity.BatchIntervals")
+            if (extentName == "PacketAnalysisEntity.CapturePackets")
             {
                 return GetView4();
             }
 
-            if (extentName == "PacketAnalysisEntity.CaptureBatches")
+            if (extentName == "PacketAnalysisEntity.BatchIntervals")
             {
                 return GetView5();
             }
 
-            if (extentName == "PacketAnalysisModelStoreContainer.CumulativeInterval")
+            if (extentName == "PacketAnalysisEntity.CaptureBatches")
             {
                 return GetView6();
             }
 
-            if (extentName == "PacketAnalysisEntity.CumulativeIntervals")
+            if (extentName == "PacketAnalysisEntity.SingleHistograms")
             {
                 return GetView7();
             }
 
-            if (extentName == "PacketAnalysisModelStoreContainer.CumulativeProbabilityDistribution")
+            if (extentName == "PacketAnalysisModelStoreContainer.CumulativeInterval")
             {
                 return GetView8();
             }
 
-            if (extentName == "PacketAnalysisEntity.CumulativeProbabilityDistributions")
+            if (extentName == "PacketAnalysisEntity.CumulativeIntervals")
             {
                 return GetView9();
             }
@@ -107,14 +107,24 @@ namespace Edm_EntityMappingGeneratedViews
                 return GetView11();
             }
 
-            if (extentName == "PacketAnalysisModelStoreContainer.Histogram")
+            if (extentName == "PacketAnalysisModelStoreContainer.CumulativeHistogram")
             {
                 return GetView12();
             }
 
-            if (extentName == "PacketAnalysisEntity.Histograms")
+            if (extentName == "PacketAnalysisEntity.CumulativeHistograms")
             {
                 return GetView13();
+            }
+
+            if (extentName == "PacketAnalysisModelStoreContainer.CumulativeProbabilityDistribution")
+            {
+                return GetView14();
+            }
+
+            if (extentName == "PacketAnalysisEntity.CumulativeProbabilityDistributions")
+            {
+                return GetView15();
             }
 
             return null;
@@ -186,10 +196,31 @@ namespace Edm_EntityMappingGeneratedViews
         }
 
         /// <summary>
-        /// Gets the view for PacketAnalysisEntity.CapturePackets.
+        /// Gets the view for PacketAnalysisModelStoreContainer.SingleHistogram.
         /// </summary>
         /// <returns>The mapping view.</returns>
         private static DbMappingView GetView3()
+        {
+            return new DbMappingView(@"
+    SELECT VALUE -- Constructing SingleHistogram
+        [PacketAnalysisModel.Store.SingleHistogram](T1.SingleHistogram_SingleHistogramId, T1.SingleHistogram_CaptureBatchId, T1.SingleHistogram_Interval, T1.SingleHistogram_Probability, T1.SingleHistogram_CaptureState)
+    FROM (
+        SELECT 
+            T.SingleHistogramId AS SingleHistogram_SingleHistogramId, 
+            T.CaptureBatchId AS SingleHistogram_CaptureBatchId, 
+            T.Interval AS SingleHistogram_Interval, 
+            T.Probability AS SingleHistogram_Probability, 
+            T.CaptureState AS SingleHistogram_CaptureState, 
+            True AS _from0
+        FROM PacketAnalysisEntity.SingleHistograms AS T
+    ) AS T1");
+        }
+
+        /// <summary>
+        /// Gets the view for PacketAnalysisEntity.CapturePackets.
+        /// </summary>
+        /// <returns>The mapping view.</returns>
+        private static DbMappingView GetView4()
         {
             return new DbMappingView(@"
     SELECT VALUE -- Constructing CapturePackets
@@ -210,7 +241,7 @@ namespace Edm_EntityMappingGeneratedViews
         /// Gets the view for PacketAnalysisEntity.BatchIntervals.
         /// </summary>
         /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView4()
+        private static DbMappingView GetView5()
         {
             return new DbMappingView(@"
     SELECT VALUE -- Constructing BatchIntervals
@@ -230,7 +261,7 @@ namespace Edm_EntityMappingGeneratedViews
         /// Gets the view for PacketAnalysisEntity.CaptureBatches.
         /// </summary>
         /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView5()
+        private static DbMappingView GetView6()
         {
             return new DbMappingView(@"
     SELECT VALUE -- Constructing CaptureBatches
@@ -251,10 +282,31 @@ namespace Edm_EntityMappingGeneratedViews
         }
 
         /// <summary>
+        /// Gets the view for PacketAnalysisEntity.SingleHistograms.
+        /// </summary>
+        /// <returns>The mapping view.</returns>
+        private static DbMappingView GetView7()
+        {
+            return new DbMappingView(@"
+    SELECT VALUE -- Constructing SingleHistograms
+        [COWE.PacketAnalysisModel.SingleHistogram](T1.SingleHistogram_SingleHistogramId, T1.SingleHistogram_CaptureBatchId, T1.SingleHistogram_Interval, T1.SingleHistogram_Probability, T1.SingleHistogram_CaptureState)
+    FROM (
+        SELECT 
+            T.SingleHistogramId AS SingleHistogram_SingleHistogramId, 
+            T.CaptureBatchId AS SingleHistogram_CaptureBatchId, 
+            T.Interval AS SingleHistogram_Interval, 
+            T.Probability AS SingleHistogram_Probability, 
+            T.CaptureState AS SingleHistogram_CaptureState, 
+            True AS _from0
+        FROM PacketAnalysisModelStoreContainer.SingleHistogram AS T
+    ) AS T1");
+        }
+
+        /// <summary>
         /// Gets the view for PacketAnalysisModelStoreContainer.CumulativeInterval.
         /// </summary>
         /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView6()
+        private static DbMappingView GetView8()
         {
             return new DbMappingView(@"
     SELECT VALUE -- Constructing CumulativeInterval
@@ -274,7 +326,7 @@ namespace Edm_EntityMappingGeneratedViews
         /// Gets the view for PacketAnalysisEntity.CumulativeIntervals.
         /// </summary>
         /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView7()
+        private static DbMappingView GetView9()
         {
             return new DbMappingView(@"
     SELECT VALUE -- Constructing CumulativeIntervals
@@ -287,48 +339,6 @@ namespace Edm_EntityMappingGeneratedViews
             T.Marked AS CumulativeInterval_Marked, 
             True AS _from0
         FROM PacketAnalysisModelStoreContainer.CumulativeInterval AS T
-    ) AS T1");
-        }
-
-        /// <summary>
-        /// Gets the view for PacketAnalysisModelStoreContainer.CumulativeProbabilityDistribution.
-        /// </summary>
-        /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView8()
-        {
-            return new DbMappingView(@"
-    SELECT VALUE -- Constructing CumulativeProbabilityDistribution
-        [PacketAnalysisModel.Store.CumulativeProbabilityDistribution](T1.CumulativeProbabilityDistribution_CumulativeProbabilityDistributionId, T1.CumulativeProbabilityDistribution_Interval, T1.CumulativeProbabilityDistribution_Probability, T1.CumulativeProbabilityDistribution_CaptureState, T1.CumulativeProbabilityDistribution_BatchType)
-    FROM (
-        SELECT 
-            T.CumulativeProbabilityDistributionId AS CumulativeProbabilityDistribution_CumulativeProbabilityDistributionId, 
-            T.Interval AS CumulativeProbabilityDistribution_Interval, 
-            T.Probability AS CumulativeProbabilityDistribution_Probability, 
-            T.CaptureState AS CumulativeProbabilityDistribution_CaptureState, 
-            T.BatchType AS CumulativeProbabilityDistribution_BatchType, 
-            True AS _from0
-        FROM PacketAnalysisEntity.CumulativeProbabilityDistributions AS T
-    ) AS T1");
-        }
-
-        /// <summary>
-        /// Gets the view for PacketAnalysisEntity.CumulativeProbabilityDistributions.
-        /// </summary>
-        /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView9()
-        {
-            return new DbMappingView(@"
-    SELECT VALUE -- Constructing CumulativeProbabilityDistributions
-        [COWE.PacketAnalysisModel.CumulativeProbabilityDistribution](T1.CumulativeProbabilityDistribution_CumulativeProbabilityDistributionId, T1.CumulativeProbabilityDistribution_Interval, T1.CumulativeProbabilityDistribution_Probability, T1.CumulativeProbabilityDistribution_CaptureState, T1.CumulativeProbabilityDistribution_BatchType)
-    FROM (
-        SELECT 
-            T.CumulativeProbabilityDistributionId AS CumulativeProbabilityDistribution_CumulativeProbabilityDistributionId, 
-            T.Interval AS CumulativeProbabilityDistribution_Interval, 
-            T.Probability AS CumulativeProbabilityDistribution_Probability, 
-            T.CaptureState AS CumulativeProbabilityDistribution_CaptureState, 
-            T.BatchType AS CumulativeProbabilityDistribution_BatchType, 
-            True AS _from0
-        FROM PacketAnalysisModelStoreContainer.CumulativeProbabilityDistribution AS T
     ) AS T1");
         }
 
@@ -387,44 +397,82 @@ namespace Edm_EntityMappingGeneratedViews
         }
 
         /// <summary>
-        /// Gets the view for PacketAnalysisModelStoreContainer.Histogram.
+        /// Gets the view for PacketAnalysisModelStoreContainer.CumulativeHistogram.
         /// </summary>
         /// <returns>The mapping view.</returns>
         private static DbMappingView GetView12()
         {
             return new DbMappingView(@"
-    SELECT VALUE -- Constructing Histogram
-        [PacketAnalysisModel.Store.Histogram](T1.Histogram_HistogramId, T1.Histogram_Interval, T1.Histogram_Probability, T1.Histogram_CaptureState, T1.Histogram_BatchType)
+    SELECT VALUE -- Constructing CumulativeHistogram
+        [PacketAnalysisModel.Store.CumulativeHistogram](T1.CumulativeHistogram_CumulativeHistogramId, T1.CumulativeHistogram_Interval, T1.CumulativeHistogram_Probability, T1.CumulativeHistogram_CaptureState)
     FROM (
         SELECT 
-            T.HistogramId AS Histogram_HistogramId, 
-            T.Interval AS Histogram_Interval, 
-            T.Probability AS Histogram_Probability, 
-            T.CaptureState AS Histogram_CaptureState, 
-            T.BatchType AS Histogram_BatchType, 
+            T.CumulativeHistogramId AS CumulativeHistogram_CumulativeHistogramId, 
+            T.Interval AS CumulativeHistogram_Interval, 
+            T.Probability AS CumulativeHistogram_Probability, 
+            T.CaptureState AS CumulativeHistogram_CaptureState, 
             True AS _from0
-        FROM PacketAnalysisEntity.Histograms AS T
+        FROM PacketAnalysisEntity.CumulativeHistograms AS T
     ) AS T1");
         }
 
         /// <summary>
-        /// Gets the view for PacketAnalysisEntity.Histograms.
+        /// Gets the view for PacketAnalysisEntity.CumulativeHistograms.
         /// </summary>
         /// <returns>The mapping view.</returns>
         private static DbMappingView GetView13()
         {
             return new DbMappingView(@"
-    SELECT VALUE -- Constructing Histograms
-        [COWE.PacketAnalysisModel.Histogram](T1.Histogram_HistogramId, T1.Histogram_Interval, T1.Histogram_Probability, T1.Histogram_CaptureState, T1.Histogram_BatchType)
+    SELECT VALUE -- Constructing CumulativeHistograms
+        [COWE.PacketAnalysisModel.CumulativeHistogram](T1.CumulativeHistogram_CumulativeHistogramId, T1.CumulativeHistogram_Interval, T1.CumulativeHistogram_Probability, T1.CumulativeHistogram_CaptureState)
     FROM (
         SELECT 
-            T.HistogramId AS Histogram_HistogramId, 
-            T.Interval AS Histogram_Interval, 
-            T.Probability AS Histogram_Probability, 
-            T.CaptureState AS Histogram_CaptureState, 
-            T.BatchType AS Histogram_BatchType, 
+            T.CumulativeHistogramId AS CumulativeHistogram_CumulativeHistogramId, 
+            T.Interval AS CumulativeHistogram_Interval, 
+            T.Probability AS CumulativeHistogram_Probability, 
+            T.CaptureState AS CumulativeHistogram_CaptureState, 
             True AS _from0
-        FROM PacketAnalysisModelStoreContainer.Histogram AS T
+        FROM PacketAnalysisModelStoreContainer.CumulativeHistogram AS T
+    ) AS T1");
+        }
+
+        /// <summary>
+        /// Gets the view for PacketAnalysisModelStoreContainer.CumulativeProbabilityDistribution.
+        /// </summary>
+        /// <returns>The mapping view.</returns>
+        private static DbMappingView GetView14()
+        {
+            return new DbMappingView(@"
+    SELECT VALUE -- Constructing CumulativeProbabilityDistribution
+        [PacketAnalysisModel.Store.CumulativeProbabilityDistribution](T1.CumulativeProbabilityDistribution_CumulativeProbabilityDistributionId, T1.CumulativeProbabilityDistribution_Interval, T1.CumulativeProbabilityDistribution_Probability, T1.CumulativeProbabilityDistribution_CaptureState)
+    FROM (
+        SELECT 
+            T.CumulativeProbabilityDistributionId AS CumulativeProbabilityDistribution_CumulativeProbabilityDistributionId, 
+            T.Interval AS CumulativeProbabilityDistribution_Interval, 
+            T.Probability AS CumulativeProbabilityDistribution_Probability, 
+            T.CaptureState AS CumulativeProbabilityDistribution_CaptureState, 
+            True AS _from0
+        FROM PacketAnalysisEntity.CumulativeProbabilityDistributions AS T
+    ) AS T1");
+        }
+
+        /// <summary>
+        /// Gets the view for PacketAnalysisEntity.CumulativeProbabilityDistributions.
+        /// </summary>
+        /// <returns>The mapping view.</returns>
+        private static DbMappingView GetView15()
+        {
+            return new DbMappingView(@"
+    SELECT VALUE -- Constructing CumulativeProbabilityDistributions
+        [COWE.PacketAnalysisModel.CumulativeProbabilityDistribution](T1.CumulativeProbabilityDistribution_CumulativeProbabilityDistributionId, T1.CumulativeProbabilityDistribution_Interval, T1.CumulativeProbabilityDistribution_Probability, T1.CumulativeProbabilityDistribution_CaptureState)
+    FROM (
+        SELECT 
+            T.CumulativeProbabilityDistributionId AS CumulativeProbabilityDistribution_CumulativeProbabilityDistributionId, 
+            T.Interval AS CumulativeProbabilityDistribution_Interval, 
+            T.Probability AS CumulativeProbabilityDistribution_Probability, 
+            T.CaptureState AS CumulativeProbabilityDistribution_CaptureState, 
+            True AS _from0
+        FROM PacketAnalysisModelStoreContainer.CumulativeProbabilityDistribution AS T
     ) AS T1");
         }
     }

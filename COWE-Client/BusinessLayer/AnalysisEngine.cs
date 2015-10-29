@@ -21,7 +21,10 @@ namespace COWE.BusinessLayer
 
         BatchType _BatchType = BatchType.Unknown;
         CaptureState _CaptureState = CaptureState.Unknown;
+        CurrentCaptureFile _File = null;
         HypothesisTest _HypothesisTest = HypothesisTest.Unknown;
+        SortedDictionary<int, decimal> _CumulativeMarkedProbabilities = new SortedDictionary<int, decimal>();
+        SortedDictionary<int, decimal> _CumulativeUnmarkedProbabilities = new SortedDictionary<int, decimal>();
         #endregion
 
         #region Constructors
@@ -33,13 +36,17 @@ namespace COWE.BusinessLayer
             this._TrimZeroPacketIntervals = trimZeroPacketIntervals;
         }
 
-        public AnalysisEngine(bool trimZeroPacketIntervals, int histogramBinSize, HypothesisTest hypothesisTest, string captureFileName, CaptureState captureState)
+        //public AnalysisEngine(bool trimZeroPacketIntervals, int histogramBinSize, HypothesisTest hypothesisTest, string captureFileName, CaptureState captureState)
+        public AnalysisEngine(bool trimZeroPacketIntervals, int histogramBinSize, HypothesisTest hypothesisTest, string captureFileName, CurrentCaptureFile file)
         {
             this._HistogramBinSize = histogramBinSize;
             this._TrimZeroPacketIntervals = trimZeroPacketIntervals;
             this._CaptureFileName = captureFileName;
-            this._CaptureState = captureState;
+            //this._CaptureState = captureState;
+            this._CaptureState = file.CaptureState;
             this._HypothesisTest = hypothesisTest;
+            this._File = new CurrentCaptureFile();
+            this._File = file;
         }
         #endregion
 
@@ -71,7 +78,7 @@ namespace COWE.BusinessLayer
             captureFile = cfd.GetCurrentCaptureFile(_CaptureFileName);
 
             // Set the global variable
-            _CaptureState = captureFile.Marked;
+            _CaptureState = captureFile.CaptureState;
 
             BindingList<BatchIntervalMarked> batchIntervals = new BindingList<BatchIntervalMarked>();
 
@@ -85,7 +92,7 @@ namespace COWE.BusinessLayer
 
             // Add the results to the DisplayStatistics table
             DisplayStatisticsData dsd = new DisplayStatisticsData();
-            if(captureFile.Marked == CaptureState.Marked)
+            if(captureFile.CaptureState == CaptureState.Marked)
             {
                 markedSingleStats = CalculateBatchStatistics(batchIntervals, CaptureState.Marked, BatchType.Single);
             }
@@ -410,6 +417,9 @@ namespace COWE.BusinessLayer
          * Need to split this into two methods according to BatchType, then call the method below and
          * pass in BatchType and BatchIntervals (single or cumulative).  Are batch intervals the same type???
          * 
+         * ==> add CaptureBatchId field when inserting histogram data for single batches
+         * 
+         * 
          *********************************************************************************************/
 
         public void CalculateSingleHistogramData()
@@ -422,22 +432,24 @@ namespace COWE.BusinessLayer
             captureFile = pcp.GetCurrentCaptureFile(_CaptureFileName);
             batchIntervals = pcp.GetMarkedBatchIntervals(captureFile.CaptureBatchId);
 
-            switch (_CaptureState)
-            {
-                case CaptureState.Marked:
-                    CalculateHistogramDataByType(batchIntervals, BatchType.Single, CaptureState.Marked);
-                    break;
-                case CaptureState.Unmarked:
-                    CalculateHistogramDataByType(batchIntervals, BatchType.Single, CaptureState.Unmarked);
-                    break;
-            }
+            CalculateSingleHistogramProbability(batchIntervals, BatchType.Single, captureFile);
+
+            //switch (_CaptureState)
+            //{
+            //    case CaptureState.Marked:
+            //        CalculateHistogramDataByType(batchIntervals, BatchType.Single, CaptureState.Marked);
+            //        break;
+            //    case CaptureState.Unmarked:
+            //        CalculateHistogramDataByType(batchIntervals, BatchType.Single, CaptureState.Unmarked);
+            //        break;
+            //}
         }
 
         public void CalculateCumulativeHistogramData()
         {
             // Delete existing cumulative histogram data - it will be replaced with new data
-            HistogramData hd = new HistogramData(BatchType.Cumulative, _CaptureState);
-            hd.DeleteCumulativeHistogramData();
+            CumulativeHistogramData chd = new CumulativeHistogramData(_CaptureState);
+            chd.DeleteCumulativeHistogramData();
 
             ProcessCapturePackets pcp = new ProcessCapturePackets();
             BindingList<BatchIntervalMarked> batchIntervals = new BindingList<BatchIntervalMarked>();
@@ -475,61 +487,143 @@ namespace COWE.BusinessLayer
             switch (_CaptureState)
             {
                 case CaptureState.Marked:
-                    CalculateHistogramDataByType(markedBatchIntervals, BatchType.Cumulative, CaptureState.Marked);
+                    CalculateCumulativeHistogramProbability(markedBatchIntervals, BatchType.Cumulative, CaptureState.Marked);
                     break;
                 case CaptureState.Unmarked:
-                    CalculateHistogramDataByType(unmarkedBatchIntervals, BatchType.Cumulative, CaptureState.Unmarked);
+                    CalculateCumulativeHistogramProbability(unmarkedBatchIntervals, BatchType.Cumulative, CaptureState.Unmarked);
+                    break;
+            }
+        }
+        public void CalculateCumulativeProbabilityDistribution(CaptureState captureState)
+        {
+            // Note: cumulative histogram intervals must have previously been calculated in order to calculate cumulative probabilities
+
+            //SortedDictionary<int, decimal> _CumulativeMarkedProbabilities = new SortedDictionary<int, decimal>();
+            //SortedDictionary<int, decimal> _CumulativeUnmarkedProbabilities = new SortedDictionary<int, decimal>();
+
+            //_CumulativeMarkedProbabilities = new CalculateProbability(batchIntervals).GetProbabilityByPacketRange(_TrimZeroPacketIntervals, histogramBinSize);
+
+            // Get the batch intervals
+            BindingList<BatchIntervalMarked> unmarkedBatchIntervals = new BindingList<BatchIntervalMarked>();
+            BindingList<BatchIntervalMarked> markedBatchIntervals = new BindingList<BatchIntervalMarked>();
+            BindingList<CumulativeProbabilityDistribution> distribution = new BindingList<CumulativeProbabilityDistribution>();
+            CumulativeProbabilityDistributionData cumProbDistData = new CumulativeProbabilityDistributionData();
+
+            // Delete any existing cumulative probability distribution data for the captureState
+            cumProbDistData.DeleteCumulativeProbabilityDistribution(captureState);
+
+            // Add the newly calculated cumulative probability distribution
+            switch (captureState)
+            {
+                case CaptureState.Marked:
+                    if (_CumulativeMarkedProbabilities != null)
+                    {
+                        SortedDictionary<int, decimal> markedProbabilities = new CalculateProbability(markedBatchIntervals).GetCumulativeProbabilityDistribution(_CumulativeMarkedProbabilities);
+
+                        // Convert to CumulativeProbabilityDistribution type
+                        foreach (KeyValuePair<int, decimal> item in markedProbabilities)
+                        {
+                            CumulativeProbabilityDistribution cpd = new CumulativeProbabilityDistribution();
+                            cpd.CaptureState = (int)CaptureState.Marked;
+                            cpd.Interval = item.Key;
+                            cpd.Probability = Math.Round(item.Value, 10);
+                            distribution.Add(cpd);
+                        }
+                    }
+                    // Save to database
+                    cumProbDistData.InsertCumulativeProbabilityDistribution(distribution);
+                    break;
+
+                case CaptureState.Unmarked:
+                    if (_CumulativeUnmarkedProbabilities != null)
+                    {
+                        SortedDictionary<int, decimal> unmarkedProbabilities = new CalculateProbability(unmarkedBatchIntervals).GetCumulativeProbabilityDistribution(_CumulativeUnmarkedProbabilities);
+
+                        // Convert to CumulativeProbabilityDistribution type
+                        foreach (KeyValuePair<int, decimal> item in unmarkedProbabilities)
+                        {
+                            CumulativeProbabilityDistribution cpd = new CumulativeProbabilityDistribution();
+                            cpd.CaptureState = (int)CaptureState.Unmarked;
+                            cpd.Interval = item.Key;
+                            //cpd.Probability = Convert.ToDecimal(String.Format("{0,10}", item.Value.ToString("D")));
+                            cpd.Probability = Math.Round(item.Value,10);
+                            distribution.Add(cpd);
+                        }
+                    }
+                    // Save to database
+                    cumProbDistData.InsertCumulativeProbabilityDistribution(distribution);
                     break;
             }
         }
         #endregion
 
         #region Private Methods
-        private void CalculateHistogramDataByType(BindingList<BatchIntervalMarked> batchIntervalsCollection, BatchType batchType, CaptureState captureState)
+        //private void CalculateHistogramDataByType(BindingList<BatchIntervalMarked> batchIntervalsCollection, BatchType batchType, CaptureState captureState)
+        private void CalculateSingleHistogramProbability(BindingList<BatchIntervalMarked> batchIntervalsCollection, BatchType batchType, CurrentCaptureFile captureFile)
         {
-            //ProcessCapturePackets pcp = new ProcessCapturePackets();
             BindingList<BatchIntervalMarked> batchIntervals = new BindingList<BatchIntervalMarked>();
             batchIntervals = batchIntervalsCollection;
 
-            //CurrentCaptureFile captureFile = new CurrentCaptureFile();
-            //captureFile = pcp.GetCurrentCaptureFile(_CaptureFileName);
-
-            // Get batch intervals
-            //batchIntervals = pcp.GetMarkedBatchIntervals(captureFile.CaptureBatchId);
-            ////CalculateHistogram histogram = new CalculateHistogram();
-            ////Dictionary<int, int> histValues = new Dictionary<int, int>();
-
-            ////BindingList<CapturePacket> capturePackets = new BindingList<CapturePacket>();
-            ////capturePackets = pcp.GetCapturePackets(_CaptureFileName);
-            ////histValues = histogram.CalculateHistogramValues(capturePackets);
-
-            //Dictionary<int, decimal> probabilities = new CalculateProbability(histValues).GetProbabilityValues();
-            //SortedDictionary<int, decimal> probabilities = new CalculateProbability(markedIntervals).GetProbabilityByPacketRange();
-
             SortedDictionary<int, decimal> histogramProbabilities = new SortedDictionary<int, decimal>();
-            //SortedDictionary<int, decimal> _CumulativeUnmarkedProbabilities = new SortedDictionary<int, decimal>();
 
             int histogramBinSize = AnalysisConfiguration.HistogramBinSize;
-            //SortedDictionary<int, decimal> markedProbabilities = new CalculateProbability(markedBatchIntervals).GetProbabilityByPacketRange(_trimZeroPacketIntervals, histogramBinSize);
-            //SortedDictionary<int, decimal> unmarkedProbabilities = new CalculateProbability(unmarkedBatchIntervals).GetProbabilityByPacketRange(_trimZeroPacketIntervals, histogramBinSize);
             histogramProbabilities = new CalculateProbability(batchIntervals).GetProbabilityByPacketRange(_TrimZeroPacketIntervals, histogramBinSize);
-            //_CumulativeUnmarkedProbabilities = new CalculateProbability(unmarkedBatchIntervals).GetProbabilityByPacketRange(_trimZeroPacketIntervals, histogramBinSize);
 
             // Convert histogram probabilities to Histogram type collection
-            BindingList<Histogram> histogramProbabilityData = new BindingList<Histogram>();
+            BindingList<SingleHistogram> singleHistogramProbabilityData = new BindingList<SingleHistogram>();
             foreach (KeyValuePair<int, decimal> data in histogramProbabilities)
             {
-                Histogram h = new Histogram();
+                SingleHistogram h = new SingleHistogram();
+                h.CaptureBatchId = captureFile.CaptureBatchId;
+                h.Interval = data.Key;
+                h.Probability = data.Value;
+                h.BatchType = Convert.ToInt32(batchType);
+                h.CaptureState = Convert.ToInt32(captureFile.CaptureState);
+                singleHistogramProbabilityData.Add(h);
+            }
+
+            // Save histogram data
+            SingleHistogramData shd = new SingleHistogramData(singleHistogramProbabilityData);
+            shd.InsertSingleHistogramData();
+        }
+
+        private void CalculateCumulativeHistogramProbability(BindingList<BatchIntervalMarked> batchIntervalsCollection, BatchType batchType, CaptureState captureState)
+        {
+            BindingList<BatchIntervalMarked> batchIntervals = new BindingList<BatchIntervalMarked>();
+            batchIntervals = batchIntervalsCollection;
+
+            SortedDictionary<int, decimal> histogramProbabilities = new SortedDictionary<int, decimal>();
+
+            int histogramBinSize = AnalysisConfiguration.HistogramBinSize;
+            histogramProbabilities = new CalculateProbability(batchIntervals).GetProbabilityByPacketRange(_TrimZeroPacketIntervals, histogramBinSize);
+            
+            // Update the cumulative intervals for calculating cumulative probability distributions
+            switch(captureState)
+            {
+                case CaptureState.Marked:
+                    _CumulativeMarkedProbabilities = histogramProbabilities;
+                    break;
+
+                case CaptureState.Unmarked:
+                    _CumulativeUnmarkedProbabilities = histogramProbabilities;
+                    break;
+            }
+
+            // Convert histogram probabilities to Histogram type collection
+            BindingList<CumulativeHistogram> cumulativeHistogramProbabilityData = new BindingList<CumulativeHistogram>();
+            foreach (KeyValuePair<int, decimal> data in histogramProbabilities)
+            {
+                CumulativeHistogram h = new CumulativeHistogram();
                 h.Interval = data.Key;
                 h.Probability = data.Value;
                 h.BatchType = Convert.ToInt32(batchType);
                 h.CaptureState = Convert.ToInt32(captureState);
-                histogramProbabilityData.Add(h);
+                cumulativeHistogramProbabilityData.Add(h);
             }
 
             // Save histogram data
-            HistogramData hd = new HistogramData(histogramProbabilityData);
-            hd.InsertHistogramData();
+            CumulativeHistogramData chd = new CumulativeHistogramData(cumulativeHistogramProbabilityData);
+            chd.InsertCumulativeHistogramData();
         }
         #endregion
     }

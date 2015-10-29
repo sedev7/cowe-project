@@ -46,11 +46,12 @@
     <Compile Include="BatchStatistics.cs" />
     <Compile Include="CaptureBatch.cs" />
     <Compile Include="CapturePacket.cs" />
+    <Compile Include="CumulativeHistogram.cs" />
     <Compile Include="CumulativeInterval.cs" />
     <Compile Include="CumulativeProbabilityDistribution.cs" />
     <Compile Include="CurrentCaptureFile.cs" />
     <Compile Include="DisplayStatistic.cs" />
-    <Compile Include="Histogram.cs" />
+    <Compile Include="SingleHistogram.cs" />
     <Compile Include="KsStatistics.cs" />
     <Compile Include="PacketAnalysisModel.cs">
       <AutoGen>True</AutoGen>

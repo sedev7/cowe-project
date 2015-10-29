@@ -7,13 +7,15 @@
       <Diagram DiagramId="5803cce9521a43ceabc9b8667815353c" Name="Diagram1">
         <EntityTypeShape EntityType="COWE.PacketAnalysisModel.CapturePacket" Width="1.5" PointX="0.75" PointY="4.125" IsExpanded="true" />
         <EntityTypeShape EntityType="COWE.PacketAnalysisModel.BatchInterval" Width="1.5" PointX="3" PointY="0.75" />
-        <EntityTypeShape EntityType="COWE.PacketAnalysisModel.CumulativeInterval" Width="2" PointX="3" PointY="3.75" />
-        <EntityTypeShape EntityType="COWE.PacketAnalysisModel.CumulativeProbabilityDistribution" Width="2.5" PointX="5.125" PointY="0.75" />
+        <EntityTypeShape EntityType="COWE.PacketAnalysisModel.CumulativeInterval" Width="2" PointX="5" PointY="0.75" />
         <EntityTypeShape EntityType="COWE.PacketAnalysisModel.CaptureBatch" Width="1.5" PointX="0.75" PointY="0.5" />
         <AssociationConnector Association="COWE.PacketAnalysisModel.FK_BatchInterval_CaptureBatch_CaptureBatchId" />
         <AssociationConnector Association="COWE.PacketAnalysisModel.FK_CapturePacket_CaptureBatch_CaptureBatchId" />
-        <EntityTypeShape EntityType="COWE.PacketAnalysisModel.DisplayStatistic" Width="1.5" PointX="6.375" PointY="3.75" />
-        <EntityTypeShape EntityType="COWE.PacketAnalysisModel.Histogram" Width="1.5" PointX="8.625" PointY="0.75" />
+        <EntityTypeShape EntityType="COWE.PacketAnalysisModel.DisplayStatistic" Width="2.625" PointX="7.375" PointY="3.375" />
+        <EntityTypeShape EntityType="COWE.PacketAnalysisModel.CumulativeHistogram" Width="1.875" PointX="5.25" PointY="3.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="COWE.PacketAnalysisModel.SingleHistogram" Width="1.75" PointX="3.125" PointY="3.375" />
+        <AssociationConnector Association="COWE.PacketAnalysisModel.FK_SingleHistogram_CaptureBatch_CaptureBatchId" />
+        <EntityTypeShape EntityType="COWE.PacketAnalysisModel.CumulativeProbabilityDistribution" Width="2.625" PointX="3.125" PointY="5.875" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

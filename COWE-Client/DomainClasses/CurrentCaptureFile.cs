@@ -13,21 +13,21 @@ namespace COWE.DomainClasses
         //public event ReceivedParsedFileEventHandler ReceivedParsedFile;
         #region Constructors
         public CurrentCaptureFile() { }
-        public CurrentCaptureFile(string fileName, CaptureState marked)
+        public CurrentCaptureFile(string fileName, CaptureState captureState)
         {
             this.FileName = fileName;
-            this.Marked = marked;
+            this.CaptureState = captureState;
         }
-        public CurrentCaptureFile(int captureBatchId, CaptureState marked)
+        public CurrentCaptureFile(int captureBatchId, CaptureState captureState)
         {
             this.CaptureBatchId = captureBatchId;
-            this.Marked = marked;
+            this.CaptureState = captureState;
         }
-        public CurrentCaptureFile(string fileName, int captureBatchId, CaptureState marked)
+        public CurrentCaptureFile(string fileName, int captureBatchId, CaptureState captureState)
         {
             this.FileName = fileName;
             this.CaptureBatchId = captureBatchId;
-            this.Marked = marked;
+            this.CaptureState = captureState;
         }
         #endregion
 
@@ -51,7 +51,7 @@ namespace COWE.DomainClasses
         #region Properties
         public int CaptureBatchId { get; set; }
         public string FileName { get; set; }
-        public CaptureState Marked { get; set; }
+        public CaptureState CaptureState { get; set; }
         #endregion
 
         #region Methods
