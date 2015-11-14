@@ -51,8 +51,9 @@
     <Compile Include="CumulativeProbabilityDistribution.cs" />
     <Compile Include="CurrentCaptureFile.cs" />
     <Compile Include="DisplayStatistic.cs" />
+    <Compile Include="HypothesisTest.cs" />
     <Compile Include="SingleHistogram.cs" />
-    <Compile Include="KsStatistics.cs" />
+    <Compile Include="MeansTestStatistic.cs" />
     <Compile Include="PacketAnalysisModel.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

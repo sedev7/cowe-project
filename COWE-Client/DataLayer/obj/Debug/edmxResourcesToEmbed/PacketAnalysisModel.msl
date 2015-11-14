@@ -144,5 +144,17 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <EntitySetMapping Name="HypothesisTests">
+      <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.HypothesisTest">
+        <MappingFragment StoreEntitySet="HypothesisTest">
+          <ScalarProperty Name="HasValues" ColumnName="HasValues" />
+          <ScalarProperty Name="KsTestResult" ColumnName="KsTestResult" />
+          <ScalarProperty Name="MeansTestResult" ColumnName="MeansTestResult" />
+          <ScalarProperty Name="MeansVarianceStandardDeviation" ColumnName="MeansVarianceStandardDeviation" />
+          <ScalarProperty Name="MeanOfMeansVariance" ColumnName="MeanOfMeansVariance" />
+          <ScalarProperty Name="HypothesisTestId" ColumnName="HypothesisTestId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
   </EntityContainerMapping>
 </Mapping>

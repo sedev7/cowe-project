@@ -15,27 +15,39 @@ select * from COWE.DisplayStatistic;
 select * from COWE.SingleHistogram;
 select * from COWE.CumulativeHistogram;
 select * from COWE.CumulativeProbabilityDistribution;
+select * from COWE.HypothesisTest;
 
 --select * from cowe.SingleHistogram order by BatchType;
+
+/********************************************************************************/
+/*                                                                              */
+/* For testing: do not delete data from CaptureBatch and CapturePacket tables   */
+/*                                                                              */
+/********************************************************************************/
 
 /*
 -- Clean out tables
 delete from COWE.BatchInterval;
 delete from COWE.CumulativeInterval;
+delete from COWE.DisplayStatistic;
 delete from COWE.CaptureBatch;
 delete from COWE.CapturePacket;
 delete from COWE.SingleHistogram;
+delete from COWE.CumulativeHistogram;
+delete from COWE.CumulativeProbabilityDistribution;
+delete from COWE.HypothesisTest;
 */
 
 /*
--- Clean out all tables except COWE.CaptureBatch
+-- Clean out all tables except COWE.CaptureBatch and COWE.CapturePacket
 TRUNCATE TABLE COWE.BatchInterval;
 TRUNCATE TABLE COWE.CumulativeInterval;
 TRUNCATE TABLE COWE.DisplayStatistic;
 TRUNCATE TABLE COWE.SingleHistogram;
 TRUNCATE TABLE COWE.CumulativeHistogram;
 TRUNCATE TABLE COWE.CumulativeProbabilityDistribution;
-UPDATE COWE.CaptureBatch SET Mean = 0, TrimmedMean = 0, SingleStatistics = 0, CumulativeStatistics = 0 WHERE CaptureBatchId in (6,7,8,9);
+TRUNCATE TABLE COWE.HypothesisTest;
+UPDATE COWE.CaptureBatch SET Mean = 0, TrimmedMean = 0, SingleStatistics = 0, CumulativeStatistics = 0 WHERE CaptureBatchId in (5,6,7,8);
 --TRUNCATE TABLE COWE.CapturePacket;
 --TRUNCATE TABLE COWE.CaptureBatch;
 */

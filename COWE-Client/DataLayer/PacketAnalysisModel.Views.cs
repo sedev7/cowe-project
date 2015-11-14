@@ -11,7 +11,7 @@ using System.Data.Entity.Infrastructure.MappingViews;
 
 [assembly: DbMappingViewCacheTypeAttribute(
     typeof(COWE.DataLayer.PacketAnalysisEntity),
-    typeof(Edm_EntityMappingGeneratedViews.ViewsForBaseEntitySetse7c3fd045642602b62fce64008fdb1854b3ace5a0d03c0aef7b027aa0f826594))]
+    typeof(Edm_EntityMappingGeneratedViews.ViewsForBaseEntitySets2582b6c9d9e9ae55df8a483ecd8796f810ec604a8270c0972fb1dba25b98347a))]
 
 namespace Edm_EntityMappingGeneratedViews
 {
@@ -23,14 +23,14 @@ namespace Edm_EntityMappingGeneratedViews
     /// Implements a mapping view cache.
     /// </summary>
     [GeneratedCode("Entity Framework Power Tools", "0.9.0.0")]
-    internal sealed class ViewsForBaseEntitySetse7c3fd045642602b62fce64008fdb1854b3ace5a0d03c0aef7b027aa0f826594 : DbMappingViewCache
+    internal sealed class ViewsForBaseEntitySets2582b6c9d9e9ae55df8a483ecd8796f810ec604a8270c0972fb1dba25b98347a : DbMappingViewCache
     {
         /// <summary>
         /// Gets a hash value computed over the mapping closure.
         /// </summary>
         public override string MappingHashValue
         {
-            get { return "e7c3fd045642602b62fce64008fdb1854b3ace5a0d03c0aef7b027aa0f826594"; }
+            get { return "2582b6c9d9e9ae55df8a483ecd8796f810ec604a8270c0972fb1dba25b98347a"; }
         }
 
         /// <summary>
@@ -125,6 +125,16 @@ namespace Edm_EntityMappingGeneratedViews
             if (extentName == "PacketAnalysisEntity.CumulativeProbabilityDistributions")
             {
                 return GetView15();
+            }
+
+            if (extentName == "PacketAnalysisModelStoreContainer.HypothesisTest")
+            {
+                return GetView16();
+            }
+
+            if (extentName == "PacketAnalysisEntity.HypothesisTests")
+            {
+                return GetView17();
             }
 
             return null;
@@ -473,6 +483,50 @@ namespace Edm_EntityMappingGeneratedViews
             T.CaptureState AS CumulativeProbabilityDistribution_CaptureState, 
             True AS _from0
         FROM PacketAnalysisModelStoreContainer.CumulativeProbabilityDistribution AS T
+    ) AS T1");
+        }
+
+        /// <summary>
+        /// Gets the view for PacketAnalysisModelStoreContainer.HypothesisTest.
+        /// </summary>
+        /// <returns>The mapping view.</returns>
+        private static DbMappingView GetView16()
+        {
+            return new DbMappingView(@"
+    SELECT VALUE -- Constructing HypothesisTest
+        [PacketAnalysisModel.Store.HypothesisTest](T1.HypothesisTest_HypothesisTestId, T1.HypothesisTest_MeanOfMeansVariance, T1.HypothesisTest_MeansVarianceStandardDeviation, T1.HypothesisTest_MeansTestResult, T1.HypothesisTest_KsTestResult, T1.HypothesisTest_HasValues)
+    FROM (
+        SELECT 
+            T.HypothesisTestId AS HypothesisTest_HypothesisTestId, 
+            T.MeanOfMeansVariance AS HypothesisTest_MeanOfMeansVariance, 
+            T.MeansVarianceStandardDeviation AS HypothesisTest_MeansVarianceStandardDeviation, 
+            T.MeansTestResult AS HypothesisTest_MeansTestResult, 
+            T.KsTestResult AS HypothesisTest_KsTestResult, 
+            T.HasValues AS HypothesisTest_HasValues, 
+            True AS _from0
+        FROM PacketAnalysisEntity.HypothesisTests AS T
+    ) AS T1");
+        }
+
+        /// <summary>
+        /// Gets the view for PacketAnalysisEntity.HypothesisTests.
+        /// </summary>
+        /// <returns>The mapping view.</returns>
+        private static DbMappingView GetView17()
+        {
+            return new DbMappingView(@"
+    SELECT VALUE -- Constructing HypothesisTests
+        [COWE.PacketAnalysisModel.HypothesisTest](T1.HypothesisTest_HypothesisTestId, T1.HypothesisTest_MeanOfMeansVariance, T1.HypothesisTest_MeansVarianceStandardDeviation, T1.HypothesisTest_MeansTestResult, T1.HypothesisTest_KsTestResult, T1.HypothesisTest_HasValues)
+    FROM (
+        SELECT 
+            T.HypothesisTestId AS HypothesisTest_HypothesisTestId, 
+            T.MeanOfMeansVariance AS HypothesisTest_MeanOfMeansVariance, 
+            T.MeansVarianceStandardDeviation AS HypothesisTest_MeansVarianceStandardDeviation, 
+            T.MeansTestResult AS HypothesisTest_MeansTestResult, 
+            T.KsTestResult AS HypothesisTest_KsTestResult, 
+            T.HasValues AS HypothesisTest_HasValues, 
+            True AS _from0
+        FROM PacketAnalysisModelStoreContainer.HypothesisTest AS T
     ) AS T1");
         }
     }

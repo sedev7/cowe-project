@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace COWE.DomainClasses
 {
-    public class KsStatistics
+    public class MeansTestStatistic
     {
-        public KsStatistics(double alpha, decimal zvalue)
+        public MeansTestStatistic() { }
+        public MeansTestStatistic(double alpha, decimal zvalue)
         {
             this.Alpha = alpha;
             this.Zvalue = zvalue;
@@ -26,7 +27,7 @@ namespace COWE.DomainClasses
         {
             get
             {
-                return UnmarkedMean - MarkedMean;
+                return Math.Abs(UnmarkedMean - MarkedMean);
             }
         }
         public decimal SigmaDifference
@@ -36,7 +37,7 @@ namespace COWE.DomainClasses
                 // Check for divide by zero errors
                 if (MarkedIntervalCount != 0 && UnmarkedIntervalCount != 0)
                 {
-                    return (Convert.ToDecimal(Math.Sqrt(Math.Pow((double)MarkedStdDev, 2) / MarkedIntervalCount + Math.Pow((double)UnmarkedStdDev, 2) / UnmarkedIntervalCount)));
+                    return Convert.ToDecimal(Math.Sqrt((Math.Pow((double)MarkedStdDev, 2) / MarkedIntervalCount) + (Math.Pow((double)UnmarkedStdDev, 2) / UnmarkedIntervalCount)));
                 }
                 else
                 {

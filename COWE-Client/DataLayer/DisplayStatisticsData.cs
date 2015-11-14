@@ -29,7 +29,25 @@ namespace COWE.DataLayer
             }
             return statistics;
         }
+        public DisplayStatistic GetLastSingleMarkedDisplayStatistics()
+        {
+            DisplayStatistic statistics = new DisplayStatistic();
 
+            using (var context = new PacketAnalysisEntity())
+            {
+                // Get the last Id value for single marked statistic data
+                var maxid = (from m in context.DisplayStatistics
+                             where m.Marked == true && m.BatchType == 1
+                             select m.DisplayStatisticId).Max();
+
+                var data = (from d in context.DisplayStatistics
+                            where d.DisplayStatisticId == maxid
+                            select d).FirstOrDefault();
+
+                statistics = data;
+            }
+            return statistics;
+        }
         public BindingList<DisplayStatistic> GetSingleUnmarkedDisplayStatistics()
         {
             BindingList<DisplayStatistic> statistics = new BindingList<DisplayStatistic>();
@@ -42,29 +60,54 @@ namespace COWE.DataLayer
             }
             return statistics;
         }
-
-        public BindingList<DisplayStatistic> GetCumulativeMarkedDisplayStatistics()
+        public DisplayStatistic GetLastSingleUnmarkedDisplayStatistics()
         {
-            BindingList<DisplayStatistic> statistics = new BindingList<DisplayStatistic>();
+            DisplayStatistic statistics = new DisplayStatistic();
+
+            using (var context = new PacketAnalysisEntity())
+            {
+                // Get the last Id value for single unmarked statistic data
+                var maxid = (from m in context.DisplayStatistics
+                             where m.Marked == false && m.BatchType == 1
+                             select m.DisplayStatisticId).Max();
+
+                var data = (from d in context.DisplayStatistics
+                            where d.DisplayStatisticId == maxid
+                            select d).FirstOrDefault();
+
+                statistics = data;
+            }
+            return statistics;
+        }
+
+        
+
+        public DisplayStatistic GetCumulativeMarkedDisplayStatistics()
+        {
+            DisplayStatistic statistics = new DisplayStatistic();
 
             using (var context = new PacketAnalysisEntity())
             {
                 var data = (from d in context.DisplayStatistics
                             where d.Marked == true && d.BatchType == 2
-                            select d).ToList();
+                            select d).FirstOrDefault();
+
+                statistics = data;
             }
             return statistics;
         }
 
-        public BindingList<DisplayStatistic> GetCumulativeUnmarkedDisplayStatistics()
+        public DisplayStatistic GetCumulativeUnmarkedDisplayStatistics()
         {
-            BindingList<DisplayStatistic> statistics = new BindingList<DisplayStatistic>();
+            DisplayStatistic statistics = new DisplayStatistic();
 
             using (var context = new PacketAnalysisEntity())
             {
                 var data = (from d in context.DisplayStatistics
                             where d.Marked == false && d.BatchType == 2
-                            select d).ToList();
+                            select d).FirstOrDefault();
+
+                statistics = data;
             }
             return statistics;
         }
@@ -196,6 +239,45 @@ namespace COWE.DataLayer
                     // no op - unknown batch type
                 }
 
+                context.SaveChanges();
+            }
+        }
+        public void DeleteHypothesisTestResults()
+        {
+            using (var context = new PacketAnalysisEntity())
+            {
+                // Check to see if the table is empty
+                var isEmpty = (from e in context.HypothesisTests select e).Count();
+
+                // If not empty delete any rows
+                if (isEmpty > 0)
+                {
+                    var deleteResults = (from t in context.HypothesisTests select t).ToList();
+
+                    foreach (HypothesisTest ht in deleteResults)
+                    {
+                        context.HypothesisTests.Remove(ht);    
+                    }
+                    context.SaveChanges();
+                }
+            }
+        }
+        public HypothesisTest GetHypothesisTestResults()
+        {
+            HypothesisTest ht = new HypothesisTest();
+
+            using (var context = new PacketAnalysisEntity())
+            {
+                var testResults = (from t in context.HypothesisTests select t).FirstOrDefault();
+                ht = testResults as HypothesisTest;
+            }
+            return ht;
+        }
+        public void InsertHypothesisTestResults(HypothesisTest testResults)
+        {
+            using (var context = new PacketAnalysisEntity())
+            {
+                context.HypothesisTests.Add(testResults);
                 context.SaveChanges();
             }
         }

@@ -44,7 +44,6 @@
   <ItemGroup>
     <Compile Include="AnalysisEngine.cs" />
     <Compile Include="BatchIntervalEngine.cs" />
-    <Compile Include="AnalyzeData.cs" />
     <Compile Include="CalculateProbability.cs" />
     <Compile Include="CalculateHistogram.cs" />
     <Compile Include="NewFileNotifier.cs" />

@@ -101,6 +101,7 @@
       <End Role="SingleHistogram" EntitySet="SingleHistograms" />
     </AssociationSet>
     <EntitySet Name="CumulativeProbabilityDistributions" EntityType="COWE.PacketAnalysisModel.CumulativeProbabilityDistribution" />
+    <EntitySet Name="HypothesisTests" EntityType="COWE.PacketAnalysisModel.HypothesisTest" />
   </EntityContainer>
   <EntityType Name="BatchInterval">
     <Key>
@@ -215,7 +216,18 @@
     </Key>
     <Property Name="CumulativeProbabilityDistributionId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="Interval" Type="Int32" Nullable="false" />
-    <Property Name="Probability" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+    <Property Name="Probability" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
     <Property Name="CaptureState" Type="Int32" Nullable="false" />
+  </EntityType>
+  <EntityType Name="HypothesisTest">
+    <Key>
+      <PropertyRef Name="HypothesisTestId" />
+    </Key>
+    <Property Name="HypothesisTestId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="MeanOfMeansVariance" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
+    <Property Name="MeansVarianceStandardDeviation" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
+    <Property Name="MeansTestResult" Type="Boolean" Nullable="false" />
+    <Property Name="KsTestResult" Type="Boolean" Nullable="false" />
+    <Property Name="HasValues" Type="Boolean" Nullable="false" />
   </EntityType>
 </Schema>

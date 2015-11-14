@@ -549,6 +549,20 @@ namespace COWE.BusinessLayer
 
             return intervals;
         }
+        public BindingList<CumulativeHistogram> GetCumulativeHistogramData(CaptureState captureState)
+        {
+            BindingList<CumulativeHistogram> probabilities = new BindingList<CumulativeHistogram>();
+            CumulativeHistogramData chd = new CumulativeHistogramData(captureState);
+            probabilities = chd.GetCumulativeHistogramData();
+            return probabilities;
+        }
+        public BindingList<CumulativeProbabilityDistribution> GetCumulativeProbabilityDistributionData(CaptureState captureState)
+        {
+            BindingList<CumulativeProbabilityDistribution> distribution = new BindingList<CumulativeProbabilityDistribution>();
+            CumulativeProbabilityDistributionData cpdd = new CumulativeProbabilityDistributionData();
+            distribution = cpdd.GetCumulativeProbabilityDistribution(captureState);
+            return distribution;
+        }
  
         public bool UpdateBatchMean(int captureBatchId, decimal mean, decimal trimmedMean)
         {
@@ -584,19 +598,78 @@ namespace COWE.BusinessLayer
             CaptureFileData cfd = new CaptureFileData();
             return cfd.GetBatchId(fileName);
         }
-        /***************************************************************
-         * 
-         * TO DO:
-         * - Add CaptureBatchId FK reference to Histogram table
-         * - Include captureState, CaptureBatchId and BatchType in the parameters
-         * 
-         ***************************************************************/
+        public int GetProcessedFilesCountMarked()
+        {
+            int fileCount = 0;
+            CaptureFileData cfd = new CaptureFileData();
+            fileCount = cfd.GetProcessedFilesCountMarked();
+            return fileCount;
+        }
+        public int GetProcessedFilesCountUnmarked()
+        {
+            int fileCount = 0;
+            CaptureFileData cfd = new CaptureFileData();
+            fileCount = cfd.GetProcessedFilesCountUnmarked();
+            return fileCount;
+        }
         public BindingList<SingleHistogram> GetSingleHistogramProbabilityData(int captureBatchId)
         {
             BindingList<SingleHistogram> probabilities = new BindingList<SingleHistogram>();
             SingleHistogramData shd = new SingleHistogramData();
             probabilities = shd.GetSingleHistogramData(captureBatchId);
             return probabilities;
+        }
+        public DisplayStatistic GetLastSingleMarkedDisplayStatistics()
+        {
+            DisplayStatistic statistics = new DisplayStatistic();
+            DisplayStatisticsData dsd = new DisplayStatisticsData();
+            statistics = dsd.GetLastSingleMarkedDisplayStatistics();
+            return statistics;
+        }
+        public DisplayStatistic GetLastSingleUnmarkedDisplayStatistics()
+        {
+            DisplayStatistic statistics = new DisplayStatistic();
+            DisplayStatisticsData dsd = new DisplayStatisticsData();
+            statistics = dsd.GetLastSingleUnmarkedDisplayStatistics();
+            return statistics;
+        }
+        public DisplayStatistic GetCumulativeUnmarkedDisplayStatistics()
+        {
+            DisplayStatistic statistics = new DisplayStatistic();
+            DisplayStatisticsData dsd = new DisplayStatisticsData();
+            statistics = dsd.GetCumulativeUnmarkedDisplayStatistics();
+            return statistics;
+        }
+        public DisplayStatistic GetCumulativeMarkedDisplayStatistics()
+        {
+            DisplayStatistic statistics = new DisplayStatistic();
+            DisplayStatisticsData dsd = new DisplayStatisticsData();
+            statistics = dsd.GetCumulativeMarkedDisplayStatistics();
+            return statistics;
+        }
+        public void DeleteHypothesisTestResults()
+        {
+            DisplayStatisticsData dsd = new DisplayStatisticsData();
+            dsd.DeleteHypothesisTestResults();
+        }
+        public HypothesisTest GetHypothesisTestResults()
+        {
+            HypothesisTest ht = new HypothesisTest();
+            DisplayStatisticsData dsd = new DisplayStatisticsData();
+            ht = dsd.GetHypothesisTestResults();
+            if (ht != null)
+            {
+                return ht;
+            }
+            else
+            {
+                return new HypothesisTest();
+            }
+        }
+        public void InsertHypothesisTestResults(HypothesisTest testResults)
+        {
+            DisplayStatisticsData dsd = new DisplayStatisticsData();
+            dsd.InsertHypothesisTestResults(testResults);
         }
         #endregion
 

@@ -24,15 +24,15 @@ namespace COWE.Client
 
         DataGridView _AnalysisDataGridView = new DataGridView();
 
-        //const double _alpha = 0.05;       // Hypothesis test significance level
-        //const decimal _zvalue = 1.65M;    // Z value for (1-_alpha), from standard normal distribution table
+        const double _alpha = 0.05;       // Hypothesis test significance level
+        const decimal _zvalue = 1.65M;    // Z value for (1-_alpha), from standard normal distribution table
                                           // (note: one-tailed test because we are looking at the distribution 
                                           // for the difference of the means)
         
         int _MaxGridDisplayRows = 8;
         int _MaxGridHeight = 300;
 
-        //KsStatistics _KsStatistics = new KsStatistics(_alpha, _zvalue);    // Alpha, Z value
+        KsStatistics _KsStatistics = new KsStatistics(_alpha, _zvalue);    // Alpha, Z value
         
         //SortedDictionary<int, decimal> _CumulativeMarkedProbabilities = new SortedDictionary<int, decimal>();
         //SortedDictionary<int, decimal> _CumulativeUnmarkedProbabilities = new SortedDictionary<int, decimal>();
@@ -95,14 +95,7 @@ namespace COWE.Client
         #endregion
 
         #region Properties
-        //public bool TrimIntervals { get; set; }
-        public bool TrimIntervals
-        {
-            get
-            {
-                return _trimZeroPacketIntervals;
-            }
-        }
+        public bool TrimIntervals { get; set; }
         public string HistogramBinSize { get; set; }
         #endregion
 
@@ -115,7 +108,7 @@ namespace COWE.Client
             _AnalysisDataGridView.ReadOnly = true;
 
             int col = 0; 
-            //int row = 0;
+            int row = 0;
 
             // Create statistic name column
             DataGridViewTextBoxColumn statisticName = new DataGridViewTextBoxColumn();
@@ -227,7 +220,7 @@ namespace COWE.Client
             dt.Rows.Add("Maximum Packets/Interval", "0", "0", "0", "0", "0", "0", "0");
             dt.Rows.Add("Mean of Means", "0", "0", "0", "0", "0", "0", "0");
             dt.Rows.Add("Alpha", "0", "0", "5%", "0", "0", "5%", "5%");
-            dt.Rows.Add("Reject H0?    | Means | K-S |", "0", "0", "0", "0", "0", "0", "0");
+            dt.Rows.Add("Reject H0?", "0", "0", "0", "0", "0", "0", "0");
             
             // Add the DataTable to the grid
             _AnalysisDataGridView.AutoGenerateColumns = false;
@@ -388,67 +381,60 @@ namespace COWE.Client
         }
         private void RefreshSingleBatchStatistics()
         {
-            //// Get the last marked and unmarked batches
-            //BindingList<CurrentCaptureFile> lastBatchIds = new BindingList<CurrentCaptureFile>();
-            //ProcessCapturePackets pcp = new ProcessCapturePackets();
-            //lastBatchIds = pcp.GetLastCaptureBatchIds();
-
-            //// Get the batch intervals
-            //BindingList<BatchIntervalMarked> unmarkedBatchIntervals = new BindingList<BatchIntervalMarked>();
-            //BindingList<BatchIntervalMarked> markedBatchIntervals = new BindingList<BatchIntervalMarked>();
-
-            //foreach (CurrentCaptureFile file in lastBatchIds)
-            //{
-            //    if (file.CaptureState == CaptureState.Marked)
-            //    {
-            //        markedBatchIntervals = pcp.GetMarkedBatchIntervals(file.CaptureBatchId);
-            //    }
-            //    else if(file.CaptureState == CaptureState.Unmarked)
-            //    {
-            //        unmarkedBatchIntervals = pcp.GetMarkedBatchIntervals(file.CaptureBatchId);
-            //    }
-            //    else
-            //    {
-            //        MessageBox.Show("Error retrieving batch intervals: capture state is unknown!", "GetMarkedBatchIntervals by CaptureBatchId", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            //    }
-            //}
-
-            //BatchStatistics markedSingleStats = new BatchStatistics();
-            //BatchStatistics unmarkedSingleStats = new BatchStatistics();
-
-            //// Get this data from DisplayStatistics table; except on refresh...
-            ////AnalysisEngine ae = new AnalysisEngine();
-            ////markedSingleStats = ae.GetBatchStatistics(markedBatchIntervals, CaptureState.Marked, BatchType.Single);
-            ////unmarkedSingleStats = ae.GetBatchStatistics(unmarkedBatchIntervals, CaptureState.Unmarked, BatchType.Single);
-
-            // Get the display statistics from the database
+            // Get the last marked and unmarked batches
+            BindingList<CurrentCaptureFile> lastBatchIds = new BindingList<CurrentCaptureFile>();
             ProcessCapturePackets pcp = new ProcessCapturePackets();
-            DisplayStatistic unmarkedSingleStats = new DisplayStatistic();
-            unmarkedSingleStats = pcp.GetLastSingleUnmarkedDisplayStatistics();
+            lastBatchIds = pcp.GetLastCaptureBatchIds();
+
+            // Get the batch intervals
+            BindingList<BatchIntervalMarked> unmarkedBatchIntervals = new BindingList<BatchIntervalMarked>();
+            BindingList<BatchIntervalMarked> markedBatchIntervals = new BindingList<BatchIntervalMarked>();
+
+            foreach (CurrentCaptureFile file in lastBatchIds)
+            {
+                if (file.CaptureState == CaptureState.Marked)
+                {
+                    markedBatchIntervals = pcp.GetMarkedBatchIntervals(file.CaptureBatchId);
+                }
+                else if(file.CaptureState == CaptureState.Unmarked)
+                {
+                    unmarkedBatchIntervals = pcp.GetMarkedBatchIntervals(file.CaptureBatchId);
+                }
+                else
+                {
+                    MessageBox.Show("Error retrieving batch intervals: capture state is unknown!", "GetMarkedBatchIntervals by CaptureBatchId", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+
+            BatchStatistics markedSingleStats = new BatchStatistics();
+            BatchStatistics unmarkedSingleStats = new BatchStatistics();
+
+            // Get this data from DisplayStatistics table; except on refresh...
+            //AnalysisEngine ae = new AnalysisEngine();
+            //markedSingleStats = ae.GetBatchStatistics(markedBatchIntervals, CaptureState.Marked, BatchType.Single);
+            //unmarkedSingleStats = ae.GetBatchStatistics(unmarkedBatchIntervals, CaptureState.Unmarked, BatchType.Single);
 
             // Load up the table
             // Single unmarked column
             int row = 0;
             _AnalysisDataGridView.Rows[row++].Cells[1].Value = unmarkedSingleStats.IntervalCount;
-            _AnalysisDataGridView.Rows[row++].Cells[1].Value = TrimIntervals == true ? unmarkedSingleStats.TrimmedIntervalCount.ToString() : "N/A";
-            _AnalysisDataGridView.Rows[row++].Cells[1].Value = string.Format("{0:N2}", unmarkedSingleStats.MeanPacketsPerInterval);
-            _AnalysisDataGridView.Rows[row++].Cells[1].Value = string.Format("{0:N2}", unmarkedSingleStats.StandardDeviation);
-            _AnalysisDataGridView.Rows[row++].Cells[1].Value = unmarkedSingleStats.MinPacketsPerInterval;
-            _AnalysisDataGridView.Rows[row++].Cells[1].Value = unmarkedSingleStats.MaxPacketsPerInterval;
+            _AnalysisDataGridView.Rows[row++].Cells[1].Value = TrimIntervals == true ? unmarkedSingleStats.IntervalCountTrimmed.ToString() : "N/A";
+            _AnalysisDataGridView.Rows[row++].Cells[1].Value = string.Format("{0:N2}", unmarkedSingleStats.PacketCountMean);
+            _AnalysisDataGridView.Rows[row++].Cells[1].Value = string.Format("{0:N2}", unmarkedSingleStats.PacketCountStandardDeviation);
+            _AnalysisDataGridView.Rows[row++].Cells[1].Value = unmarkedSingleStats.PacketCountMinimum;
+            _AnalysisDataGridView.Rows[row++].Cells[1].Value = unmarkedSingleStats.PacketCountMaximum;
             _AnalysisDataGridView.Rows[row++].Cells[1].Value = "N/A";
             _AnalysisDataGridView.Rows[row++].Cells[1].Value = "N/A";
             _AnalysisDataGridView.Rows[row++].Cells[1].Value = "N/A";
 
-            DisplayStatistic markedSingleStats = new DisplayStatistic();
-            markedSingleStats = pcp.GetLastSingleMarkedDisplayStatistics();
             // Single marked column
             row = 0;
             _AnalysisDataGridView.Rows[row++].Cells[2].Value = markedSingleStats.IntervalCount;
-            _AnalysisDataGridView.Rows[row++].Cells[2].Value = TrimIntervals == true ? markedSingleStats.TrimmedIntervalCount.ToString() : "N/A";
-            _AnalysisDataGridView.Rows[row++].Cells[2].Value = string.Format("{0:N2}", markedSingleStats.MeanPacketsPerInterval);
-            _AnalysisDataGridView.Rows[row++].Cells[2].Value = string.Format("{0:N2}", markedSingleStats.StandardDeviation);
-            _AnalysisDataGridView.Rows[row++].Cells[2].Value = markedSingleStats.MinPacketsPerInterval;
-            _AnalysisDataGridView.Rows[row++].Cells[2].Value = markedSingleStats.MaxPacketsPerInterval;
+            _AnalysisDataGridView.Rows[row++].Cells[2].Value = TrimIntervals == true ? markedSingleStats.IntervalCountTrimmed.ToString() : "N/A";
+            _AnalysisDataGridView.Rows[row++].Cells[2].Value = string.Format("{0:N2}", markedSingleStats.PacketCountMean);
+            _AnalysisDataGridView.Rows[row++].Cells[2].Value = string.Format("{0:N2}", markedSingleStats.PacketCountStandardDeviation);
+            _AnalysisDataGridView.Rows[row++].Cells[2].Value = markedSingleStats.PacketCountMinimum;
+            _AnalysisDataGridView.Rows[row++].Cells[2].Value = markedSingleStats.PacketCountMaximum;
             _AnalysisDataGridView.Rows[row++].Cells[2].Value = "N/A";
             _AnalysisDataGridView.Rows[row++].Cells[2].Value = "N/A";
             _AnalysisDataGridView.Rows[row++].Cells[2].Value = "N/A";
@@ -456,11 +442,11 @@ namespace COWE.Client
             // Single variance column
             row = 0;
             _AnalysisDataGridView.Rows[row++].Cells[3].Value = unmarkedSingleStats.IntervalCount - markedSingleStats.IntervalCount;
-            _AnalysisDataGridView.Rows[row++].Cells[3].Value = TrimIntervals == true ? (unmarkedSingleStats.TrimmedIntervalCount - markedSingleStats.TrimmedIntervalCount).ToString() : "N/A";
-            _AnalysisDataGridView.Rows[row++].Cells[3].Value = string.Format("{0:N2}", (unmarkedSingleStats.MeanPacketsPerInterval - markedSingleStats.MeanPacketsPerInterval));
-            _AnalysisDataGridView.Rows[row++].Cells[3].Value = string.Format("{0:N2}",(unmarkedSingleStats.StandardDeviation - markedSingleStats.StandardDeviation));
-            _AnalysisDataGridView.Rows[row++].Cells[3].Value = unmarkedSingleStats.MinPacketsPerInterval - markedSingleStats.MinPacketsPerInterval;
-            _AnalysisDataGridView.Rows[row++].Cells[3].Value = unmarkedSingleStats.MaxPacketsPerInterval - markedSingleStats.MaxPacketsPerInterval;
+            _AnalysisDataGridView.Rows[row++].Cells[3].Value = TrimIntervals == true ? (unmarkedSingleStats.IntervalCountTrimmed - markedSingleStats.IntervalCountTrimmed).ToString() : "N/A";
+            _AnalysisDataGridView.Rows[row++].Cells[3].Value = string.Format("{0:N2}", (unmarkedSingleStats.PacketCountMean - markedSingleStats.PacketCountMean));
+            _AnalysisDataGridView.Rows[row++].Cells[3].Value = string.Format("{0:N2}",(unmarkedSingleStats.PacketCountStandardDeviation - markedSingleStats.PacketCountStandardDeviation));
+            _AnalysisDataGridView.Rows[row++].Cells[3].Value = unmarkedSingleStats.PacketCountMinimum - markedSingleStats.PacketCountMinimum;
+            _AnalysisDataGridView.Rows[row++].Cells[3].Value = unmarkedSingleStats.PacketCountMaximum - markedSingleStats.PacketCountMaximum;
             _AnalysisDataGridView.Rows[row++].Cells[3].Value = "N/A";
             _AnalysisDataGridView.Rows[row++].Cells[3].Value = "N/A";
             _AnalysisDataGridView.Rows[row++].Cells[3].Value = "N/A";
@@ -584,153 +570,113 @@ namespace COWE.Client
         {
             // Get the cumulative interval counts
             ProcessCapturePackets pcp = new ProcessCapturePackets();
-            //BindingList<CumulativeInterval> cumulativeIntervals = new BindingList<CumulativeInterval>();
-            //cumulativeIntervals = pcp.GetCumulativeIntervals();
+            BindingList<CumulativeInterval> cumulativeIntervals = new BindingList<CumulativeInterval>();
+            cumulativeIntervals = pcp.GetCumulativeIntervals();
 
-            //// Get the batch intervals
-            //BindingList<BatchIntervalMarked> unmarkedBatchIntervals = new BindingList<BatchIntervalMarked>();
-            //BindingList<BatchIntervalMarked> markedBatchIntervals = new BindingList<BatchIntervalMarked>();
+            // Get the batch intervals
+            BindingList<BatchIntervalMarked> unmarkedBatchIntervals = new BindingList<BatchIntervalMarked>();
+            BindingList<BatchIntervalMarked> markedBatchIntervals = new BindingList<BatchIntervalMarked>();
 
-            //foreach (CumulativeInterval ci in cumulativeIntervals)
-            //{
-            //    if (ci.Marked)
-            //    {
-            //        BatchIntervalMarked bim = new BatchIntervalMarked();
-            //        bim.BatchIntervalId = 0;
-            //        bim.CaptureBatchId = 0;
-            //        bim.IntervalNumber = ci.CumulativeIntervalNumber;
-            //        bim.Marked = CaptureState.Marked;
-            //        bim.PacketCount = ci.PacketCount;
-            //        markedBatchIntervals.Add(bim);
-            //    }
-            //    else
-            //    {
-            //        BatchIntervalMarked bim = new BatchIntervalMarked();
-            //        bim.BatchIntervalId = 0;
-            //        bim.CaptureBatchId = 0;
-            //        bim.IntervalNumber = ci.CumulativeIntervalNumber;
-            //        bim.Marked = CaptureState.Unmarked;
-            //        bim.PacketCount = ci.PacketCount;
-            //        unmarkedBatchIntervals.Add(bim);
-            //    }
-            //}
-
-            //BatchStatistics markedCumulativeStats = new BatchStatistics();
-            //BatchStatistics unmarkedCumulativeStats = new BatchStatistics();
-            //decimal markedMeanOfMeans = 0;
-            //decimal markedStdDevMeanOfMeans = 0;
-            //decimal unmarkedMeanOfMeans = 0;
-            //decimal unmarkedStdDevMeanOfMeans = 0;
-
-            //AnalysisEngine ae = new AnalysisEngine();
-
-            // Get the marked cumulative statistics
-            DisplayStatistic markedCumulativeStats = new DisplayStatistic();
-            markedCumulativeStats = pcp.GetCumulativeMarkedDisplayStatistics();
-
-            if (markedCumulativeStats != null)
+            foreach (CumulativeInterval ci in cumulativeIntervals)
             {
-                //if(markedBatchIntervals.Count > 0)
-                //{
-                //    markedCumulativeStats = ae.CalculateBatchStatistics(markedBatchIntervals,CaptureState.Marked, BatchType.Cumulative);
-                //    markedMeanOfMeans = pcp.CalculateMeanOfMeans(CaptureState.Marked, TrimIntervals ? true : false);
-                //    markedStdDevMeanOfMeans = pcp.CalculateStdDevForMeanOfMeans(CaptureState.Marked, TrimIntervals ? true : false);
+                if (ci.Marked)
+                {
+                    BatchIntervalMarked bim = new BatchIntervalMarked();
+                    bim.BatchIntervalId = 0;
+                    bim.CaptureBatchId = 0;
+                    bim.IntervalNumber = ci.CumulativeIntervalNumber;
+                    bim.Marked = CaptureState.Marked;
+                    bim.PacketCount = ci.PacketCount;
+                    markedBatchIntervals.Add(bim);
+                }
+                else
+                {
+                    BatchIntervalMarked bim = new BatchIntervalMarked();
+                    bim.BatchIntervalId = 0;
+                    bim.CaptureBatchId = 0;
+                    bim.IntervalNumber = ci.CumulativeIntervalNumber;
+                    bim.Marked = CaptureState.Unmarked;
+                    bim.PacketCount = ci.PacketCount;
+                    unmarkedBatchIntervals.Add(bim);
+                }
+            }
+
+            BatchStatistics markedCumulativeStats = new BatchStatistics();
+            BatchStatistics unmarkedCumulativeStats = new BatchStatistics();
+            decimal markedMeanOfMeans = 0;
+            decimal markedStdDevMeanOfMeans = 0;
+            decimal unmarkedMeanOfMeans = 0;
+            decimal unmarkedStdDevMeanOfMeans = 0;
+
+            AnalysisEngine ae = new AnalysisEngine();
+
+            if(markedBatchIntervals.Count > 0)
+            {
+                markedCumulativeStats = ae.CalculateBatchStatistics(markedBatchIntervals,CaptureState.Marked, BatchType.Cumulative);
+                markedMeanOfMeans = pcp.CalculateMeanOfMeans(CaptureState.Marked, TrimIntervals ? true : false);
+                markedStdDevMeanOfMeans = pcp.CalculateStdDevForMeanOfMeans(CaptureState.Marked, TrimIntervals ? true : false);
 
                 // Load up the table
                 // Cumulative marked column
                 int row = 0;
                 _AnalysisDataGridView.Rows[row++].Cells[5].Value = markedCumulativeStats.IntervalCount;
-                _AnalysisDataGridView.Rows[row++].Cells[5].Value = TrimIntervals == true ? markedCumulativeStats.TrimmedIntervalCount.ToString() : "N/A";
-                _AnalysisDataGridView.Rows[row++].Cells[5].Value = string.Format("{0:N2}", markedCumulativeStats.MeanPacketsPerInterval);
-                _AnalysisDataGridView.Rows[row++].Cells[5].Value = string.Format("{0:N2}", markedCumulativeStats.StandardDeviation);
-                _AnalysisDataGridView.Rows[row++].Cells[5].Value = markedCumulativeStats.MinPacketsPerInterval;
-                _AnalysisDataGridView.Rows[row++].Cells[5].Value = markedCumulativeStats.MaxPacketsPerInterval;
-                _AnalysisDataGridView.Rows[row++].Cells[5].Value = string.Format("{0:N2}", markedCumulativeStats.MeanOfMeans);
+                _AnalysisDataGridView.Rows[row++].Cells[5].Value = TrimIntervals == true ? markedCumulativeStats.IntervalCountTrimmed.ToString() : "N/A";
+                _AnalysisDataGridView.Rows[row++].Cells[5].Value = string.Format("{0:N2}", markedCumulativeStats.PacketCountMean);
+                _AnalysisDataGridView.Rows[row++].Cells[5].Value = string.Format("{0:N2}", markedCumulativeStats.PacketCountStandardDeviation);
+                _AnalysisDataGridView.Rows[row++].Cells[5].Value = markedCumulativeStats.PacketCountMinimum;
+                _AnalysisDataGridView.Rows[row++].Cells[5].Value = markedCumulativeStats.PacketCountMaximum;
+                _AnalysisDataGridView.Rows[row++].Cells[5].Value = string.Format("{0:N2}", markedMeanOfMeans);
                 _AnalysisDataGridView.Rows[row++].Cells[5].Value = "N/A";
                 _AnalysisDataGridView.Rows[row++].Cells[5].Value = "N/A";
-                //}
             }
 
-            // Get the marked cumulative statistics
-            DisplayStatistic unmarkedCumulativeStats = new DisplayStatistic();
-            unmarkedCumulativeStats = pcp.GetCumulativeUnmarkedDisplayStatistics();
-
-            if (unmarkedCumulativeStats != null)
+            if (unmarkedBatchIntervals.Count > 0)
             {
-                //if (unmarkedBatchIntervals.Count > 0)
-                //{
-                //    unmarkedCumulativeStats = ae.CalculateBatchStatistics(unmarkedBatchIntervals, CaptureState.Marked, BatchType.Cumulative);
-                //    unmarkedMeanOfMeans = pcp.CalculateMeanOfMeans(CaptureState.Unmarked, TrimIntervals ? true : false);
-                //    unmarkedStdDevMeanOfMeans = pcp.CalculateStdDevForMeanOfMeans(CaptureState.Unmarked, TrimIntervals ? true : false);
+                unmarkedCumulativeStats = ae.CalculateBatchStatistics(unmarkedBatchIntervals, CaptureState.Marked, BatchType.Cumulative);
+                unmarkedMeanOfMeans = pcp.CalculateMeanOfMeans(CaptureState.Unmarked, TrimIntervals ? true : false);
+                unmarkedStdDevMeanOfMeans = pcp.CalculateStdDevForMeanOfMeans(CaptureState.Unmarked, TrimIntervals ? true : false);
 
                 // Load up the table
                 // Cumulative unmarked column
                 int row = 0;
                 _AnalysisDataGridView.Rows[row++].Cells[4].Value = unmarkedCumulativeStats.IntervalCount;
-                _AnalysisDataGridView.Rows[row++].Cells[4].Value = TrimIntervals == true ? unmarkedCumulativeStats.TrimmedIntervalCount.ToString() : "N/A";
-                _AnalysisDataGridView.Rows[row++].Cells[4].Value = string.Format("{0:N2}", unmarkedCumulativeStats.MeanPacketsPerInterval);
-                _AnalysisDataGridView.Rows[row++].Cells[4].Value = string.Format("{0:N2}", unmarkedCumulativeStats.StandardDeviation);
-                _AnalysisDataGridView.Rows[row++].Cells[4].Value = unmarkedCumulativeStats.MinPacketsPerInterval;
-                _AnalysisDataGridView.Rows[row++].Cells[4].Value = unmarkedCumulativeStats.MaxPacketsPerInterval;
-                _AnalysisDataGridView.Rows[row++].Cells[4].Value = string.Format("{0:N2}", unmarkedCumulativeStats.MeanOfMeans);
+                _AnalysisDataGridView.Rows[row++].Cells[4].Value = TrimIntervals == true ? unmarkedCumulativeStats.IntervalCountTrimmed.ToString() : "N/A";
+                _AnalysisDataGridView.Rows[row++].Cells[4].Value = string.Format("{0:N2}", unmarkedCumulativeStats.PacketCountMean);
+                _AnalysisDataGridView.Rows[row++].Cells[4].Value = string.Format("{0:N2}", unmarkedCumulativeStats.PacketCountStandardDeviation);
+                _AnalysisDataGridView.Rows[row++].Cells[4].Value = unmarkedCumulativeStats.PacketCountMinimum;
+                _AnalysisDataGridView.Rows[row++].Cells[4].Value = unmarkedCumulativeStats.PacketCountMaximum;
+                _AnalysisDataGridView.Rows[row++].Cells[4].Value = string.Format("{0:N2}", unmarkedMeanOfMeans);
                 _AnalysisDataGridView.Rows[row++].Cells[4].Value = "N/A";
                 _AnalysisDataGridView.Rows[row++].Cells[4].Value = "N/A";
-                //}
             }
 
 
-            //if (markedBatchIntervals.Count > 0 && unmarkedBatchIntervals.Count > 0)
-            if (markedCumulativeStats != null && unmarkedCumulativeStats != null)
+            if (markedBatchIntervals.Count > 0 && unmarkedBatchIntervals.Count > 0)
             {
-                // Get the Hypothesis Test results
-                HypothesisTest ht = new HypothesisTest();
-                ht = pcp.GetHypothesisTestResults();
-
-                // Specify font for hypothesis test result fields
-                Font font = new Font(_AnalysisDataGridView.DefaultCellStyle.Font.FontFamily, _AnalysisDataGridView.Font.Size, FontStyle.Bold);
-
                 // Cumulative variance column
                 int row = 0;
                 _AnalysisDataGridView.Rows[row++].Cells[6].Value = unmarkedCumulativeStats.IntervalCount - markedCumulativeStats.IntervalCount;
-                _AnalysisDataGridView.Rows[row++].Cells[6].Value = TrimIntervals == true ? (unmarkedCumulativeStats.TrimmedIntervalCount - markedCumulativeStats.TrimmedIntervalCount).ToString() : "N/A";
-                _AnalysisDataGridView.Rows[row++].Cells[6].Value = string.Format("{0:N2}", (unmarkedCumulativeStats.MeanPacketsPerInterval - markedCumulativeStats.MeanPacketsPerInterval));
-                _AnalysisDataGridView.Rows[row++].Cells[6].Value = string.Format("{0:N2}", (unmarkedCumulativeStats.StandardDeviation - markedCumulativeStats.StandardDeviation));
-                _AnalysisDataGridView.Rows[row++].Cells[6].Value = unmarkedCumulativeStats.MinPacketsPerInterval - markedCumulativeStats.MinPacketsPerInterval;
-                _AnalysisDataGridView.Rows[row++].Cells[6].Value = unmarkedCumulativeStats.MaxPacketsPerInterval - markedCumulativeStats.MaxPacketsPerInterval;
-                _AnalysisDataGridView.Rows[row++].Cells[6].Value = string.Format("{0:N2}", (unmarkedCumulativeStats.MeanOfMeans - markedCumulativeStats.MeanOfMeans));
-                _AnalysisDataGridView.Rows[row++].Cells[6].Value = string.Format("{0:P1}", AnalysisConfiguration.Alpha);
-                // Means test results
-                _AnalysisDataGridView.Rows[row].Cells[6].Style.Font = font;
-                _AnalysisDataGridView.Rows[row].Cells[6].Value = ht.MeansTestResult == true ? "True" : "False";
-                _AnalysisDataGridView.Rows[row].Cells[6].Style.BackColor = ht.MeansTestResult == true ? Color.LightGreen : Color.LightCoral;
-                
-                // Update the K-S statistics column
-                row = 0;
-                _AnalysisDataGridView.Rows[row++].Cells[7].Value = "N/A";
-                _AnalysisDataGridView.Rows[row++].Cells[7].Value = "N/A";
-                _AnalysisDataGridView.Rows[row++].Cells[7].Value = "N/A";
-                _AnalysisDataGridView.Rows[row++].Cells[7].Value = string.Format("{0:N2}", ht.MeansVarianceStandardDeviation);
-                _AnalysisDataGridView.Rows[row++].Cells[7].Value = "N/A";
-                _AnalysisDataGridView.Rows[row++].Cells[7].Value = "N/A";
-                _AnalysisDataGridView.Rows[row++].Cells[7].Value = string.Format("{0:N2}", ht.MeanOfMeansVariance);
-                _AnalysisDataGridView.Rows[row++].Cells[7].Value = string.Format("{0:P1}", AnalysisConfiguration.Alpha);
-                // K-S test results
-                _AnalysisDataGridView.Rows[row].Cells[7].Style.Font = font;
-                _AnalysisDataGridView.Rows[row].Cells[7].Value = ht.KsTestResult == true ? "True" : "False";
-                _AnalysisDataGridView.Rows[row].Cells[7].Style.BackColor = ht.KsTestResult == true ? Color.LightGreen : Color.LightCoral;
+                _AnalysisDataGridView.Rows[row++].Cells[6].Value = TrimIntervals == true ? (unmarkedCumulativeStats.IntervalCountTrimmed - markedCumulativeStats.IntervalCountTrimmed).ToString() : "N/A";
+                _AnalysisDataGridView.Rows[row++].Cells[6].Value = string.Format("{0:N2}", (unmarkedCumulativeStats.PacketCountMean - markedCumulativeStats.PacketCountMean));
+                _AnalysisDataGridView.Rows[row++].Cells[6].Value = string.Format("{0:N2}", (unmarkedCumulativeStats.PacketCountStandardDeviation - markedCumulativeStats.PacketCountStandardDeviation));
+                _AnalysisDataGridView.Rows[row++].Cells[6].Value = unmarkedCumulativeStats.PacketCountMinimum - markedCumulativeStats.PacketCountMinimum;
+                _AnalysisDataGridView.Rows[row++].Cells[6].Value = unmarkedCumulativeStats.PacketCountMaximum - markedCumulativeStats.PacketCountMaximum;
+                _AnalysisDataGridView.Rows[row++].Cells[6].Value = string.Format("{0:N2}", (unmarkedMeanOfMeans - markedMeanOfMeans));
+                _AnalysisDataGridView.Rows[row++].Cells[6].Value = "N/A";
+                _AnalysisDataGridView.Rows[row++].Cells[6].Value = "N/A";
             }
 
-            //// Update the K-S statistics object
-            //_KsStatistics.MarkedMean = markedMeanOfMeans;
-            //_KsStatistics.MarkedStdDev = markedStdDevMeanOfMeans;
-            ////_KsStatistics.MarkedMean = markedCumulativeStats.PacketCountMean;
-            ////_KsStatistics.MarkedStdDev = markedCumulativeStats.PacketCountStandardDeviation;
-            //_KsStatistics.MarkedIntervalCount = TrimIntervals == true ? markedCumulativeStats.IntervalCountTrimmed : markedCumulativeStats.IntervalCount;
-            //_KsStatistics.UnmarkedMean = unmarkedMeanOfMeans;
-            //_KsStatistics.UnmarkedStdDev = unmarkedStdDevMeanOfMeans;
-            ////_KsStatistics.UnmarkedMean = unmarkedCumulativeStats.PacketCountMean;
-            ////_KsStatistics.UnmarkedStdDev = unmarkedCumulativeStats.PacketCountStandardDeviation;
-            //_KsStatistics.UnmarkedIntervalCount = TrimIntervals == true ? unmarkedCumulativeStats.IntervalCountTrimmed : unmarkedCumulativeStats.IntervalCount;
+            // Update the K-S statistics object
+            _KsStatistics.MarkedMean = markedMeanOfMeans;
+            _KsStatistics.MarkedStdDev = markedStdDevMeanOfMeans;
+            //_KsStatistics.MarkedMean = markedCumulativeStats.PacketCountMean;
+            //_KsStatistics.MarkedStdDev = markedCumulativeStats.PacketCountStandardDeviation;
+            _KsStatistics.MarkedIntervalCount = TrimIntervals == true ? markedCumulativeStats.IntervalCountTrimmed : markedCumulativeStats.IntervalCount;
+            _KsStatistics.UnmarkedMean = unmarkedMeanOfMeans;
+            _KsStatistics.UnmarkedStdDev = unmarkedStdDevMeanOfMeans;
+            //_KsStatistics.UnmarkedMean = unmarkedCumulativeStats.PacketCountMean;
+            //_KsStatistics.UnmarkedStdDev = unmarkedCumulativeStats.PacketCountStandardDeviation;
+            _KsStatistics.UnmarkedIntervalCount = TrimIntervals == true ? unmarkedCumulativeStats.IntervalCountTrimmed : unmarkedCumulativeStats.IntervalCount;
             
         }
         private void RefreshCumulativeProbabilityChart()
@@ -800,7 +746,7 @@ namespace COWE.Client
             }
 
             BindingList<CumulativeProbabilityDistribution> unmarkedCumulativeProbabilityDistributionList = new BindingList<CumulativeProbabilityDistribution>();
-            unmarkedCumulativeProbabilityDistributionList = pcp.GetCumulativeProbabilityDistributionData(CaptureState.Unmarked);
+            markedCumulativeProbabilityDistributionList = pcp.GetCumulativeProbabilityDistributionData(CaptureState.Unmarked);
             SortedDictionary<int, decimal> unmarkedCumulativeProbabilityDistribution = new SortedDictionary<int, decimal>();
             foreach (CumulativeProbabilityDistribution cpd in unmarkedCumulativeProbabilityDistributionList)
             {
@@ -813,44 +759,43 @@ namespace COWE.Client
                 CdfChart.Series["UnmarkedProbabilities"].Points.AddXY(Convert.ToDouble(pair.Key), Convert.ToDouble(pair.Value));
             }
         }
-        //private void RefreshKsStatistics()
-        //{
-        //    // Reset the backcolor for Reject H0? cell in K-S column of grid
-        //    _AnalysisDataGridView.Rows[8].Cells[7].Style.BackColor = Color.White;
+        private void RefreshKsStatistics()
+        {
+            // Reset the backcolor for Reject H0? cell in K-S column of grid
+            _AnalysisDataGridView.Rows[8].Cells[7].Style.BackColor = Color.White;
 
-        //    //bool KS_result = GetHypothesisTestResult(_KsStatistics.UnmarkedMean, _KsStatistics.MarkedMean, _KsStatistics.UnmarkedStdDev, _KsStatistics.MarkedStdDev, _KsStatistics.UnmarkedIntervalCount, _KsStatistics.MarkedIntervalCount);
-        //    //bool KS_result = GetHypothesisTestResult(_KsStatistics.UnmarkedMean, _KsStatistics.MarkedMean, _KsStatistics.UnmarkedStdDev, _KsStatistics.MarkedStdDev, _KsStatistics.UnmarkedIntervalCount, _KsStatistics.MarkedIntervalCount);
-
-        //    int row = 0;
-        //    _AnalysisDataGridView.Rows[row++].Cells[7].Value = "N/A";
-        //    _AnalysisDataGridView.Rows[row++].Cells[7].Value = "N/A";
-        //    _AnalysisDataGridView.Rows[row++].Cells[7].Value = string.Format("{0:N2}", _KsStatistics.MeanDifference);
-        //    _AnalysisDataGridView.Rows[row++].Cells[7].Value = string.Format("{0:N2}",_KsStatistics.StandardDeviation);
-        //    _AnalysisDataGridView.Rows[row++].Cells[7].Value = "N/A";
-        //    _AnalysisDataGridView.Rows[row++].Cells[7].Value = "N/A";
-        //    _AnalysisDataGridView.Rows[row++].Cells[7].Value = string.Format("{0:N2}",_KsStatistics.MeanDifference);
-        //    _AnalysisDataGridView.Rows[row++].Cells[7].Value = string.Format("{0:P1}", AnalysisConfiguration.Alpha);
-        //    Font font = new Font(_AnalysisDataGridView.DefaultCellStyle.Font.FontFamily, _AnalysisDataGridView.Font.Size, FontStyle.Bold);
-        //    _AnalysisDataGridView.Rows[row].Cells[7].Style.Font = font;
-        //    _AnalysisDataGridView.Rows[row].Cells[7].Value = KS_result.ToString();
-        //    _AnalysisDataGridView.Rows[row].Cells[7].Style.BackColor = KS_result == true ? Color.LightGreen : Color.LightCoral;
-        //}
+            //bool KS_result = GetHypothesisTestResult(_KsStatistics.UnmarkedMean, _KsStatistics.MarkedMean, _KsStatistics.UnmarkedStdDev, _KsStatistics.MarkedStdDev, _KsStatistics.UnmarkedIntervalCount, _KsStatistics.MarkedIntervalCount);
+            bool KS_result = GetHypothesisTestResult(_KsStatistics.UnmarkedMean, _KsStatistics.MarkedMean, _KsStatistics.UnmarkedStdDev, _KsStatistics.MarkedStdDev, _KsStatistics.UnmarkedIntervalCount, _KsStatistics.MarkedIntervalCount);
+            int row = 0;
+            _AnalysisDataGridView.Rows[row++].Cells[7].Value = "N/A";
+            _AnalysisDataGridView.Rows[row++].Cells[7].Value = "N/A";
+            _AnalysisDataGridView.Rows[row++].Cells[7].Value = string.Format("{0:N2}", _KsStatistics.MeanDifference);
+            _AnalysisDataGridView.Rows[row++].Cells[7].Value = string.Format("{0:N2}",_KsStatistics.StandardDeviation);
+            _AnalysisDataGridView.Rows[row++].Cells[7].Value = "N/A";
+            _AnalysisDataGridView.Rows[row++].Cells[7].Value = "N/A";
+            _AnalysisDataGridView.Rows[row++].Cells[7].Value = string.Format("{0:N2}",_KsStatistics.MeanDifference);
+            _AnalysisDataGridView.Rows[row++].Cells[7].Value = string.Format("{0:P1}", _alpha);
+            Font font = new Font(_AnalysisDataGridView.DefaultCellStyle.Font.FontFamily, _AnalysisDataGridView.Font.Size, FontStyle.Bold);
+            _AnalysisDataGridView.Rows[row].Cells[7].Style.Font = font;
+            _AnalysisDataGridView.Rows[row].Cells[7].Value = KS_result.ToString();
+            _AnalysisDataGridView.Rows[row].Cells[7].Style.BackColor = KS_result == true ? Color.LightGreen : Color.LightCoral;
+        }
         private bool GetHypothesisTestResult(decimal unmarkedMean, decimal markedMean, decimal unmarkedStdDev, decimal markedStdDev, int unmarkedPacketCount, int markedPacketCount)
         {
             bool result = false;
 
-            //// H0: there is no difference in the distribution of packets between marked and unmarked batches
-            //// H1: there is a difference between the batches
+            // H0: there is no difference in the distribution of packets between marked and unmarked batches
+            // H1: there is a difference between the batches
 
-            //// Test the difference in the distribution means
-            //decimal meanDifference = _KsStatistics.MeanDifference;
-            //decimal sigmaDifference = _KsStatistics.SigmaDifference;
+            // Test the difference in the distribution means
+            decimal meanDifference = _KsStatistics.MeanDifference;
+            decimal sigmaDifference = _KsStatistics.SigmaDifference;
 
-            //// Single-tail test (if there is a difference in the means it will be a positive value)
-            //// Z value for alpha = 5% significance level:
+            // Single-tail test (if there is a difference in the means it will be a positive value)
+            // Z value for alpha = 5% significance level:
 
-            //// Test result: true = reject H0 - difference of means has only 5% probability of occurring if H0 is true
-            //result = _KsStatistics.MeanDifference > _KsStatistics.StandardDeviation ? true : false;
+            // Test result: true = reject H0 - difference of means has only 5% probability of occurring if H0 is true
+            result = _KsStatistics.MeanDifference > _KsStatistics.StandardDeviation ? true : false;
 
             return result;
         }
@@ -973,7 +918,7 @@ namespace COWE.Client
             RefreshSingleBatchStatistics();
             RefreshCumulativeBatchStatistics();
             RefreshCumulativeProbabilityChart();
-            //RefreshKsStatistics();
+            RefreshKsStatistics();
         }
         
         #endregion

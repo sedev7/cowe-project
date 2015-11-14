@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace COWE.Enumerations
 {
-    public enum HypothesisTest
+    public enum HypothesisTestType
     {
         Unknown = 0,
         KsTest = 1,

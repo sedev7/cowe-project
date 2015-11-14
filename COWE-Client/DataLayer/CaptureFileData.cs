@@ -134,6 +134,36 @@ namespace COWE.DataLayer
 
             return lastRecord;
         }
+        public int GetProcessedFilesCountMarked()
+        {
+            // Gets the number of marked files that have been parsed and for which statistics have been calculated
+            int fileCount = 0;
+
+            using(var context = new PacketAnalysisEntity())
+            {
+                var count = (from c in context.CaptureBatches
+                             where c.Marked == true && c.CumulativeStatistics == true
+                             select c).Count();
+
+                fileCount = Convert.ToInt32(count);
+            }
+            return fileCount;
+        }
+        public int GetProcessedFilesCountUnmarked()
+        {
+            // Gets the number of unmarked files that have been parsed and for which statistics have been calculated
+            int fileCount = 0;
+
+            using (var context = new PacketAnalysisEntity())
+            {
+                var count = (from c in context.CaptureBatches
+                             where c.Marked == false && c.CumulativeStatistics == true
+                             select c).Count();
+
+                fileCount = Convert.ToInt32(count);
+            }
+            return fileCount;
+        }
 
         public bool UpdateBatchMean(int captureBatchId, decimal mean, decimal trimmedMean)
         {

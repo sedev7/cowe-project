@@ -36,6 +36,7 @@ namespace COWE.DataLayer
         public virtual DbSet<CumulativeHistogram> CumulativeHistograms { get; set; }
         public virtual DbSet<SingleHistogram> SingleHistograms { get; set; }
         public virtual DbSet<CumulativeProbabilityDistribution> CumulativeProbabilityDistributions { get; set; }
+        public virtual DbSet<HypothesisTest> HypothesisTests { get; set; }
     
         public virtual int CaptureBatchInsert(string fileName, Nullable<bool> marked, Nullable<decimal> mean, Nullable<decimal> trimmedMean, ObjectParameter newCaptureBatchId)
         {

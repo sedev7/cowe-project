@@ -61,7 +61,7 @@
           </Key>
           <Property Name="CumulativeProbabilityDistributionId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Interval" Type="int" Nullable="false" />
-          <Property Name="Probability" Type="decimal" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="Probability" Type="decimal" Precision="28" Scale="10" Nullable="false" />
           <Property Name="CaptureState" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="DisplayStatistic">
@@ -79,6 +79,17 @@
           <Property Name="MeanOfMeansStandardDeviation" Type="decimal" Precision="28" Scale="10" Nullable="false" />
           <Property Name="Marked" Type="bit" Nullable="false" />
           <Property Name="BatchType" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="HypothesisTest">
+          <Key>
+            <PropertyRef Name="HypothesisTestId" />
+          </Key>
+          <Property Name="HypothesisTestId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MeanOfMeansVariance" Type="decimal" Precision="28" Scale="10" Nullable="false" />
+          <Property Name="MeansVarianceStandardDeviation" Type="decimal" Precision="28" Scale="10" Nullable="false" />
+          <Property Name="MeansTestResult" Type="bit" Nullable="false" />
+          <Property Name="KsTestResult" Type="bit" Nullable="false" />
+          <Property Name="HasValues" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="SingleHistogram">
           <Key>
@@ -192,6 +203,7 @@
           <EntitySet Name="CumulativeInterval" EntityType="Self.CumulativeInterval" Schema="COWE" store:Type="Tables" />
           <EntitySet Name="CumulativeProbabilityDistribution" EntityType="Self.CumulativeProbabilityDistribution" Schema="COWE" store:Type="Tables" />
           <EntitySet Name="DisplayStatistic" EntityType="Self.DisplayStatistic" Schema="COWE" store:Type="Tables" />
+          <EntitySet Name="HypothesisTest" EntityType="Self.HypothesisTest" Schema="COWE" store:Type="Tables" />
           <EntitySet Name="SingleHistogram" EntityType="Self.SingleHistogram" Schema="COWE" store:Type="Tables" />
           <AssociationSet Name="FK_BatchInterval$CaptureBatch_CaptureBatchId" Association="Self.FK_BatchInterval$CaptureBatch_CaptureBatchId">
             <End Role="CaptureBatch" EntitySet="CaptureBatch" />
@@ -311,6 +323,7 @@
             <End Role="SingleHistogram" EntitySet="SingleHistograms" />
           </AssociationSet>
           <EntitySet Name="CumulativeProbabilityDistributions" EntityType="COWE.PacketAnalysisModel.CumulativeProbabilityDistribution" />
+          <EntitySet Name="HypothesisTests" EntityType="COWE.PacketAnalysisModel.HypothesisTest" />
           </EntityContainer>
         <EntityType Name="BatchInterval">
           <Key>
@@ -425,8 +438,19 @@
           </Key>
           <Property Name="CumulativeProbabilityDistributionId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Interval" Type="Int32" Nullable="false" />
-          <Property Name="Probability" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Probability" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
           <Property Name="CaptureState" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="HypothesisTest">
+          <Key>
+            <PropertyRef Name="HypothesisTestId" />
+          </Key>
+          <Property Name="HypothesisTestId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MeanOfMeansVariance" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
+          <Property Name="MeansVarianceStandardDeviation" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
+          <Property Name="MeansTestResult" Type="Boolean" Nullable="false" />
+          <Property Name="KsTestResult" Type="Boolean" Nullable="false" />
+          <Property Name="HasValues" Type="Boolean" Nullable="false" />
         </EntityType>
         </Schema>
     </edmx:ConceptualModels>
@@ -574,6 +598,18 @@
                 <ScalarProperty Name="Probability" ColumnName="Probability" />
                 <ScalarProperty Name="Interval" ColumnName="Interval" />
                 <ScalarProperty Name="CumulativeProbabilityDistributionId" ColumnName="CumulativeProbabilityDistributionId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="HypothesisTests">
+            <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.HypothesisTest">
+              <MappingFragment StoreEntitySet="HypothesisTest">
+                <ScalarProperty Name="HasValues" ColumnName="HasValues" />
+                <ScalarProperty Name="KsTestResult" ColumnName="KsTestResult" />
+                <ScalarProperty Name="MeansTestResult" ColumnName="MeansTestResult" />
+                <ScalarProperty Name="MeansVarianceStandardDeviation" ColumnName="MeansVarianceStandardDeviation" />
+                <ScalarProperty Name="MeanOfMeansVariance" ColumnName="MeanOfMeansVariance" />
+                <ScalarProperty Name="HypothesisTestId" ColumnName="HypothesisTestId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

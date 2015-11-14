@@ -12,6 +12,7 @@
 --  - Add CumulativeHistogram table.
 --  - Remove BatchState column from both histogram tables - no longer needed.
 --  - Remove BatchState column from CumulativeProbabilityDistribution table - no longer needed.
+--  - Add HypothesisTest table.
 --
 -- v5 09-07-2015:
 --  - Add columns for parse and statistics (single and cumulative) flags to CaptureBatch table.
@@ -167,6 +168,17 @@ IF  OBJECT_ID(N'[COWE].[CumulativeProbabilityDistribution]',N'U') IS NOT NULL
 ELSE
   PRINT '   => Table not found!'
 GO
+
+PRINT '  Dropping HypothesisTest table...';
+IF  OBJECT_ID(N'[COWE].[HypothesisTest]',N'U') IS NOT NULL
+  BEGIN
+    DROP TABLE [COWE].[HypothesisTest]
+	PRINT '  Table successfully dropped'
+  END
+ELSE
+  PRINT '   => Table not found!'
+GO
+
 
 PRINT 'Done dropping tables';
 
@@ -366,6 +378,28 @@ CREATE TABLE [COWE].[CumulativeProbabilityDistribution](
 ) ON [PRIMARY]
 ;
 GO
+
+/************************************************************************/
+/*                                                                      */
+/*                 CREATE HypothesisTest TABLE                          */
+/*                                                                      */
+/************************************************************************/
+
+PRINT '  Creating HypothesisTest table...';
+CREATE TABLE [COWE].[HypothesisTest](
+	[HypothesisTestId] [int] IDENTITY(1,1) NOT NULL,
+	[MeanOfMeansVariance] [decimal](28,10) NOT NULL,
+	[MeansVarianceStandardDeviation] [decimal](28,10) NOT NULL,
+	[MeansTestResult] [bit] NOT NULL,
+	[KsTestResult] [bit] NOT NULL,
+	[HasValues] [bit] NOT NULL
+ CONSTRAINT [PK_Hypothesis_HypothesisTestId] PRIMARY KEY CLUSTERED 
+(
+	[HypothesisTestId] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY];
+GO
+
 
 PRINT 'Done creating tables';
 

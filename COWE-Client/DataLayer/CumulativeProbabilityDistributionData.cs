@@ -12,6 +12,8 @@ namespace COWE.DataLayer
 {
     public class CumulativeProbabilityDistributionData
     {
+        public CumulativeProbabilityDistributionData() { }
+
         // need to create insert and delete functions
         public BindingList<CumulativeProbabilityDistribution> GetCumulativeProbabilityDistribution(CaptureState captureState)
         {

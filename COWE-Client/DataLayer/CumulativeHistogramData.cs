@@ -33,6 +33,7 @@ namespace COWE.DataLayer
             using (var context = new PacketAnalysisEntity())
             {
                 var histograms = from p in context.CumulativeHistograms
+                                 where p.CaptureState == (int)_CaptureState
                                  select p;
 
                 foreach (CumulativeHistogram h in histograms)

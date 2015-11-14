@@ -213,6 +213,10 @@ namespace COWE.Client
             TrimIntervalsCheckBox.Checked = true;
             TrimSmallestBinsToolTip.SetToolTip(TrimIntervalsCheckBox, "Trim any intervals with a packet count less than or equal to the histogram bin size");
             KsTestRadioButton.Checked = true;
+            AnalysisConfiguration.Alpha = 0.05;      // Hypothesis test significance level
+            AnalysisConfiguration.Zvalue = 1.65M;    // Z value for (1-_alpha), from standard normal distribution table
+                                                     // (note: one-tailed test because we are looking at the distribution 
+                                                     // for the difference of the means)
 
             // Start the background worker thread for the new file notifier
             bgWorker.RunWorkerAsync();
@@ -637,21 +641,29 @@ namespace COWE.Client
                 case "FlooderTabPage":
                     break;
                 case "AnalysisTabPage":
-                    if (AnalysisMainPanel.Controls.Contains(_AnalysisControl))
-                    {
-                        _AnalysisControl.HistogramBinSize = HistogramBinSizeTextBox.Text;
-                        _AnalysisControl.TrimIntervals = TrimIntervalsCheckBox.Checked;
-                        _AnalysisControl.BringToFront();
-                    }
-                    else
+                    //if (AnalysisMainPanel.Controls.Contains(_AnalysisControl))
+                    //{
+                    //    _AnalysisControl.HistogramBinSize = HistogramBinSizeTextBox.Text;
+                    //    _AnalysisControl.TrimIntervals = TrimIntervalsCheckBox.Checked;
+                    //    _AnalysisControl.BringToFront();
+                    //}
+                    //else
+                    //{
+                    //    _AnalysisControl = new AnalysisControl();
+                    //    _AnalysisControl.Dock = DockStyle.Fill;
+                    //    _AnalysisControl.HistogramBinSize = HistogramBinSizeTextBox.Text;
+                    //    AnalysisMainPanel.Controls.Add(_AnalysisControl);
+                    //    _AnalysisControl.BringToFront();
+                    //}
+                    if (!AnalysisMainPanel.Controls.Contains(_AnalysisControl))
                     {
                         _AnalysisControl = new AnalysisControl();
                         _AnalysisControl.Dock = DockStyle.Fill;
-                        _AnalysisControl.HistogramBinSize = HistogramBinSizeTextBox.Text;
+                        //_AnalysisControl.HistogramBinSize = HistogramBinSizeTextBox.Text;
                         AnalysisMainPanel.Controls.Add(_AnalysisControl);
                         _AnalysisControl.BringToFront();
                     }
-                    
+
                     break;
             }
         }
@@ -683,12 +695,13 @@ namespace COWE.Client
                     biEngine.ProcessNewBatchIntervals();
                     
                     //AnalysisEngine analysisEngine = new AnalysisEngine(AnalysisConfiguration.TrimSmallPackets, AnalysisConfiguration.HistogramBinSize, AnalysisConfiguration.HypothesisTest, captureFileName, file.CaptureState);
-                    AnalysisEngine analysisEngine = new AnalysisEngine(AnalysisConfiguration.TrimSmallPackets, AnalysisConfiguration.HistogramBinSize, AnalysisConfiguration.HypothesisTest, captureFileName, file);
+                    AnalysisEngine analysisEngine = new AnalysisEngine(AnalysisConfiguration.TrimSmallPackets, AnalysisConfiguration.HistogramBinSize, AnalysisConfiguration.HypothesisTestType, file);
                     analysisEngine.CalculateSingleBatchStatistics();
                     analysisEngine.CalculateCumulativeBatchStatistics();
                     analysisEngine.CalculateSingleHistogramData();
                     analysisEngine.CalculateCumulativeHistogramData();
                     analysisEngine.CalculateCumulativeProbabilityDistribution(file.CaptureState);
+                    analysisEngine.CalculateHypothesisTestResults();
 
                     biEngine = null;
                     analysisEngine = null;
@@ -957,14 +970,14 @@ namespace COWE.Client
         {
             if (KsTestRadioButton.Checked)
             {
-                AnalysisConfiguration.HypothesisTest = HypothesisTest.KsTest;
+                AnalysisConfiguration.HypothesisTestType = HypothesisTestType.KsTest;
             }
         }
         private void MeansTestRadioButton_CheckedChanged(object sender, EventArgs e)
         {
             if (MeansTestRadioButton.Checked)
             {
-                AnalysisConfiguration.HypothesisTest = HypothesisTest.MeansTest;
+                AnalysisConfiguration.HypothesisTestType = HypothesisTestType.MeansTest;
             }
         }
         private void TargetPortTextBox_TextChanged(object sender, EventArgs e)
