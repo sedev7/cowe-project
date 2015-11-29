@@ -101,6 +101,7 @@
       <End Role="SingleHistogram" EntitySet="SingleHistograms" />
     </AssociationSet>
     <EntitySet Name="CumulativeProbabilityDistributions" EntityType="COWE.PacketAnalysisModel.CumulativeProbabilityDistribution" />
+    <FunctionImport Name="TruncateAllIntervalStatisticAndTestTables" />
     <EntitySet Name="HypothesisTests" EntityType="COWE.PacketAnalysisModel.HypothesisTest" />
   </EntityContainer>
   <EntityType Name="BatchInterval">
@@ -226,6 +227,8 @@
     <Property Name="HypothesisTestId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="MeanOfMeansVariance" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
     <Property Name="MeansVarianceStandardDeviation" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
+    <Property Name="KsStatistic" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
+    <Property Name="MaxCpdVariance" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
     <Property Name="MeansTestResult" Type="Boolean" Nullable="false" />
     <Property Name="KsTestResult" Type="Boolean" Nullable="false" />
     <Property Name="HasValues" Type="Boolean" Nullable="false" />

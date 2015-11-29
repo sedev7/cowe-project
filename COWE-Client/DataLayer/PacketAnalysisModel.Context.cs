@@ -276,5 +276,10 @@ namespace COWE.DataLayer
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("CaptureBatchUpdate_for_CaptureBatchId", captureBatchIdParameter, fileNameParameter, markedParameter, meanParameter, trimmedMeanParameter, parsedParameter, singleStatisticsParameter, cumulativeStatisticsParameter);
         }
+    
+        public virtual int TruncateAllIntervalStatisticAndTestTables()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("TruncateAllIntervalStatisticAndTestTables");
+        }
     }
 }

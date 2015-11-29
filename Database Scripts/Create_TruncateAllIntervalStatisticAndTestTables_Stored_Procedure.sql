@@ -1,16 +1,13 @@
--- Create_TruncateAllIntervalTables_Stored_Procedure.sql
+-- Create_TruncateAllIntervalStatisticAndTestTables_Stored_Procedure.sql
 --
--- J. Savage  08-09-2015
+-- J. Savage  11-17-2015
 -- COWE Thesis/Research Project (CISE)
 --
 -- Truncate BatchInterval, CumulativeInterval, statistic and test tables.  Call this procedure
 -- when a new interval parameters have been entered and the intervals must be recalculated.
 --
--- v1 08-09-2015:
---  - Initial version
---
--- v2 11-17-2015:
---  - Add statistic and test tables.
+-- v1 11-17-2015:
+--  - Initial version.
 --
 
 USE Packets
@@ -22,8 +19,15 @@ GO
 /*                                                                            */
 /******************************************************************************/
 
-IF OBJECT_ID(N'[COWE].[TruncateAllIntervalTables]', N'P') IS NOT NULL
-	DROP PROCEDURE [COWE].[TruncateAllIntervalTables];
+PRINT 'Dropping procedure [COWE].[TruncateAllIntervalStatisticAndTestTables]...';
+IF OBJECT_ID(N'[COWE].[TruncateAllIntervalStatisticAndTestTables]', N'P') IS NOT NULL
+  BEGIN
+	DROP PROCEDURE [COWE].[TruncateAllIntervalStatisticAndTestTables];
+		PRINT '  Procedure successfully dropped'
+  END
+ELSE
+  PRINT '   => Procedure not found!'
+GO
 GO
 
 SET ANSI_NULLS ON
@@ -41,7 +45,10 @@ GO
 /*                                                                            */
 /******************************************************************************/
 
-CREATE PROCEDURE [COWE].[TruncateAllIntervalTables]
+PRINT 'Creating procedure [COWE].[TruncateAllIntervalStatisticAndTestTables]...';
+GO
+
+CREATE PROCEDURE [COWE].[TruncateAllIntervalStatisticAndTestTables]
 
 AS 
 
@@ -76,4 +83,6 @@ SET ROWCOUNT 0
 
 	END CATCH
 END
+GO
+PRINT 'Procedure [COWE].[TruncateAllIntervalStatisticAndTestTables] successfully created';
 GO

@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Drawing;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 
 using COWE.BusinessLayer;
+using COWE.DataLayer;
 using COWE.DomainClasses;
 using COWE.Enumerations;
 
@@ -61,17 +64,29 @@ namespace COWE.Client
         }
         private void RefreshButton_Click(object sender, EventArgs e)
         {
+            GrayOutGridAndChartsWhileRecalculating();
+
+            // Locate form in the current center of the Client form
+            Point location = new Point(Client.ActiveForm.Location.X + ((Client.ActiveForm.Width / 2) - 128), Client.ActiveForm.Location.Y + ((Client.ActiveForm.Height / 2) - 45));
+            NotifyUserForm.ShowRecalculatingNotice("Recalculating...", location);
+            Thread t = new Thread(new ThreadStart(RecalculateData));
+            t.Start();
+            t.Join();
+            NotifyUserForm.CloseForm();
+
+            RestoreGridAndChartsAfterRecalculating();
             RefreshData();
         }
-        private void TrimIntervalsCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
 
-        }
         private void AnalysisControl_VisibleChanged(object sender, EventArgs e)
         {
             if (this.Visible)
             {
+                // Locate form in the current center of the Client form
+                Point location = new Point(Client.ActiveForm.Location.X + ((Client.ActiveForm.Width / 2) - 128), Client.ActiveForm.Location.Y + ((Client.ActiveForm.Height / 2) - 45));
+                NotifyUserForm.ShowRecalculatingNotice("Retrieving data...", location);
                 RefreshData();
+                NotifyUserForm.CloseForm();
             }
         }
         //private void COWE.Client.Client.ReceivedParsedFileEventHandler(object sender, ReceivedParsedFileEventArgs e)
@@ -86,11 +101,78 @@ namespace COWE.Client
         //CurrentCaptureFile.ReceivedParsedFileEventHandler rpfh = new CurrentCaptureFile.ReceivedParsedFileEventHandler(ReceivedParsedFile);
         //ccf.ReceivedParsedFile += rpfh;
         
+        private void GrayOutGridAndChartsWhileRecalculating()
+        {
+            this._AnalysisDataGridView.CurrentCell.Selected = false;
+
+            // Gray out the data grid
+            this._AnalysisDataGridView.BackgroundColor = System.Drawing.Color.LightGray;
+            this._AnalysisDataGridView.DefaultCellStyle.BackColor = SystemColors.Control;
+            this._AnalysisDataGridView.DefaultCellStyle.ForeColor = SystemColors.GrayText;
+            this._AnalysisDataGridView.ColumnHeadersDefaultCellStyle.BackColor = SystemColors.Control;
+            this._AnalysisDataGridView.ColumnHeadersDefaultCellStyle.ForeColor = SystemColors.GrayText;
+            this._AnalysisDataGridView.CurrentCell = null;
+            this._AnalysisDataGridView.ReadOnly = true;
+            this._AnalysisDataGridView.EnableHeadersVisualStyles = false;
+            
+            // Gray out the hypothesis test result cell's color
+            this._AnalysisDataGridView.Rows[8].Cells[6].Style.BackColor = SystemColors.Control;
+            this._AnalysisDataGridView.Rows[8].Cells[7].Style.BackColor = SystemColors.Control;
+
+            // Gray out the charts
+            this.SingleChart.BackColor = SystemColors.Control;
+            this.SingleChart.Series[0].Color = System.Drawing.Color.LightGray;
+            this.SingleChart.Series[1].Color = System.Drawing.Color.DarkGray;
+            this.SingleChart.ChartAreas[0].BackColor = SystemColors.Control;
+            this.CumulativeChart.BackColor = SystemColors.Control;
+            this.CumulativeChart.Series[0].Color = System.Drawing.Color.LightGray;
+            this.CumulativeChart.Series[1].Color = System.Drawing.Color.DarkGray;
+            this.CumulativeChart.ChartAreas[0].BackColor = SystemColors.Control;
+            this.CdfChart.BackColor = SystemColors.Control;
+            this.CdfChart.Series[0].Color = System.Drawing.Color.LightGray;
+            this.CdfChart.Series[1].Color = System.Drawing.Color.DarkGray;
+            this.CdfChart.ChartAreas[0].BackColor = SystemColors.Control;
+
+            // Disable controls
+            this.RefreshButton.Enabled = false;
+            this.ChartTypeComboBox.Enabled = false;
+            Application.DoEvents();
+        }
+
+        private void RestoreGridAndChartsAfterRecalculating()
+        {
+            // Restore the data grid colors
+            this._AnalysisDataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
+            this._AnalysisDataGridView.DefaultCellStyle.BackColor = SystemColors.Window;
+            this._AnalysisDataGridView.DefaultCellStyle.ForeColor = SystemColors.ControlText;
+            this._AnalysisDataGridView.ColumnHeadersDefaultCellStyle.BackColor = SystemColors.Window;
+            this._AnalysisDataGridView.ColumnHeadersDefaultCellStyle.ForeColor = SystemColors.ControlText;
+            this._AnalysisDataGridView.ReadOnly = false;
+            this._AnalysisDataGridView.EnableHeadersVisualStyles = true;
+
+            // Restore the chart colors
+            this.SingleChart.BackColor = System.Drawing.Color.White;
+            this.SingleChart.ChartAreas[0].BackColor = System.Drawing.Color.White;
+            this.CumulativeChart.BackColor = System.Drawing.Color.White;
+            this.CumulativeChart.ChartAreas[0].BackColor = System.Drawing.Color.White;
+            this.CdfChart.BackColor = System.Drawing.Color.White;
+            this.CdfChart.ChartAreas[0].BackColor = System.Drawing.Color.White;
+
+            // Reenable the controls
+            this.RefreshButton.Enabled = true;
+            this.ChartTypeComboBox.Enabled = true;
+            Application.DoEvents();
+        }
 
         //public static void ReceivedParsedFile(string msg)
         public static void OnReceivedFileEvent(string msg)
         {
             MessageBox.Show("[AnalysisControl] - received file event notification");
+        }
+        private void AnalysisDataGridView_SelectionChanged(object sender, EventArgs e)
+        {
+            // Prevent any selection of a cell, column or row
+            this._AnalysisDataGridView.ClearSelection();
         }
         #endregion
 
@@ -111,8 +193,20 @@ namespace COWE.Client
         {
             _AnalysisDataGridView = AnalysisDataGridView;
             _AnalysisDataGridView.Columns.Clear();
-            // User cannot change data in the grid
+
+            // Prevent user from changing data in the grid
+            _AnalysisDataGridView.AllowUserToAddRows = false;
+            _AnalysisDataGridView.AllowUserToDeleteRows = false;
+            _AnalysisDataGridView.AllowUserToOrderColumns = false;
             _AnalysisDataGridView.ReadOnly = true;
+            //_AnalysisDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            _AnalysisDataGridView.MultiSelect = false;
+            _AnalysisDataGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+            _AnalysisDataGridView.AllowUserToResizeColumns = false;
+            //_AnalysisDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            _AnalysisDataGridView.AllowUserToResizeRows = false;
+            //_AnalysisDataGridView.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+            //_AnalysisDataGridView.RowsDefaultCellStyle.SelectionBackColor = System.Drawing.Color.Transparent;
 
             int col = 0; 
             //int row = 0;
@@ -124,7 +218,7 @@ namespace COWE.Client
             statisticName.HeaderText = "";
             statisticName.HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
             statisticName.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            statisticName.Width = 180;
+            statisticName.Width = 210;
             statisticName.ReadOnly = true;
             _AnalysisDataGridView.Columns.Insert(col++, statisticName);
 
@@ -201,7 +295,7 @@ namespace COWE.Client
             ksStatistic.HeaderText = "K-S";
             ksStatistic.HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
             ksStatistic.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            ksStatistic.Width = 70;
+            ksStatistic.Width = 100;
             ksStatistic.ReadOnly = true;
             _AnalysisDataGridView.Columns.Insert(col++, ksStatistic);
 
@@ -222,12 +316,12 @@ namespace COWE.Client
             dt.Rows.Add("Interval Count", "0", "0", "0", "0", "0", "0", "0");
             dt.Rows.Add("Interval Count (Trimmed)", "0", "0", "0", "0", "0", "0", "0");
             dt.Rows.Add("Mean Packets/Interval", "0", "0", "0", "0", "0", "0", "0");
-            dt.Rows.Add("Standard Deviation", "0", "0", "0", "0", "0", "0", "0");
+            dt.Rows.Add("Std Dev | K-S Max CPD Variance", "0", "0", "0", "0", "0", "0", "0");
             dt.Rows.Add("Minimum Packets/Interval", "0", "0", "0", "0", "0", "0", "0");
             dt.Rows.Add("Maximum Packets/Interval", "0", "0", "0", "0", "0", "0", "0");
-            dt.Rows.Add("Mean of Means", "0", "0", "0", "0", "0", "0", "0");
+            dt.Rows.Add("Mean of Means | K-S Statistic", "0", "0", "0", "0", "0", "0", "0");
             dt.Rows.Add("Alpha", "0", "0", "5%", "0", "0", "5%", "5%");
-            dt.Rows.Add("Reject H0?    | Means | K-S |", "0", "0", "0", "0", "0", "0", "0");
+            dt.Rows.Add("Reject H0?    |  Means  |  K-S  |", "0", "0", "0", "0", "0", "0", "0");
             
             // Add the DataTable to the grid
             _AnalysisDataGridView.AutoGenerateColumns = false;
@@ -248,6 +342,9 @@ namespace COWE.Client
             // Hide the row header column
             _AnalysisDataGridView.RowHeadersVisible = false;
 
+            // Prevent resorting of the rows
+            _AnalysisDataGridView.Columns.Cast<DataGridViewColumn>().ToList().ForEach(f => f.SortMode = DataGridViewColumnSortMode.NotSortable);
+            
             ResizeAnalysisGrid();
         }
         private void ResizeAnalysisGrid()
@@ -354,6 +451,10 @@ namespace COWE.Client
 
                 // Convert the histogram probability data 
                 SortedDictionary<int, decimal> probabilities = new SortedDictionary<int, decimal>();
+                //SortedDictionary<int, decimal> markedProbabilities = new SortedDictionary<int, decimal>();
+                //SortedDictionary<int, decimal> unmarkedProbabilities = new SortedDictionary<int, decimal>();
+
+
                 foreach (SingleHistogram hist in histogramProbabilityList)
                 {
                     probabilities.Add(hist.Interval, hist.Probability);
@@ -703,21 +804,21 @@ namespace COWE.Client
                 _AnalysisDataGridView.Rows[row].Cells[6].Style.Font = font;
                 _AnalysisDataGridView.Rows[row].Cells[6].Value = ht.MeansTestResult == true ? "True" : "False";
                 _AnalysisDataGridView.Rows[row].Cells[6].Style.BackColor = ht.MeansTestResult == true ? Color.LightGreen : Color.LightCoral;
-                
-                // Update the K-S statistics column
-                row = 0;
-                _AnalysisDataGridView.Rows[row++].Cells[7].Value = "N/A";
-                _AnalysisDataGridView.Rows[row++].Cells[7].Value = "N/A";
-                _AnalysisDataGridView.Rows[row++].Cells[7].Value = "N/A";
-                _AnalysisDataGridView.Rows[row++].Cells[7].Value = string.Format("{0:N2}", ht.MeansVarianceStandardDeviation);
-                _AnalysisDataGridView.Rows[row++].Cells[7].Value = "N/A";
-                _AnalysisDataGridView.Rows[row++].Cells[7].Value = "N/A";
-                _AnalysisDataGridView.Rows[row++].Cells[7].Value = string.Format("{0:N2}", ht.MeanOfMeansVariance);
-                _AnalysisDataGridView.Rows[row++].Cells[7].Value = string.Format("{0:P1}", AnalysisConfiguration.Alpha);
-                // K-S test results
-                _AnalysisDataGridView.Rows[row].Cells[7].Style.Font = font;
-                _AnalysisDataGridView.Rows[row].Cells[7].Value = ht.KsTestResult == true ? "True" : "False";
-                _AnalysisDataGridView.Rows[row].Cells[7].Style.BackColor = ht.KsTestResult == true ? Color.LightGreen : Color.LightCoral;
+
+                //// Update the K-S statistics column
+                //row = 0;
+                //_AnalysisDataGridView.Rows[row++].Cells[7].Value = "N/A";
+                //_AnalysisDataGridView.Rows[row++].Cells[7].Value = "N/A";
+                //_AnalysisDataGridView.Rows[row++].Cells[7].Value = "N/A";
+                //_AnalysisDataGridView.Rows[row++].Cells[7].Value = string.Format("{0:N2}", ht.MeansVarianceStandardDeviation);
+                //_AnalysisDataGridView.Rows[row++].Cells[7].Value = "N/A";
+                //_AnalysisDataGridView.Rows[row++].Cells[7].Value = "N/A";
+                //_AnalysisDataGridView.Rows[row++].Cells[7].Value = string.Format("{0:N2}", ht.MeanOfMeansVariance);
+                //_AnalysisDataGridView.Rows[row++].Cells[7].Value = string.Format("{0:P1}", AnalysisConfiguration.Alpha);
+                //// K-S test results
+                //_AnalysisDataGridView.Rows[row].Cells[7].Style.Font = font;
+                //_AnalysisDataGridView.Rows[row].Cells[7].Value = ht.KsTestResult == true ? "True" : "False";
+                //_AnalysisDataGridView.Rows[row].Cells[7].Style.BackColor = ht.KsTestResult == true ? Color.LightGreen : Color.LightCoral;
             }
 
             //// Update the K-S statistics object
@@ -813,47 +914,52 @@ namespace COWE.Client
                 CdfChart.Series["UnmarkedProbabilities"].Points.AddXY(Convert.ToDouble(pair.Key), Convert.ToDouble(pair.Value));
             }
         }
-        //private void RefreshKsStatistics()
-        //{
-        //    // Reset the backcolor for Reject H0? cell in K-S column of grid
-        //    _AnalysisDataGridView.Rows[8].Cells[7].Style.BackColor = Color.White;
-
-        //    //bool KS_result = GetHypothesisTestResult(_KsStatistics.UnmarkedMean, _KsStatistics.MarkedMean, _KsStatistics.UnmarkedStdDev, _KsStatistics.MarkedStdDev, _KsStatistics.UnmarkedIntervalCount, _KsStatistics.MarkedIntervalCount);
-        //    //bool KS_result = GetHypothesisTestResult(_KsStatistics.UnmarkedMean, _KsStatistics.MarkedMean, _KsStatistics.UnmarkedStdDev, _KsStatistics.MarkedStdDev, _KsStatistics.UnmarkedIntervalCount, _KsStatistics.MarkedIntervalCount);
-
-        //    int row = 0;
-        //    _AnalysisDataGridView.Rows[row++].Cells[7].Value = "N/A";
-        //    _AnalysisDataGridView.Rows[row++].Cells[7].Value = "N/A";
-        //    _AnalysisDataGridView.Rows[row++].Cells[7].Value = string.Format("{0:N2}", _KsStatistics.MeanDifference);
-        //    _AnalysisDataGridView.Rows[row++].Cells[7].Value = string.Format("{0:N2}",_KsStatistics.StandardDeviation);
-        //    _AnalysisDataGridView.Rows[row++].Cells[7].Value = "N/A";
-        //    _AnalysisDataGridView.Rows[row++].Cells[7].Value = "N/A";
-        //    _AnalysisDataGridView.Rows[row++].Cells[7].Value = string.Format("{0:N2}",_KsStatistics.MeanDifference);
-        //    _AnalysisDataGridView.Rows[row++].Cells[7].Value = string.Format("{0:P1}", AnalysisConfiguration.Alpha);
-        //    Font font = new Font(_AnalysisDataGridView.DefaultCellStyle.Font.FontFamily, _AnalysisDataGridView.Font.Size, FontStyle.Bold);
-        //    _AnalysisDataGridView.Rows[row].Cells[7].Style.Font = font;
-        //    _AnalysisDataGridView.Rows[row].Cells[7].Value = KS_result.ToString();
-        //    _AnalysisDataGridView.Rows[row].Cells[7].Style.BackColor = KS_result == true ? Color.LightGreen : Color.LightCoral;
-        //}
-        private bool GetHypothesisTestResult(decimal unmarkedMean, decimal markedMean, decimal unmarkedStdDev, decimal markedStdDev, int unmarkedPacketCount, int markedPacketCount)
+        private void RefreshKsStatistics()
         {
-            bool result = false;
+            // Reset the backcolor for Reject H0? cell in K-S column of grid
+            _AnalysisDataGridView.Rows[8].Cells[7].Style.BackColor = Color.White;
 
-            //// H0: there is no difference in the distribution of packets between marked and unmarked batches
-            //// H1: there is a difference between the batches
+            //bool KS_result = GetHypothesisTestResult(_KsStatistics.UnmarkedMean, _KsStatistics.MarkedMean, _KsStatistics.UnmarkedStdDev, _KsStatistics.MarkedStdDev, _KsStatistics.UnmarkedIntervalCount, _KsStatistics.MarkedIntervalCount);
+            //bool KS_result = GetHypothesisTestResult(_KsStatistics.UnmarkedMean, _KsStatistics.MarkedMean, _KsStatistics.UnmarkedStdDev, _KsStatistics.MarkedStdDev, _KsStatistics.UnmarkedIntervalCount, _KsStatistics.MarkedIntervalCount);
 
-            //// Test the difference in the distribution means
-            //decimal meanDifference = _KsStatistics.MeanDifference;
-            //decimal sigmaDifference = _KsStatistics.SigmaDifference;
+            ProcessCapturePackets pcp = new ProcessCapturePackets();
+            HypothesisTest ht = new HypothesisTest();
 
-            //// Single-tail test (if there is a difference in the means it will be a positive value)
-            //// Z value for alpha = 5% significance level:
+            ht = pcp.GetHypothesisTestResults();
 
-            //// Test result: true = reject H0 - difference of means has only 5% probability of occurring if H0 is true
-            //result = _KsStatistics.MeanDifference > _KsStatistics.StandardDeviation ? true : false;
-
-            return result;
+            int row = 0;
+            _AnalysisDataGridView.Rows[row++].Cells[7].Value = "N/A";
+            _AnalysisDataGridView.Rows[row++].Cells[7].Value = "N/A";
+            _AnalysisDataGridView.Rows[row++].Cells[7].Value = "N/A";
+            _AnalysisDataGridView.Rows[row++].Cells[7].Value = string.Format("{0:N2}", ht.MaxCpdVariance);
+            _AnalysisDataGridView.Rows[row++].Cells[7].Value = "N/A";
+            _AnalysisDataGridView.Rows[row++].Cells[7].Value = "N/A";
+            _AnalysisDataGridView.Rows[row++].Cells[7].Value = string.Format("{0:N2}", ht.KsStatistic);
+            _AnalysisDataGridView.Rows[row++].Cells[7].Value = string.Format("{0:P1}", AnalysisConfiguration.Alpha);
+            Font font = new Font(_AnalysisDataGridView.DefaultCellStyle.Font.FontFamily, _AnalysisDataGridView.Font.Size, FontStyle.Bold);
+            _AnalysisDataGridView.Rows[row].Cells[7].Style.Font = font;
+            _AnalysisDataGridView.Rows[row].Cells[7].Value = ht.KsTestResult.ToString();
+            _AnalysisDataGridView.Rows[row].Cells[7].Style.BackColor = ht.KsTestResult == true ? Color.LightGreen : Color.LightCoral;
         }
+        //private bool GetHypothesisTestResult(decimal unmarkedMean, decimal markedMean, decimal unmarkedStdDev, decimal markedStdDev, int unmarkedPacketCount, int markedPacketCount)
+        //{
+        //    bool result = false;
+
+        //    //// H0: there is no difference in the distribution of packets between marked and unmarked batches
+        //    //// H1: there is a difference between the batches
+
+        //    //// Test the difference in the distribution means
+        //    //decimal meanDifference = _KsStatistics.MeanDifference;
+        //    //decimal sigmaDifference = _KsStatistics.SigmaDifference;
+
+        //    //// Single-tail test (if there is a difference in the means it will be a positive value)
+        //    //// Z value for alpha = 5% significance level:
+
+        //    //// Test result: true = reject H0 - difference of means has only 5% probability of occurring if H0 is true
+        //    //result = _KsStatistics.MeanDifference > _KsStatistics.StandardDeviation ? true : false;
+
+        //    return result;
+        //}
 
         private void InitializeSingleDataChart()
         {
@@ -963,20 +1069,42 @@ namespace COWE.Client
             CdfChart.Series["UnmarkedProbabilities"].IsVisibleInLegend = true;
             CdfChart.Series["UnmarkedProbabilities"].LegendText = "Unmarked";
         }
-        #endregion
+        private void RecalculateData()
+        {
+            BatchIntervalEngine intervalEngine = new BatchIntervalEngine(DatabaseConnections.SqlConnection, AnalysisConfiguration.ProcessedCaptureFilesPath, "allFiles", 5, AnalysisConfiguration.IntervalSize);
+            intervalEngine.RecalculateBatchIntervals();
 
-        #region Public Methods
-        public void RefreshData()
+            ProcessCapturePackets pcp = new ProcessCapturePackets();
+
+            BindingList<CurrentCaptureFile> captureFiles = new BindingList<CurrentCaptureFile>();
+            captureFiles = pcp.GetAllCaptureFiles();
+
+            if (captureFiles.Count > 0)
+            {
+                foreach (CurrentCaptureFile file in captureFiles)
+                {
+                    AnalysisEngine analysisEngine = new AnalysisEngine(AnalysisConfiguration.TrimSmallPackets, AnalysisConfiguration.HistogramBinSize, AnalysisConfiguration.HypothesisTestType, file);
+                    analysisEngine.CalculateSingleBatchStatistics();
+                    analysisEngine.CalculateCumulativeBatchStatistics();
+                    analysisEngine.CalculateSingleHistogramData();
+                    analysisEngine.CalculateCumulativeHistogramData();
+                    analysisEngine.CalculateCumulativeProbabilityDistribution(file.CaptureState);
+                    analysisEngine.CalculateHypothesisTestResults();
+                    analysisEngine = null;
+                }
+            }
+        }
+        private void RefreshData()
         {
             RefreshSingleDataChart();
             RefreshCumulativeDataChart();
             RefreshSingleBatchStatistics();
             RefreshCumulativeBatchStatistics();
             RefreshCumulativeProbabilityChart();
-            //RefreshKsStatistics();
+            RefreshKsStatistics();
         }
-        
         #endregion
 
+ 
     }
 }

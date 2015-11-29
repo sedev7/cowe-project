@@ -132,6 +132,13 @@ namespace COWE.DataLayer
                 context.TruncateAllIntervalTables();
             }
         }
+        public void TruncateAllIntervalStatisticAndTestTables()
+        {
+            using (var context = new PacketAnalysisEntity())
+            {
+                context.TruncateAllIntervalStatisticAndTestTables();
+            }
+        }
         #endregion
     }
 }

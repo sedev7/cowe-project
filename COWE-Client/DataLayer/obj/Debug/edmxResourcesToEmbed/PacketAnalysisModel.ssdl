@@ -82,6 +82,8 @@
     <Property Name="HypothesisTestId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="MeanOfMeansVariance" Type="decimal" Precision="28" Scale="10" Nullable="false" />
     <Property Name="MeansVarianceStandardDeviation" Type="decimal" Precision="28" Scale="10" Nullable="false" />
+    <Property Name="KsStatistic" Type="decimal" Precision="28" Scale="10" Nullable="false" />
+    <Property Name="MaxCpdVariance" Type="decimal" Precision="28" Scale="10" Nullable="false" />
     <Property Name="MeansTestResult" Type="bit" Nullable="false" />
     <Property Name="KsTestResult" Type="bit" Nullable="false" />
     <Property Name="HasValues" Type="bit" Nullable="false" />
@@ -189,6 +191,7 @@
     <Parameter Name="CaptureState" Type="int" Mode="In" />
     <Parameter Name="BatchType" Type="int" Mode="In" />
   </Function>
+  <Function Name="TruncateAllIntervalStatisticAndTestTables" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="COWE" />
   <Function Name="TruncateAllIntervalTables" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="COWE" />
   <EntityContainer Name="PacketAnalysisModelStoreContainer">
     <EntitySet Name="BatchInterval" EntityType="Self.BatchInterval" Schema="COWE" store:Type="Tables" />

@@ -38,6 +38,7 @@
  *  x Reset UI when socket connection fails (i.e., throws exception).
  *  x Add Flooder class.
  *  x On start/stop flooder, check flooders list for existence before adding to list.
+ *  - Disable changes to the statistical analysis configuration controls while a capture session is running.
  * 
  */
 #endregion
@@ -339,6 +340,8 @@ namespace COWE.Client
 
                     if (cellButton.Value.ToString() == "Start")
                     {
+                        DisableConfigurationControls();
+
                         if (DatabaseResetCheckBox.Checked == true)
                         {
                             ResetDatabaseAndDeleteCaptureFiles();
@@ -346,51 +349,62 @@ namespace COWE.Client
 
                         IsStarting = true;
 
-                        // Get the timer interval (start/stop interval for flooder)
-                        _FlooderTimerInterval = Convert.ToInt32(FlooderIntervalTextBox.Text);
-
-                        bool success = false;
-                        // Open the socket connection to the flooder
-                        if (OpenFlooderConnection(IsStarting, flooder, _FlooderTimerInterval))
+                        // Check to see if the flooder is running
+                        Ping verifyPing = new Ping();
+                        PingReply reply = verifyPing.Send(flooderIpAddress, 1000);
+                        if (reply.Status.ToString() != "TimedOut")
                         {
-                            cellButton.UseColumnTextForButtonValue = false;
-                            cellButton.Value = "Stop";
-                            cellButton.Style.BackColor = System.Drawing.Color.Red;
+                            // Get the timer interval (start/stop interval for flooder)
+                            _FlooderTimerInterval = Convert.ToInt32(FlooderIntervalTextBox.Text);
 
-                            // Update the status column for this row (i.e., this flooder instance)
-                            _FlooderStatusDataGridView.Rows[row].Cells["FlooderStatus"].Value = "Running";
-                            _FlooderStatusDataGridView.Rows[row].Cells["FlooderStatus"].Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                            _FlooderStatusDataGridView["FlooderStatus", row].Style.BackColor = NonResident;
-                            success = true;
-                            IsFlooding = true;
-                            IsMarked = true;
+                            bool success = false;
+                            // Open the socket connection to the flooder
+                            if (OpenFlooderConnection(IsStarting, flooder, _FlooderTimerInterval))
+                            {
+                                cellButton.UseColumnTextForButtonValue = false;
+                                cellButton.Value = "Stop";
+                                cellButton.Style.BackColor = System.Drawing.Color.Red;
+
+                                // Update the status column for this row (i.e., this flooder instance)
+                                _FlooderStatusDataGridView.Rows[row].Cells["FlooderStatus"].Value = "Running";
+                                _FlooderStatusDataGridView.Rows[row].Cells["FlooderStatus"].Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                                _FlooderStatusDataGridView["FlooderStatus", row].Style.BackColor = NonResident;
+                                success = true;
+                                IsFlooding = true;
+                                IsMarked = true;
+                            }
+                            else
+                            {
+                                MessageBox.Show("Unable to start flooder", "Start Flooder");
+                            }
+
+                            if (success)
+                            {
+                                // Start the packet capture
+
+                                // Get our local IP address
+                                _HostIpAddress = _SelectedNetworkInterface.IpAddress;
+
+                                // Note: source host is web server (target), destination host is client
+                                if (StartPacketCapture(TargetIpAddressTextBox.Text.Trim(), _HostIpAddress, _FlooderTimerInterval))
+                                {
+                                    // Packet capture started successfully
+                                    DisplayProgressMessage("Capturing marked packet data...");
+
+                                    //// Start the timer (ms increments)
+                                    //_FlooderIntervalTimer = new System.Timers.Timer(_FlooderTimerInterval * 1000);
+                                    //_FlooderIntervalTimer.Elapsed += new ElapsedEventHandler(OnFlooderTimerElapsedEvent);
+                                    //_FlooderIntervalTimer.Start();
+                                    //StopWatchStart();
+                                    TimerStart(_FlooderTimerInterval);
+                                }
+                            }
                         }
                         else
                         {
-                            MessageBox.Show("Unable to start flooder", "Start Flooder");
+                            MessageBox.Show("Unable to ping flooder!\r\n\r\nCheck to be sure flooder is up and icmp is not blocked.", "Verify Flooder is Reachable", MessageBoxButtons.OK, MessageBoxIcon.Hand);
                         }
-
-                        if (success)
-                        {
-                            // Start the packet capture
-
-                            // Get our local IP address
-                            _HostIpAddress = _SelectedNetworkInterface.IpAddress;
-
-                            // Note: source host is web server (target), destination host is client
-                            if (StartPacketCapture(TargetIpAddressTextBox.Text.Trim(), _HostIpAddress, _FlooderTimerInterval))
-                            {
-                                // Packet capture started successfully
-                                DisplayProgressMessage("Capturing marked packet data...");
-
-                                //// Start the timer (ms increments)
-                                //_FlooderIntervalTimer = new System.Timers.Timer(_FlooderTimerInterval * 1000);
-                                //_FlooderIntervalTimer.Elapsed += new ElapsedEventHandler(OnFlooderTimerElapsedEvent);
-                                //_FlooderIntervalTimer.Start();
-                                //StopWatchStart();
-                                TimerStart(_FlooderTimerInterval);
-                            }
-                        }
+                        EnableConfigurationControls();
                     }
                     else
                     {
@@ -455,6 +469,7 @@ namespace COWE.Client
 
                         // Move the last packet capture file
                         MovePacketCaptureFile(_CurrentCaptureFileName);
+                        EnableConfigurationControls();
                     }
                 }
             }
@@ -639,22 +654,11 @@ namespace COWE.Client
             switch (ClientTabControl.SelectedTab.Name)
             {
                 case "FlooderTabPage":
+                    RestoreClientControlsColorWhenSwitchingTabs();
                     break;
+
                 case "AnalysisTabPage":
-                    //if (AnalysisMainPanel.Controls.Contains(_AnalysisControl))
-                    //{
-                    //    _AnalysisControl.HistogramBinSize = HistogramBinSizeTextBox.Text;
-                    //    _AnalysisControl.TrimIntervals = TrimIntervalsCheckBox.Checked;
-                    //    _AnalysisControl.BringToFront();
-                    //}
-                    //else
-                    //{
-                    //    _AnalysisControl = new AnalysisControl();
-                    //    _AnalysisControl.Dock = DockStyle.Fill;
-                    //    _AnalysisControl.HistogramBinSize = HistogramBinSizeTextBox.Text;
-                    //    AnalysisMainPanel.Controls.Add(_AnalysisControl);
-                    //    _AnalysisControl.BringToFront();
-                    //}
+                    GrayOutClientControlsWhenSwitchingTabs();
                     if (!AnalysisMainPanel.Controls.Contains(_AnalysisControl))
                     {
                         _AnalysisControl = new AnalysisControl();
@@ -663,9 +667,66 @@ namespace COWE.Client
                         AnalysisMainPanel.Controls.Add(_AnalysisControl);
                         _AnalysisControl.BringToFront();
                     }
-
                     break;
             }
+        }
+
+        private void GrayOutClientControlsWhenSwitchingTabs()
+        {
+            // Gray out the data grid, background panel, and other controls
+            _FlooderStatusDataGridView.BackgroundColor = System.Drawing.Color.LightGray;
+            _FlooderStatusDataGridView.DefaultCellStyle.BackColor = SystemColors.Control;
+            _FlooderStatusDataGridView.DefaultCellStyle.ForeColor = SystemColors.GrayText;
+            _FlooderStatusDataGridView.ColumnHeadersDefaultCellStyle.BackColor = SystemColors.Control;
+            _FlooderStatusDataGridView.ColumnHeadersDefaultCellStyle.ForeColor = SystemColors.GrayText;
+            _FlooderStatusDataGridView.CurrentCell = null;
+            _FlooderStatusDataGridView.ReadOnly = true;
+            _FlooderStatusDataGridView.EnableHeadersVisualStyles = false;
+
+            mainPanel.BackColor = SystemColors.Control;
+            TargetIpAddressTextBox.BackColor = SystemColors.Control;
+            TargetPortTextBox.BackColor = SystemColors.Control;
+            FlooderIntervalTextBox.BackColor = SystemColors.Control;
+            // Gray out the status cell value for each flooder instance
+            foreach (DataGridViewRow row in _FlooderStatusDataGridView.Rows)
+            {
+                row.Cells[6].Style.BackColor = SystemColors.Control;
+            }
+            Application.DoEvents();
+        }
+
+        private void RestoreClientControlsColorWhenSwitchingTabs()
+        {
+            // Restore the colors for the data grid, background panel, and other controls
+            _FlooderStatusDataGridView.BackgroundColor = SystemColors.AppWorkspace;
+            _FlooderStatusDataGridView.DefaultCellStyle.BackColor = SystemColors.Window;
+            _FlooderStatusDataGridView.DefaultCellStyle.ForeColor = SystemColors.ControlText;
+            _FlooderStatusDataGridView.ColumnHeadersDefaultCellStyle.BackColor = SystemColors.Window;
+            _FlooderStatusDataGridView.ColumnHeadersDefaultCellStyle.ForeColor = SystemColors.ControlText;
+            _FlooderStatusDataGridView.ReadOnly = false;
+            _FlooderStatusDataGridView.EnableHeadersVisualStyles = true;
+
+            mainPanel.BackColor = SystemColors.GradientInactiveCaption;
+            TargetIpAddressTextBox.BackColor = SystemColors.Window;
+            TargetPortTextBox.BackColor = SystemColors.Window;
+            FlooderIntervalTextBox.BackColor = SystemColors.Window;
+            // Gray out the status cell value for each flooder instance
+            foreach (DataGridViewRow row in _FlooderStatusDataGridView.Rows)
+            {
+                switch (row.Cells[6].Value.ToString())
+                {
+                    case "Not Connected":
+                        row.Cells[6].Style.BackColor = NotConnected;
+                        break;
+                    case "Running":
+                        row.Cells[6].Style.BackColor = NonResident;
+                        break;
+                    case "Co-Resident":
+                        row.Cells[6].Style.BackColor = CoResident;
+                        break;
+                }
+            }
+            Application.DoEvents();
         }
         private void ProcessCaptureDataButton_Click(object sender, EventArgs e)
         {
@@ -1241,7 +1302,7 @@ namespace COWE.Client
             col = 1;
 
             _FlooderStatusDataGridView.Rows[row].Cells[col++].Value = pid.ToString();   // PID
-            _FlooderStatusDataGridView.Rows[row].Cells[col++].Value = "10.10.10.208";   // Flooder IP Address
+            _FlooderStatusDataGridView.Rows[row].Cells[col++].Value = "10.10.10.128";   // Flooder IP Address
             _FlooderStatusDataGridView.Rows[row].Cells[col++].Value = "8080";           // Flooder port
             _FlooderStatusDataGridView.Rows[row].Cells[col++].Value = "10.10.10.118";   // Flooder Destination
             _FlooderStatusDataGridView.Rows[row].Cells[col++].Value = "0";              // Runtime
@@ -1565,7 +1626,9 @@ namespace COWE.Client
                 _ParseFolderPath = nvc["PARSE_FILE_PATH"];
                 _ParsedFilesPath = nvc["PARSED_FILES_PATH"];
                 _ProcessedFilesPath = nvc["PROCESSED_FILES_PATH"];
+                AnalysisConfiguration.ProcessedCaptureFilesPath = _ProcessedFilesPath;
                 DbConnectionString = nvc["DB_CONN_STR"];
+                DatabaseConnections.SqlConnection = DbConnectionString;
             }
             catch (Exception ex)
             {
@@ -1883,9 +1946,32 @@ namespace COWE.Client
             Font analysisMetricsFont = new Font("Microsoft Sans Serif", 8);
             AnalysisMetricsGroupBox.Font = analysisMetricsFont;
         }
+        private void DisableConfigurationControls()
+        {
+            NetworkInterfaceComboBox.Enabled = false;
+            AnalysisIntervalSizeTextBox.Enabled = false;
+            HistogramBinSizeTextBox.Enabled = false;
+            TrimIntervalsCheckBox.Enabled = false;
+            HypothesisTestGroupBox.Enabled = false;
+            TargetIpAddressTextBox.Enabled = false;
+            TargetPortTextBox.Enabled = false;
+            FlooderIntervalTextBox.Enabled = false;
+            DatabaseResetCheckBox.Enabled = false;
+            StartParseFilesServiceButton.Enabled = false;
+        }
+        private void EnableConfigurationControls()
+        {
+            NetworkInterfaceComboBox.Enabled = true;
+            AnalysisIntervalSizeTextBox.Enabled = true;
+            HistogramBinSizeTextBox.Enabled = true;
+            TrimIntervalsCheckBox.Enabled = true;
+            HypothesisTestGroupBox.Enabled = true;
+            TargetIpAddressTextBox.Enabled = true;
+            TargetPortTextBox.Enabled = true;
+            FlooderIntervalTextBox.Enabled = true;
+            DatabaseResetCheckBox.Enabled = true;
+            StartParseFilesServiceButton.Enabled = true;
+        }
         #endregion
-
-
-
     }
 }

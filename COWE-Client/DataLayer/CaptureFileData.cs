@@ -108,6 +108,26 @@ namespace COWE.DataLayer
             }
             return BatchId;
         }
+        public BindingList<CurrentCaptureFile> GetAllFiles()
+        {
+            BindingList<CurrentCaptureFile> files = new BindingList<CurrentCaptureFile>();
+
+            using (var context = new PacketAnalysisEntity())
+            {
+                var fileList = (from f in context.CaptureBatches
+                                select f).ToList();
+
+                foreach (var record in fileList)
+                {
+                    CurrentCaptureFile ccf = new CurrentCaptureFile();
+                    ccf.CaptureBatchId = record.CaptureBatchId;
+                    ccf.CaptureState = record.Marked == true ? CaptureState.Marked : CaptureState.Unmarked;
+                    ccf.FileName = record.FileName;
+                    files.Add(ccf);
+                }
+            }
+            return files;
+        }
         public CurrentCaptureFile GetLastCaptureBatchRecord()
         {
             CurrentCaptureFile lastRecord = new CurrentCaptureFile();

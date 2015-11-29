@@ -122,7 +122,8 @@ namespace COWE.BusinessLayer
 
             // First delete all existing batch intervals and cumulative intervals
             BatchIntervalData bid = new BatchIntervalData();
-            bid.RemoveAllBatchIntervals();
+            //bid.RemoveAllBatchIntervals();
+            bid.TruncateAllIntervalStatisticAndTestTables();
 
             // Get a list of all capture files
             CaptureFileData cfd = new CaptureFileData();
@@ -136,6 +137,7 @@ namespace COWE.BusinessLayer
                 BindingList<PacketInterval> intervals = new BindingList<PacketInterval>();
                 intervals = CreateBatchIntervals(file.FileName);
                 UpdateCumulativeIntervals(intervals);
+                UpdateCaptureBatchParseStatusForRecalculation(file.CaptureBatchId);
             }
         }
         #endregion
@@ -212,6 +214,11 @@ namespace COWE.BusinessLayer
         {
             CaptureFileData cfd = new CaptureFileData();
             cfd.UpdateCaptureBatchParseStatus(_CurrentCaptureBatchId);
+        }
+        private void UpdateCaptureBatchParseStatusForRecalculation(int captureBatchId)
+        {
+            CaptureFileData cfd = new CaptureFileData();
+            cfd.UpdateCaptureBatchParseStatus(captureBatchId);
         }
 
         private int GetLastCaptureBatchId()

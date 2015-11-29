@@ -51,6 +51,7 @@
     <Compile Include="BatchIntervalData.cs" />
     <Compile Include="CumulativeHistogramData.cs" />
     <Compile Include="CumulativeProbabilityDistributionData.cs" />
+    <Compile Include="DatabaseConnections.cs" />
     <Compile Include="DisplayStatisticsData.cs" />
     <Compile Include="CaptureFileData.cs" />
     <Compile Include="CumulativeIntervalData.cs" />

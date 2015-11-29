@@ -576,7 +576,11 @@ namespace COWE.BusinessLayer
                 ht.MeansVarianceStandardDeviation = htMeans.MeansVarianceStandardDeviation;
 
                 // Get the K-S test results
-                ht.KsTestResult = GetKsHypothesisTestResult();
+                HypothesisTest htKs = new HypothesisTest();
+                htKs = GetKsHypothesisTestResult();
+                ht.KsStatistic = htKs.KsStatistic;
+                ht.MaxCpdVariance = htKs.MaxCpdVariance;
+                ht.KsTestResult = htKs.KsTestResult;
                 ht.HasValues = true;
                 IsDirty = true;
             }
@@ -701,12 +705,18 @@ namespace COWE.BusinessLayer
             unmarkedStatistics = pcp.GetCumulativeUnmarkedDisplayStatistics();
 
             MeansTestStatistic _MeansTestStatistic = new MeansTestStatistic(AnalysisConfiguration.Alpha, AnalysisConfiguration.Zvalue);
-            _MeansTestStatistic.MarkedMean = markedStatistics.MeanOfMeans;
-            _MeansTestStatistic.MarkedStdDev = markedStatistics.MeanOfMeansStandardDeviation;
-            _MeansTestStatistic.MarkedIntervalCount = _TrimZeroPacketIntervals == true ? markedStatistics.TrimmedIntervalCount : markedStatistics.IntervalCount;
-            _MeansTestStatistic.UnmarkedMean = unmarkedStatistics.MeanOfMeans;
-            _MeansTestStatistic.UnmarkedStdDev = unmarkedStatistics.MeanOfMeansStandardDeviation;
-            _MeansTestStatistic.UnmarkedIntervalCount = _TrimZeroPacketIntervals == true ? unmarkedStatistics.TrimmedIntervalCount : unmarkedStatistics.IntervalCount;
+            if (markedStatistics != null)
+            {
+                _MeansTestStatistic.MarkedMean = markedStatistics.MeanOfMeans;
+                _MeansTestStatistic.MarkedStdDev = markedStatistics.MeanOfMeansStandardDeviation;
+                _MeansTestStatistic.MarkedIntervalCount = _TrimZeroPacketIntervals == true ? markedStatistics.TrimmedIntervalCount : markedStatistics.IntervalCount;
+            }
+            if (unmarkedStatistics != null)
+            {
+                _MeansTestStatistic.UnmarkedMean = unmarkedStatistics.MeanOfMeans;
+                _MeansTestStatistic.UnmarkedStdDev = unmarkedStatistics.MeanOfMeansStandardDeviation;
+                _MeansTestStatistic.UnmarkedIntervalCount = _TrimZeroPacketIntervals == true ? unmarkedStatistics.TrimmedIntervalCount : unmarkedStatistics.IntervalCount;
+            }
 
             // Test the difference in the distribution means
             decimal meanDifference = _MeansTestStatistic.MeanDifference;
@@ -724,9 +734,9 @@ namespace COWE.BusinessLayer
             return ht;
         }
 
-        private bool GetKsHypothesisTestResult()
+        private HypothesisTest GetKsHypothesisTestResult()
         {
-            bool result = false;
+            HypothesisTest ht = new HypothesisTest(); ;
 
             // Get cumulative probability distribution data and find the max difference between marked and unmarked distributions
             ProcessCapturePackets pcp = new ProcessCapturePackets();
@@ -735,120 +745,132 @@ namespace COWE.BusinessLayer
             markedCPD = pcp.GetCumulativeProbabilityDistributionData(CaptureState.Marked);
             unmarkedCPD = pcp.GetCumulativeProbabilityDistributionData(CaptureState.Unmarked);
 
-            decimal maxVariance = 0M;
-            int intervalCount = 0;
-
-            // Only compare intervals from each distribution with a corresponding interval in the other distribution 
-            if (unmarkedCPD.Count > markedCPD.Count)
+            if (markedCPD.Count > 0 && unmarkedCPD.Count > 0)
             {
-                intervalCount = markedCPD.Count;
-            }
-            else
-            {
-                intervalCount = unmarkedCPD.Count;
-            }
+                decimal maxVariance = 0M;
+                int intervalCount = 0;
 
-            // Expand each distribution into equal discrete steps for comparison of cumulative probabilities
-            // First, find the largest cumulative packet count (= interval)
-            int maxPacketCount = 0;
-            if(markedCPD[markedCPD.Count - 1].Interval >= unmarkedCPD[unmarkedCPD.Count - 1].Interval)
-            {
-                maxPacketCount = markedCPD[markedCPD.Count - 1].Interval;
-            }
-            else
-            {
-                maxPacketCount = unmarkedCPD[unmarkedCPD.Count - 1].Interval;
-            }
-
-            // Second, expand the packet counts by interpolating between packet counts (intervals) using an average probability
-            // for each packet count in the range and successively adding up to the next packet count (interval); add these 
-            // interpolated packets to a dictionary; outcome is a dictionary for each distribution containing packet counts and
-            // probabilities from packet count = 0 to packet count = largest packet count (interval) of both distributions and 
-            // the associated probabilities for each packet count.  We are basically calculating a linear estimate of packet
-            // counts and probabilities between each packet count and probability in the actual distributions.
-
-            //int lastInterval = 0;
-            //decimal newProbability = 0M;
-            //SortedDictionary<int, decimal> markedCPDExpanded = new SortedDictionary<int, decimal>();
-
-            //foreach (var item in markedCPD)
-            //{
-            //    if(item.Interval > lastInterval  && item.Interval <= maxPacketCount)
-            //    {
-            //        int numberOfIntervals = item.Interval - lastInterval - 1;
-            //        decimal intervalProbability = (item.Probability - newProbability) / numberOfIntervals;
-
-            //        // Probability of first expanded packet count will be zero
-            //        if(markedCPD.IndexOf(item) == 0)
-            //        {
-            //            markedCPDExpanded.Add(0, 0M);
-            //        }
-
-            //        // Add each expanded packet count and probability in the range to the dictionary
-            //        for (int i = 1; i <= numberOfIntervals; i++)
-            //        {
-            //            newProbability = newProbability + intervalProbability;
-            //            markedCPDExpanded.Add(lastInterval + i, newProbability);
-            //        }
-            //        // Last packet count is the current interval value
-            //        //markedCPDExpanded.Add(item.Interval, item.Probability);
-            //        // Reset the last interval to the current interval
-            //        lastInterval = item.Interval - 1;
-            //    }
-            //    // Move to next interval and reset the probability
-            //    //lastInterval++;
-            //    newProbability = item.Probability;
-            //}
-
-            //// Third, check for packet counts that are less than the maximum packet count and assign a probability of 1
-            //// to any that are found
-            //int maxMarkedPacketCount = markedCPD[markedCPD.Count - 1].Interval;
-            //if(maxPacketCount > maxMarkedPacketCount)
-            //{
-            //    // We have fewer packet counts in this distribution than the max packet count, so add one to the packet
-            //    // count with a probability of 1.0 for each incremental packet count, up to maxMarkedPacketCount
-            //    for (int i = 0; i < maxPacketCount - maxMarkedPacketCount; i++)
-            //    {
-            //        markedCPDExpanded.Add(++lastInterval, 1.0M);
-            //    }
-            //}
-
-            SortedDictionary<int, decimal> markedCPDExpanded = new SortedDictionary<int, decimal>();
-            SortedDictionary<int, decimal> unmarkedCPDExpanded = new SortedDictionary<int, decimal>();
-            markedCPDExpanded = ExpandPacketCount(markedCPD, maxPacketCount);
-            unmarkedCPDExpanded = ExpandPacketCount(unmarkedCPD, maxPacketCount);
-
-            //// Find the maximum variance between the cumulative probabilities in each distribution
-            //for (int i = 0; i < intervalCount; i++ )
-            //{
-            //    if(Math.Abs(unmarkedCPD[i].Probability - markedCPD[i].Probability) > maxVariance)
-            //    {
-            //        maxVariance = Math.Abs(unmarkedCPD[i].Probability - markedCPD[i].Probability);
-            //    }
-            //}
-
-            for (int i = 0; i < maxPacketCount; i++)
-            {
-                #region Debug
-#if(DEBUG)
-                System.Diagnostics.Debug.WriteLine("unmarkedCPDExpanded[{0}]:[{1}] - markedCPDExpanded[{2}]:[{3}] = {4}", i, unmarkedCPDExpanded[i], i, markedCPDExpanded[i], Math.Abs(unmarkedCPDExpanded[i] - markedCPDExpanded[i]));
-#endif
-                #endregion
-                if (Math.Abs(unmarkedCPDExpanded[i] - markedCPDExpanded[i]) > maxVariance)
+                // Only compare intervals from each distribution with a corresponding interval in the other distribution 
+                if (unmarkedCPD.Count > markedCPD.Count)
                 {
-                    maxVariance = Math.Abs(unmarkedCPDExpanded[i] - markedCPDExpanded[i]);
+                    intervalCount = markedCPD.Count;
+                }
+                else
+                {
+                    intervalCount = unmarkedCPD.Count;
+                }
+
+                // Expand each distribution into equal discrete steps for comparison of cumulative probabilities
+                // First, find the largest cumulative packet count (= interval)
+                int maxPacketCount = 0;
+                if (markedCPD[markedCPD.Count - 1].Interval >= unmarkedCPD[unmarkedCPD.Count - 1].Interval)
+                {
+                    maxPacketCount = markedCPD[markedCPD.Count - 1].Interval;
+                }
+                else
+                {
+                    maxPacketCount = unmarkedCPD[unmarkedCPD.Count - 1].Interval;
+                }
+
+                // Second, expand the packet counts by interpolating between packet counts (intervals) using an average probability
+                // for each packet count in the range and successively adding up to the next packet count (interval); add these 
+                // interpolated packets to a dictionary; outcome is a dictionary for each distribution containing packet counts and
+                // probabilities from packet count = 0 to packet count = largest packet count (interval) of both distributions and 
+                // the associated probabilities for each packet count.  We are basically calculating a linear estimate of packet
+                // counts and probabilities between each packet count and probability in the actual distributions.
+
+                //int lastInterval = 0;
+                //decimal newProbability = 0M;
+                //SortedDictionary<int, decimal> markedCPDExpanded = new SortedDictionary<int, decimal>();
+
+                //foreach (var item in markedCPD)
+                //{
+                //    if(item.Interval > lastInterval  && item.Interval <= maxPacketCount)
+                //    {
+                //        int numberOfIntervals = item.Interval - lastInterval - 1;
+                //        decimal intervalProbability = (item.Probability - newProbability) / numberOfIntervals;
+
+                //        // Probability of first expanded packet count will be zero
+                //        if(markedCPD.IndexOf(item) == 0)
+                //        {
+                //            markedCPDExpanded.Add(0, 0M);
+                //        }
+
+                //        // Add each expanded packet count and probability in the range to the dictionary
+                //        for (int i = 1; i <= numberOfIntervals; i++)
+                //        {
+                //            newProbability = newProbability + intervalProbability;
+                //            markedCPDExpanded.Add(lastInterval + i, newProbability);
+                //        }
+                //        // Last packet count is the current interval value
+                //        //markedCPDExpanded.Add(item.Interval, item.Probability);
+                //        // Reset the last interval to the current interval
+                //        lastInterval = item.Interval - 1;
+                //    }
+                //    // Move to next interval and reset the probability
+                //    //lastInterval++;
+                //    newProbability = item.Probability;
+                //}
+
+                //// Third, check for packet counts that are less than the maximum packet count and assign a probability of 1
+                //// to any that are found
+                //int maxMarkedPacketCount = markedCPD[markedCPD.Count - 1].Interval;
+                //if(maxPacketCount > maxMarkedPacketCount)
+                //{
+                //    // We have fewer packet counts in this distribution than the max packet count, so add one to the packet
+                //    // count with a probability of 1.0 for each incremental packet count, up to maxMarkedPacketCount
+                //    for (int i = 0; i < maxPacketCount - maxMarkedPacketCount; i++)
+                //    {
+                //        markedCPDExpanded.Add(++lastInterval, 1.0M);
+                //    }
+                //}
+
+                SortedDictionary<int, decimal> markedCPDExpanded = new SortedDictionary<int, decimal>();
+                SortedDictionary<int, decimal> unmarkedCPDExpanded = new SortedDictionary<int, decimal>();
+                markedCPDExpanded = ExpandPacketCount(markedCPD, maxPacketCount);
+                unmarkedCPDExpanded = ExpandPacketCount(unmarkedCPD, maxPacketCount);
+
+                //// Find the maximum variance between the cumulative probabilities in each distribution
+                //for (int i = 0; i < intervalCount; i++ )
+                //{
+                //    if(Math.Abs(unmarkedCPD[i].Probability - markedCPD[i].Probability) > maxVariance)
+                //    {
+                //        maxVariance = Math.Abs(unmarkedCPD[i].Probability - markedCPD[i].Probability);
+                //    }
+                //}
+
+                for (int i = 0; i < maxPacketCount; i++)
+                {
+                    #region Debug
+#if(DEBUG)
+                    System.Diagnostics.Debug.WriteLine("unmarkedCPDExpanded[{0}]:[{1}] - markedCPDExpanded[{2}]:[{3}] = {4}", i, unmarkedCPDExpanded[i], i, markedCPDExpanded[i], Math.Abs(unmarkedCPDExpanded[i] - markedCPDExpanded[i]));
+#endif
+                    #endregion
+                    if (Math.Abs(unmarkedCPDExpanded[i] - markedCPDExpanded[i]) > maxVariance)
+                    {
+                        maxVariance = Math.Abs(unmarkedCPDExpanded[i] - markedCPDExpanded[i]);
+                    }
+                }
+
+                // Compare the maximum variance with the hypothesis test threshold
+                // For significance level alpha = 0.05, the K-S statistic is computed as 1.36/N^(1/2), where N is the number of samples
+                decimal ksStatistic = Convert.ToDecimal(1.36 / Math.Pow(intervalCount, 0.5));
+                ht.KsStatistic = ksStatistic;
+                ht.MaxCpdVariance = maxVariance;
+                if (maxVariance > ksStatistic)
+                {
+                    // Reject the null hypothesis
+                    ht.KsTestResult = true;
                 }
             }
-
-            // Compare the maximum variance with the hypothesis test threshold
-            // For significance level alpha = 0.05, the K-S statistic is computed as 1.36/N^(1/2), where N is the number of samples
-            decimal ksStatistic = Convert.ToDecimal(1.36 / Math.Pow(intervalCount, 0.5));
-            if(maxVariance > ksStatistic)
+            else
             {
-                // Reject the null hypothesis
-                result = true;
+                // Not enough data to perform the test
+                ht.KsStatistic = 0;
+                ht.MaxCpdVariance = 0;
+                ht.KsTestResult = false;
             }
-            return result;
+            return ht;
         }
 
         private SortedDictionary<int, decimal> ExpandPacketCount(BindingList<CumulativeProbabilityDistribution> cpdPackets, int maxPacketCount)

@@ -11,6 +11,8 @@ namespace COWE.DomainClasses
         public int HypothesisTestId { get; private set; }
         public decimal MeanOfMeansVariance { get; set; }
         public decimal MeansVarianceStandardDeviation { get; set; }
+        public decimal KsStatistic { get; set; }
+        public decimal MaxCpdVariance { get; set; }
         public bool MeansTestResult { get; set; }
         public bool KsTestResult { get; set; }
         public bool HasValues { get; set; }

@@ -18,5 +18,6 @@ namespace COWE.DomainClasses
         public static Decimal Zvalue { get; set; }  // Z value for (1-_alpha), from standard normal distribution table
                                                     // (note: one-tailed test because we are looking at the distribution 
                                                     // for the difference of the means)
+        public static string ProcessedCaptureFilesPath { get; set; }
     }
 }

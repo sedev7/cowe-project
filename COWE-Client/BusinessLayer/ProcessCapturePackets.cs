@@ -208,6 +208,14 @@ namespace COWE.BusinessLayer
             }
         }
 
+        public BindingList<CurrentCaptureFile> GetAllCaptureFiles()
+        {
+            BindingList<CurrentCaptureFile> files = new BindingList<CurrentCaptureFile>();
+
+            CaptureFileData cfd = new CaptureFileData();
+            files = cfd.GetAllFiles();
+            return files;
+        }
         public CurrentCaptureFile GetCurrentCaptureFile(string fileName)
         {
             CurrentCaptureFile ccf = null;
@@ -670,6 +678,11 @@ namespace COWE.BusinessLayer
         {
             DisplayStatisticsData dsd = new DisplayStatisticsData();
             dsd.InsertHypothesisTestResults(testResults);
+        }
+        public void TruncateAllIntervalStatisticAndTestTables()
+        {
+            BatchIntervalData bid = new BatchIntervalData();
+            bid.TruncateAllIntervalStatisticAndTestTables();
         }
         #endregion
 

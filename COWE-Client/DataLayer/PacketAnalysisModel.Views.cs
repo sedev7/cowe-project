@@ -11,7 +11,7 @@ using System.Data.Entity.Infrastructure.MappingViews;
 
 [assembly: DbMappingViewCacheTypeAttribute(
     typeof(COWE.DataLayer.PacketAnalysisEntity),
-    typeof(Edm_EntityMappingGeneratedViews.ViewsForBaseEntitySets2582b6c9d9e9ae55df8a483ecd8796f810ec604a8270c0972fb1dba25b98347a))]
+    typeof(Edm_EntityMappingGeneratedViews.ViewsForBaseEntitySets67e3307eef0583d5afb158d92b3316677fc151d891cb2c439b5549f9ad424896))]
 
 namespace Edm_EntityMappingGeneratedViews
 {
@@ -23,14 +23,14 @@ namespace Edm_EntityMappingGeneratedViews
     /// Implements a mapping view cache.
     /// </summary>
     [GeneratedCode("Entity Framework Power Tools", "0.9.0.0")]
-    internal sealed class ViewsForBaseEntitySets2582b6c9d9e9ae55df8a483ecd8796f810ec604a8270c0972fb1dba25b98347a : DbMappingViewCache
+    internal sealed class ViewsForBaseEntitySets67e3307eef0583d5afb158d92b3316677fc151d891cb2c439b5549f9ad424896 : DbMappingViewCache
     {
         /// <summary>
         /// Gets a hash value computed over the mapping closure.
         /// </summary>
         public override string MappingHashValue
         {
-            get { return "2582b6c9d9e9ae55df8a483ecd8796f810ec604a8270c0972fb1dba25b98347a"; }
+            get { return "67e3307eef0583d5afb158d92b3316677fc151d891cb2c439b5549f9ad424896"; }
         }
 
         /// <summary>
@@ -494,12 +494,14 @@ namespace Edm_EntityMappingGeneratedViews
         {
             return new DbMappingView(@"
     SELECT VALUE -- Constructing HypothesisTest
-        [PacketAnalysisModel.Store.HypothesisTest](T1.HypothesisTest_HypothesisTestId, T1.HypothesisTest_MeanOfMeansVariance, T1.HypothesisTest_MeansVarianceStandardDeviation, T1.HypothesisTest_MeansTestResult, T1.HypothesisTest_KsTestResult, T1.HypothesisTest_HasValues)
+        [PacketAnalysisModel.Store.HypothesisTest](T1.HypothesisTest_HypothesisTestId, T1.HypothesisTest_MeanOfMeansVariance, T1.HypothesisTest_MeansVarianceStandardDeviation, T1.HypothesisTest_KsStatistic, T1.HypothesisTest_MaxCpdVariance, T1.HypothesisTest_MeansTestResult, T1.HypothesisTest_KsTestResult, T1.HypothesisTest_HasValues)
     FROM (
         SELECT 
             T.HypothesisTestId AS HypothesisTest_HypothesisTestId, 
             T.MeanOfMeansVariance AS HypothesisTest_MeanOfMeansVariance, 
             T.MeansVarianceStandardDeviation AS HypothesisTest_MeansVarianceStandardDeviation, 
+            T.KsStatistic AS HypothesisTest_KsStatistic, 
+            T.MaxCpdVariance AS HypothesisTest_MaxCpdVariance, 
             T.MeansTestResult AS HypothesisTest_MeansTestResult, 
             T.KsTestResult AS HypothesisTest_KsTestResult, 
             T.HasValues AS HypothesisTest_HasValues, 
@@ -516,12 +518,14 @@ namespace Edm_EntityMappingGeneratedViews
         {
             return new DbMappingView(@"
     SELECT VALUE -- Constructing HypothesisTests
-        [COWE.PacketAnalysisModel.HypothesisTest](T1.HypothesisTest_HypothesisTestId, T1.HypothesisTest_MeanOfMeansVariance, T1.HypothesisTest_MeansVarianceStandardDeviation, T1.HypothesisTest_MeansTestResult, T1.HypothesisTest_KsTestResult, T1.HypothesisTest_HasValues)
+        [COWE.PacketAnalysisModel.HypothesisTest](T1.HypothesisTest_HypothesisTestId, T1.HypothesisTest_MeanOfMeansVariance, T1.HypothesisTest_MeansVarianceStandardDeviation, T1.HypothesisTest_KsStatistic, T1.HypothesisTest_MaxCpdVariance, T1.HypothesisTest_MeansTestResult, T1.HypothesisTest_KsTestResult, T1.HypothesisTest_HasValues)
     FROM (
         SELECT 
             T.HypothesisTestId AS HypothesisTest_HypothesisTestId, 
             T.MeanOfMeansVariance AS HypothesisTest_MeanOfMeansVariance, 
             T.MeansVarianceStandardDeviation AS HypothesisTest_MeansVarianceStandardDeviation, 
+            T.KsStatistic AS HypothesisTest_KsStatistic, 
+            T.MaxCpdVariance AS HypothesisTest_MaxCpdVariance, 
             T.MeansTestResult AS HypothesisTest_MeansTestResult, 
             T.KsTestResult AS HypothesisTest_KsTestResult, 
             T.HasValues AS HypothesisTest_HasValues, 

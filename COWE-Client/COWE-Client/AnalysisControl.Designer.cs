@@ -29,17 +29,17 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend6 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.AnalysisDataGridView = new System.Windows.Forms.DataGridView();
             this.SingleChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.CumulativeChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
@@ -73,69 +73,70 @@
             this.AnalysisDataGridView.AllowUserToAddRows = false;
             this.AnalysisDataGridView.AllowUserToDeleteRows = false;
             this.AnalysisDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle3.Padding = new System.Windows.Forms.Padding(2, 4, 2, 4);
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.AnalysisDataGridView.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle1.Padding = new System.Windows.Forms.Padding(2, 4, 2, 4);
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.AnalysisDataGridView.DefaultCellStyle = dataGridViewCellStyle1;
             this.AnalysisDataGridView.Location = new System.Drawing.Point(2, 3);
             this.AnalysisDataGridView.Name = "AnalysisDataGridView";
-            dataGridViewCellStyle4.Padding = new System.Windows.Forms.Padding(2);
-            this.AnalysisDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle2.Padding = new System.Windows.Forms.Padding(2);
+            this.AnalysisDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle2;
             this.AnalysisDataGridView.Size = new System.Drawing.Size(410, 146);
-            this.AnalysisDataGridView.TabIndex = 0;
+            this.AnalysisDataGridView.TabIndex = 2;
+            this.AnalysisDataGridView.SelectionChanged += new System.EventHandler(this.AnalysisDataGridView_SelectionChanged);
             // 
             // SingleChart
             // 
-            chartArea4.Name = "ChartArea1";
-            this.SingleChart.ChartAreas.Add(chartArea4);
+            chartArea1.Name = "ChartArea1";
+            this.SingleChart.ChartAreas.Add(chartArea1);
             this.SingleChart.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend4.Name = "Legend1";
-            this.SingleChart.Legends.Add(legend4);
+            legend1.Name = "Legend1";
+            this.SingleChart.Legends.Add(legend1);
             this.SingleChart.Location = new System.Drawing.Point(0, 0);
             this.SingleChart.Name = "SingleChart";
-            series4.ChartArea = "ChartArea1";
-            series4.Legend = "Legend1";
-            series4.Name = "Series1";
-            this.SingleChart.Series.Add(series4);
+            series1.ChartArea = "ChartArea1";
+            series1.Legend = "Legend1";
+            series1.Name = "Series1";
+            this.SingleChart.Series.Add(series1);
             this.SingleChart.Size = new System.Drawing.Size(242, 219);
             this.SingleChart.TabIndex = 1;
             this.SingleChart.Text = "chart1";
             // 
             // CumulativeChart
             // 
-            chartArea5.Name = "ChartArea1";
-            this.CumulativeChart.ChartAreas.Add(chartArea5);
+            chartArea2.Name = "ChartArea1";
+            this.CumulativeChart.ChartAreas.Add(chartArea2);
             this.CumulativeChart.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend5.Name = "Legend1";
-            this.CumulativeChart.Legends.Add(legend5);
+            legend2.Name = "Legend1";
+            this.CumulativeChart.Legends.Add(legend2);
             this.CumulativeChart.Location = new System.Drawing.Point(0, 0);
             this.CumulativeChart.Name = "CumulativeChart";
-            series5.ChartArea = "ChartArea1";
-            series5.Legend = "Legend1";
-            series5.Name = "Series1";
-            this.CumulativeChart.Series.Add(series5);
+            series2.ChartArea = "ChartArea1";
+            series2.Legend = "Legend1";
+            series2.Name = "Series1";
+            this.CumulativeChart.Series.Add(series2);
             this.CumulativeChart.Size = new System.Drawing.Size(242, 219);
             this.CumulativeChart.TabIndex = 2;
             this.CumulativeChart.Text = "chart2";
             // 
             // CdfChart
             // 
-            chartArea6.Name = "ChartArea1";
-            this.CdfChart.ChartAreas.Add(chartArea6);
+            chartArea3.Name = "ChartArea1";
+            this.CdfChart.ChartAreas.Add(chartArea3);
             this.CdfChart.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend6.Name = "Legend1";
-            this.CdfChart.Legends.Add(legend6);
+            legend3.Name = "Legend1";
+            this.CdfChart.Legends.Add(legend3);
             this.CdfChart.Location = new System.Drawing.Point(0, 0);
             this.CdfChart.Name = "CdfChart";
-            series6.ChartArea = "ChartArea1";
-            series6.Legend = "Legend1";
-            series6.Name = "Series1";
-            this.CdfChart.Series.Add(series6);
+            series3.ChartArea = "ChartArea1";
+            series3.Legend = "Legend1";
+            series3.Name = "Series1";
+            this.CdfChart.Series.Add(series3);
             this.CdfChart.Size = new System.Drawing.Size(242, 219);
             this.CdfChart.TabIndex = 3;
             this.CdfChart.Text = "chart3";
@@ -183,7 +184,7 @@
             this.AnalysisMetricsGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.AnalysisMetricsGroupBox.Location = new System.Drawing.Point(0, 0);
             this.AnalysisMetricsGroupBox.Name = "AnalysisMetricsGroupBox";
-            this.AnalysisMetricsGroupBox.Size = new System.Drawing.Size(117, 205);
+            this.AnalysisMetricsGroupBox.Size = new System.Drawing.Size(75, 205);
             this.AnalysisMetricsGroupBox.TabIndex = 1;
             this.AnalysisMetricsGroupBox.TabStop = false;
             this.AnalysisMetricsGroupBox.Text = "Chart Controls";
@@ -191,28 +192,28 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(6, 40);
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(5, 39);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(77, 16);
+            this.label2.Size = new System.Drawing.Size(68, 15);
             this.label2.TabIndex = 5;
             this.label2.Text = "Chart Type:";
             // 
             // ChartTypeComboBox
             // 
             this.ChartTypeComboBox.FormattingEnabled = true;
-            this.ChartTypeComboBox.Location = new System.Drawing.Point(7, 57);
+            this.ChartTypeComboBox.Location = new System.Drawing.Point(4, 57);
             this.ChartTypeComboBox.Name = "ChartTypeComboBox";
-            this.ChartTypeComboBox.Size = new System.Drawing.Size(103, 21);
+            this.ChartTypeComboBox.Size = new System.Drawing.Size(69, 21);
             this.ChartTypeComboBox.TabIndex = 4;
             // 
             // RefreshButton
             // 
             this.RefreshButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.RefreshButton.Location = new System.Drawing.Point(27, 104);
+            this.RefreshButton.Location = new System.Drawing.Point(4, 103);
             this.RefreshButton.Name = "RefreshButton";
             this.RefreshButton.Size = new System.Drawing.Size(68, 24);
-            this.RefreshButton.TabIndex = 2;
+            this.RefreshButton.TabIndex = 0;
             this.RefreshButton.Text = "Refresh";
             this.RefreshButton.UseVisualStyleBackColor = true;
             this.RefreshButton.Click += new System.EventHandler(this.RefreshButton_Click);
@@ -220,9 +221,9 @@
             // panel4
             // 
             this.panel4.Controls.Add(this.AnalysisMetricsGroupBox);
-            this.panel4.Location = new System.Drawing.Point(627, 3);
+            this.panel4.Location = new System.Drawing.Point(669, 3);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(117, 205);
+            this.panel4.Size = new System.Drawing.Size(75, 205);
             this.panel4.TabIndex = 2;
             // 
             // panel5
@@ -230,7 +231,7 @@
             this.panel5.Controls.Add(this.AnalysisDataGridView);
             this.panel5.Location = new System.Drawing.Point(3, 3);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(620, 205);
+            this.panel5.Size = new System.Drawing.Size(664, 205);
             this.panel5.TabIndex = 3;
             // 
             // AnalysisControl

@@ -390,6 +390,8 @@ CREATE TABLE [COWE].[HypothesisTest](
 	[HypothesisTestId] [int] IDENTITY(1,1) NOT NULL,
 	[MeanOfMeansVariance] [decimal](28,10) NOT NULL,
 	[MeansVarianceStandardDeviation] [decimal](28,10) NOT NULL,
+	[KsStatistic] [decimal](28,10) NOT NULL,
+	[MaxCpdVariance] [decimal](28,10) NOT NULL,
 	[MeansTestResult] [bit] NOT NULL,
 	[KsTestResult] [bit] NOT NULL,
 	[HasValues] [bit] NOT NULL

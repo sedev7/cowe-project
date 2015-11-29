@@ -144,12 +144,15 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <FunctionImportMapping FunctionImportName="TruncateAllIntervalStatisticAndTestTables" FunctionName="PacketAnalysisModel.Store.TruncateAllIntervalStatisticAndTestTables" />
     <EntitySetMapping Name="HypothesisTests">
       <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.HypothesisTest">
         <MappingFragment StoreEntitySet="HypothesisTest">
           <ScalarProperty Name="HasValues" ColumnName="HasValues" />
           <ScalarProperty Name="KsTestResult" ColumnName="KsTestResult" />
           <ScalarProperty Name="MeansTestResult" ColumnName="MeansTestResult" />
+          <ScalarProperty Name="MaxCpdVariance" ColumnName="MaxCpdVariance" />
+          <ScalarProperty Name="KsStatistic" ColumnName="KsStatistic" />
           <ScalarProperty Name="MeansVarianceStandardDeviation" ColumnName="MeansVarianceStandardDeviation" />
           <ScalarProperty Name="MeanOfMeansVariance" ColumnName="MeanOfMeansVariance" />
           <ScalarProperty Name="HypothesisTestId" ColumnName="HypothesisTestId" />
