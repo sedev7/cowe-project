@@ -360,6 +360,13 @@ namespace COWE.DataLayer
             }
             return mean;
         }
+        public void TruncateAllTables()
+        {
+            using (var context = new PacketAnalysisEntity())
+            {
+                context.TruncateAllTables();
+            }
+        }
         #endregion
     }
 }

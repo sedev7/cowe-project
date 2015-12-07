@@ -684,6 +684,11 @@ namespace COWE.BusinessLayer
             BatchIntervalData bid = new BatchIntervalData();
             bid.TruncateAllIntervalStatisticAndTestTables();
         }
+        public void TruncateAllTables()
+        {
+            CaptureFileData cfd = new CaptureFileData();
+            cfd.TruncateAllTables();
+        }
         #endregion
 
         #region Private Methods

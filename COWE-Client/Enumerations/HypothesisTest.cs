@@ -9,7 +9,8 @@ namespace COWE.Enumerations
     public enum HypothesisTestType
     {
         Unknown = 0,
-        KsTest = 1,
-        MeansTest = 2
+        KsTestStep = 1,
+        KsTestLinear = 2,
+        MeansTest = 3
     }
 }

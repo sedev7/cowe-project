@@ -198,6 +198,7 @@
         </Function>
         <Function Name="TruncateAllIntervalStatisticAndTestTables" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="COWE" />
         <Function Name="TruncateAllIntervalTables" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="COWE" />
+        <Function Name="TruncateAllTables" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="COWE" />
         <EntityContainer Name="PacketAnalysisModelStoreContainer">
           <EntitySet Name="BatchInterval" EntityType="Self.BatchInterval" Schema="COWE" store:Type="Tables" />
           <EntitySet Name="CaptureBatch" EntityType="Self.CaptureBatch" Schema="COWE" store:Type="Tables" />
@@ -328,6 +329,7 @@
           <EntitySet Name="CumulativeProbabilityDistributions" EntityType="COWE.PacketAnalysisModel.CumulativeProbabilityDistribution" />
           <FunctionImport Name="TruncateAllIntervalStatisticAndTestTables" />
           <EntitySet Name="HypothesisTests" EntityType="COWE.PacketAnalysisModel.HypothesisTest" />
+          <FunctionImport Name="TruncateAllTables" />
           </EntityContainer>
         <EntityType Name="BatchInterval">
           <Key>
@@ -622,6 +624,7 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="TruncateAllTables" FunctionName="PacketAnalysisModel.Store.TruncateAllTables" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

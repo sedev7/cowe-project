@@ -20,7 +20,7 @@ namespace COWE.BusinessLayer
 
         int _CurrentCaptureBatchId = 0;
         int _IntervalSize = 0;
-        int _WaitSecondsLimit = 0;
+        int _WaitSecondsLimit = 5;
 
         string _CaptureFileName = string.Empty;
         string _DbConnectionString = string.Empty;

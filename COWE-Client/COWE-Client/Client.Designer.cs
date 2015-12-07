@@ -29,9 +29,13 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.topPanel = new System.Windows.Forms.Panel();
             this.AnalysisMetricsGroupBox = new System.Windows.Forms.GroupBox();
+            this.HypothesisTestGroupBox = new System.Windows.Forms.GroupBox();
+            this.KsTestLinearRadioButton = new System.Windows.Forms.RadioButton();
+            this.MeansTestRadioButton = new System.Windows.Forms.RadioButton();
+            this.KsTestStepRadioButton = new System.Windows.Forms.RadioButton();
             this.HistogramBinSizeTextBox = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.TrimIntervalsCheckBox = new System.Windows.Forms.CheckBox();
@@ -100,12 +104,10 @@
             this.ClientStatusToolStripProgressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.ClientStatusToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.TrimSmallestBinsToolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.HypothesisTestGroupBox = new System.Windows.Forms.GroupBox();
-            this.KsTestRadioButton = new System.Windows.Forms.RadioButton();
-            this.MeansTestRadioButton = new System.Windows.Forms.RadioButton();
             this.HypothesisTestToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.topPanel.SuspendLayout();
             this.AnalysisMetricsGroupBox.SuspendLayout();
+            this.HypothesisTestGroupBox.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.bottonPanel.SuspendLayout();
@@ -124,7 +126,6 @@
             this.FlooderTabPage.SuspendLayout();
             this.AnalysisTabPage.SuspendLayout();
             this.CientStatusStrip.SuspendLayout();
-            this.HypothesisTestGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // topPanel
@@ -155,6 +156,57 @@
             this.AnalysisMetricsGroupBox.TabIndex = 6;
             this.AnalysisMetricsGroupBox.TabStop = false;
             this.AnalysisMetricsGroupBox.Text = "Analysis Metrics";
+            // 
+            // HypothesisTestGroupBox
+            // 
+            this.HypothesisTestGroupBox.Controls.Add(this.KsTestLinearRadioButton);
+            this.HypothesisTestGroupBox.Controls.Add(this.MeansTestRadioButton);
+            this.HypothesisTestGroupBox.Controls.Add(this.KsTestStepRadioButton);
+            this.HypothesisTestGroupBox.Location = new System.Drawing.Point(8, 100);
+            this.HypothesisTestGroupBox.Name = "HypothesisTestGroupBox";
+            this.HypothesisTestGroupBox.Size = new System.Drawing.Size(162, 41);
+            this.HypothesisTestGroupBox.TabIndex = 8;
+            this.HypothesisTestGroupBox.TabStop = false;
+            this.HypothesisTestGroupBox.Text = "Hypothesis Test";
+            this.HypothesisTestToolTip.SetToolTip(this.HypothesisTestGroupBox, "KS compares cumulative probability distributions (marked vs unmarked) - KS-S uses" +
+        " step function, KS-L uses linear function;\r\nMeans compares the mean of means for" +
+        " each distribution (marked vs unmarked)");
+            // 
+            // KsTestLinearRadioButton
+            // 
+            this.KsTestLinearRadioButton.AutoSize = true;
+            this.KsTestLinearRadioButton.Location = new System.Drawing.Point(51, 17);
+            this.KsTestLinearRadioButton.Name = "KsTestLinearRadioButton";
+            this.KsTestLinearRadioButton.Size = new System.Drawing.Size(48, 17);
+            this.KsTestLinearRadioButton.TabIndex = 2;
+            this.KsTestLinearRadioButton.TabStop = true;
+            this.KsTestLinearRadioButton.Text = "KS-L";
+            this.KsTestLinearRadioButton.UseVisualStyleBackColor = true;
+            this.KsTestLinearRadioButton.CheckedChanged += new System.EventHandler(this.KsTestLinearRadioButton_CheckedChanged);
+            // 
+            // MeansTestRadioButton
+            // 
+            this.MeansTestRadioButton.AutoSize = true;
+            this.MeansTestRadioButton.Location = new System.Drawing.Point(100, 17);
+            this.MeansTestRadioButton.Name = "MeansTestRadioButton";
+            this.MeansTestRadioButton.Size = new System.Drawing.Size(57, 17);
+            this.MeansTestRadioButton.TabIndex = 1;
+            this.MeansTestRadioButton.TabStop = true;
+            this.MeansTestRadioButton.Text = "Means";
+            this.MeansTestRadioButton.UseVisualStyleBackColor = true;
+            this.MeansTestRadioButton.CheckedChanged += new System.EventHandler(this.MeansTestRadioButton_CheckedChanged);
+            // 
+            // KsTestStepRadioButton
+            // 
+            this.KsTestStepRadioButton.AutoSize = true;
+            this.KsTestStepRadioButton.Location = new System.Drawing.Point(5, 17);
+            this.KsTestStepRadioButton.Name = "KsTestStepRadioButton";
+            this.KsTestStepRadioButton.Size = new System.Drawing.Size(49, 17);
+            this.KsTestStepRadioButton.TabIndex = 0;
+            this.KsTestStepRadioButton.TabStop = true;
+            this.KsTestStepRadioButton.Text = "KS-S";
+            this.KsTestStepRadioButton.UseVisualStyleBackColor = true;
+            this.KsTestStepRadioButton.CheckedChanged += new System.EventHandler(this.KsTestStepRadioButton_CheckedChanged);
             // 
             // HistogramBinSizeTextBox
             // 
@@ -375,6 +427,7 @@
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(52, 20);
             this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // bottonPanel
             // 
@@ -634,6 +687,7 @@
             this.DatabaseResetCheckBox.TabIndex = 0;
             this.DatabaseResetCheckBox.Text = "Reset Database and Files";
             this.DatabaseResetCheckBox.UseVisualStyleBackColor = true;
+            this.DatabaseResetCheckBox.CheckedChanged += new System.EventHandler(this.DatabaseResetCheckBox_CheckedChanged);
             // 
             // ParseCaptureFilesServiceGroupBox
             // 
@@ -694,8 +748,8 @@
             this.FlooderStatusDataGridView.Location = new System.Drawing.Point(68, 116);
             this.FlooderStatusDataGridView.Name = "FlooderStatusDataGridView";
             this.FlooderStatusDataGridView.ReadOnly = true;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FlooderStatusDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FlooderStatusDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle1;
             this.FlooderStatusDataGridView.Size = new System.Drawing.Size(887, 153);
             this.FlooderStatusDataGridView.TabIndex = 0;
             this.FlooderStatusDataGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.FlooderStatusDataGridView_CellContentClick);
@@ -832,43 +886,6 @@
             this.ClientStatusToolStripStatusLabel.Size = new System.Drawing.Size(207, 17);
             this.ClientStatusToolStripStatusLabel.Text = "ClientStatusToolStripStatusLabel...";
             // 
-            // HypothesisTestGroupBox
-            // 
-            this.HypothesisTestGroupBox.Controls.Add(this.MeansTestRadioButton);
-            this.HypothesisTestGroupBox.Controls.Add(this.KsTestRadioButton);
-            this.HypothesisTestGroupBox.Location = new System.Drawing.Point(8, 100);
-            this.HypothesisTestGroupBox.Name = "HypothesisTestGroupBox";
-            this.HypothesisTestGroupBox.Size = new System.Drawing.Size(162, 41);
-            this.HypothesisTestGroupBox.TabIndex = 8;
-            this.HypothesisTestGroupBox.TabStop = false;
-            this.HypothesisTestGroupBox.Text = "Hypothesis Test";
-            this.HypothesisTestToolTip.SetToolTip(this.HypothesisTestGroupBox, "K-S compares cumulative probability distributions (marked vs unmarked); Means com" +
-        "pares the mean of means for each distribution (marked vs unmarked) ");
-            // 
-            // KsTestRadioButton
-            // 
-            this.KsTestRadioButton.AutoSize = true;
-            this.KsTestRadioButton.Location = new System.Drawing.Point(12, 17);
-            this.KsTestRadioButton.Name = "KsTestRadioButton";
-            this.KsTestRadioButton.Size = new System.Drawing.Size(42, 17);
-            this.KsTestRadioButton.TabIndex = 0;
-            this.KsTestRadioButton.TabStop = true;
-            this.KsTestRadioButton.Text = "K-S";
-            this.KsTestRadioButton.UseVisualStyleBackColor = true;
-            this.KsTestRadioButton.CheckedChanged += new System.EventHandler(this.KsTestRadioButton_CheckedChanged);
-            // 
-            // MeansTestRadioButton
-            // 
-            this.MeansTestRadioButton.AutoSize = true;
-            this.MeansTestRadioButton.Location = new System.Drawing.Point(66, 17);
-            this.MeansTestRadioButton.Name = "MeansTestRadioButton";
-            this.MeansTestRadioButton.Size = new System.Drawing.Size(57, 17);
-            this.MeansTestRadioButton.TabIndex = 1;
-            this.MeansTestRadioButton.TabStop = true;
-            this.MeansTestRadioButton.Text = "Means";
-            this.MeansTestRadioButton.UseVisualStyleBackColor = true;
-            this.MeansTestRadioButton.CheckedChanged += new System.EventHandler(this.MeansTestRadioButton_CheckedChanged);
-            // 
             // HypothesisTestToolTip
             // 
             this.HypothesisTestToolTip.ToolTipTitle = "Hypothesis Test";
@@ -892,6 +909,8 @@
             this.topPanel.PerformLayout();
             this.AnalysisMetricsGroupBox.ResumeLayout(false);
             this.AnalysisMetricsGroupBox.PerformLayout();
+            this.HypothesisTestGroupBox.ResumeLayout(false);
+            this.HypothesisTestGroupBox.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
@@ -916,8 +935,6 @@
             this.AnalysisTabPage.ResumeLayout(false);
             this.CientStatusStrip.ResumeLayout(false);
             this.CientStatusStrip.PerformLayout();
-            this.HypothesisTestGroupBox.ResumeLayout(false);
-            this.HypothesisTestGroupBox.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -997,8 +1014,9 @@
         private System.Windows.Forms.ToolTip TrimSmallestBinsToolTip;
         private System.Windows.Forms.GroupBox HypothesisTestGroupBox;
         private System.Windows.Forms.RadioButton MeansTestRadioButton;
-        private System.Windows.Forms.RadioButton KsTestRadioButton;
+        private System.Windows.Forms.RadioButton KsTestStepRadioButton;
         private System.Windows.Forms.ToolTip HypothesisTestToolTip;
+        private System.Windows.Forms.RadioButton KsTestLinearRadioButton;
     }
 }
 

@@ -1,0 +1,4 @@
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\CaptureAgent\bin\Release\CaptureAgent.dll
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\CaptureAgent\bin\Release\CaptureAgent.pdb
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\CaptureAgent\obj\Release\CaptureAgent.dll
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\CaptureAgent\obj\Release\CaptureAgent.pdb

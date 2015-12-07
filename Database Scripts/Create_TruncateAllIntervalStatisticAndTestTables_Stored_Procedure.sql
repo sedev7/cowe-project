@@ -28,7 +28,6 @@ IF OBJECT_ID(N'[COWE].[TruncateAllIntervalStatisticAndTestTables]', N'P') IS NOT
 ELSE
   PRINT '   => Procedure not found!'
 GO
-GO
 
 SET ANSI_NULLS ON
 GO

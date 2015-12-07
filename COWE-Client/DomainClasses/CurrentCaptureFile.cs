@@ -33,7 +33,8 @@ namespace COWE.DomainClasses
 
         #region Delegates
         // Define a delegate type
-        public delegate void ReceivedParsedFileEventHandler(string msg);
+        //public delegate void ReceivedParsedFileEventHandler(string msg);
+        public delegate void ReceivedParsedFileEventHandler(CurrentCaptureFile captureFile);
         #endregion
 
         #region Events
@@ -61,17 +62,24 @@ namespace COWE.DomainClasses
         //    listOfHandlers = methodToCall;
         //}
         #endregion
-        public void ReceiveFile()
+        //public void ReceiveFile()
+        //{
+        //    if (ReceivedParsedFile != null)
+        //    {
+        //        ReceivedParsedFile("Received parsed file");
+        //    }
+
+        //    //if (listOfHandlers != null)
+        //    //{
+        //    //    listOfHandlers("received file");
+        //    //}
+        //}
+        public void ReceiveFile(CurrentCaptureFile captureFile)
         {
             if (ReceivedParsedFile != null)
             {
-                ReceivedParsedFile("Received parsed file");
+                ReceivedParsedFile(captureFile);
             }
-
-            //if (listOfHandlers != null)
-            //{
-            //    listOfHandlers("received file");
-            //}
         }
     }
 }

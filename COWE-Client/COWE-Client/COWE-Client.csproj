@@ -93,6 +93,12 @@
       <DependentUpon>Client.cs</DependentUpon>
     </Compile>
     <Compile Include="Clock.cs" />
+    <Compile Include="CoweAboutBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CoweAboutBox.Designer.cs">
+      <DependentUpon>CoweAboutBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="Flooder.cs" />
     <Compile Include="FlooderIntervalTimer.cs" />
     <Compile Include="InterarrivalInterval.cs" />
@@ -116,6 +122,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Client.resx">
       <DependentUpon>Client.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CoweAboutBox.resx">
+      <DependentUpon>CoweAboutBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

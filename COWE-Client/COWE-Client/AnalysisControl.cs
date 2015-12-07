@@ -67,7 +67,19 @@ namespace COWE.Client
             GrayOutGridAndChartsWhileRecalculating();
 
             // Locate form in the current center of the Client form
-            Point location = new Point(Client.ActiveForm.Location.X + ((Client.ActiveForm.Width / 2) - 128), Client.ActiveForm.Location.Y + ((Client.ActiveForm.Height / 2) - 45));
+            Point location = new Point();
+#if(DEBUG)
+            {
+                location.X = 10;
+                location.Y = 10;
+            }
+#else
+            {
+                location.X = Client.ActiveForm.Location.X + ((Client.ActiveForm.Width / 2) - 128);
+                location.Y = Client.ActiveForm.Location.Y + ((Client.ActiveForm.Height / 2) - 45);
+            }
+#endif
+            //Point location = new Point(Client.ActiveForm.Location.X + ((Client.ActiveForm.Width / 2) - 128), Client.ActiveForm.Location.Y + ((Client.ActiveForm.Height / 2) - 45));
             NotifyUserForm.ShowRecalculatingNotice("Recalculating...", location);
             Thread t = new Thread(new ThreadStart(RecalculateData));
             t.Start();
@@ -83,7 +95,19 @@ namespace COWE.Client
             if (this.Visible)
             {
                 // Locate form in the current center of the Client form
-                Point location = new Point(Client.ActiveForm.Location.X + ((Client.ActiveForm.Width / 2) - 128), Client.ActiveForm.Location.Y + ((Client.ActiveForm.Height / 2) - 45));
+                Point location = new Point();
+#if(DEBUG)
+                {
+                    location.X = 10;
+                    location.Y = 10;
+                }
+#else
+            {
+                location.X = Client.ActiveForm.Location.X + ((Client.ActiveForm.Width / 2) - 128);
+                location.Y = Client.ActiveForm.Location.Y + ((Client.ActiveForm.Height / 2) - 45);
+            }
+#endif
+                //Point location = new Point(Client.ActiveForm.Location.X + ((Client.ActiveForm.Width / 2) - 128), Client.ActiveForm.Location.Y + ((Client.ActiveForm.Height / 2) - 45));
                 NotifyUserForm.ShowRecalculatingNotice("Retrieving data...", location);
                 RefreshData();
                 NotifyUserForm.CloseForm();

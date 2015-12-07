@@ -52,9 +52,11 @@ UPDATE COWE.CaptureBatch SET Mean = 0, TrimmedMean = 0, SingleStatistics = 0, Cu
 --TRUNCATE TABLE COWE.CaptureBatch;
 */
 
+--exec COWE.TruncateAllTables
 
 ---- Test CaptureBatchInsert sproc
 --declare @CaptureBatchId int
 --exec [COWE].[CaptureBatchInsert] @FileName = 'CaptureFile635674934042778582d.pcap', @Marked = 1, @NewCaptureBatchId = @CaptureBatchId output
 --select @CaptureBatchId
-
+--delete from COWE.SingleHistogram where CaptureBatchId = 7 and SingleHistogramId >= 72
+--delete from COWE.SingleHistogram where CaptureBatchId = 8 and SingleHistogramId >= 59

@@ -281,5 +281,10 @@ namespace COWE.DataLayer
         {
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("TruncateAllIntervalStatisticAndTestTables");
         }
+    
+        public virtual int TruncateAllTables()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("TruncateAllTables");
+        }
     }
 }

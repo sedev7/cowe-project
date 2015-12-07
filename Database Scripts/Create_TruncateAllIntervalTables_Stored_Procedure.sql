@@ -60,6 +60,8 @@ SET ROWCOUNT 0
 			TRUNCATE TABLE COWE.CumulativeHistogram;
 			TRUNCATE TABLE COWE.CumulativeProbabilityDistribution;
 			TRUNCATE TABLE COWE.HypothesisTest;
+			TRUNCATE TABLE COWE.CaptureBatch;
+			TRUNCATE TABLE COWE.CapturePacket;
 
 		COMMIT;
 

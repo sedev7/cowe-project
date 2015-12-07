@@ -85,7 +85,7 @@ namespace COWE.Client
 
         #region Events
         //public event ReceivedParsedFileEventHandler ReceivedParsedFile;
-
+       
         #endregion
 
         #region Global Variables
@@ -130,11 +130,11 @@ namespace COWE.Client
         private Stopwatch stopWatch = new Stopwatch();
 
         string currentTime = string.Empty;
-        string DbConnectionString = string.Empty;                   // Database connection string for bulk-loading data (not using Entity Framework for bulk-loading data)
+        static string DbConnectionString = string.Empty;                   // Database connection string for bulk-loading data (not using Entity Framework for bulk-loading data)
         string _HostIpAddress = string.Empty;                       // The IP address on the selected NIC for this client
         string _CaptureFolderPath = string.Empty;                   // Location where capture files are created
         string _ParseFolderPath = string.Empty;                     // Location to which capture files are moved for parsing
-        string _ParsedFilesPath = string.Empty;                     // Location of optional parsed text files
+        static string _ParsedFilesPath = string.Empty;                     // Location of optional parsed text files
         string _ProcessedFilesPath = string.Empty;                  // Location where completed processed files will be created (file names only)
         string _CurrentCaptureFileName = string.Empty;
         string _CurrentClientNetworkInterface = string.Empty;       // Network interface number for currently selected NIC
@@ -197,7 +197,7 @@ namespace COWE.Client
 
             // Resize the row height to match the other rows
             _FlooderStatusDataGridView.Rows[row].Height = 30;
-     
+
             // Expand the grid to accommodate the new row
             ResizeFlooderGrid();
 
@@ -213,11 +213,12 @@ namespace COWE.Client
             HistogramBinSizeTextBox.Text = "5";
             TrimIntervalsCheckBox.Checked = true;
             TrimSmallestBinsToolTip.SetToolTip(TrimIntervalsCheckBox, "Trim any intervals with a packet count less than or equal to the histogram bin size");
-            KsTestRadioButton.Checked = true;
+            //KsTestStepRadioButton.Checked = true;
+            KsTestLinearRadioButton.Checked = true;
             AnalysisConfiguration.Alpha = 0.05;      // Hypothesis test significance level
             AnalysisConfiguration.Zvalue = 1.65M;    // Z value for (1-_alpha), from standard normal distribution table
-                                                     // (note: one-tailed test because we are looking at the distribution 
-                                                     // for the difference of the means)
+            // (note: one-tailed test because we are looking at the distribution 
+            // for the difference of the means)
 
             // Start the background worker thread for the new file notifier
             bgWorker.RunWorkerAsync();
@@ -274,17 +275,17 @@ namespace COWE.Client
                 _SelectedRow = e.RowIndex;
 
                 // Verify that flooder data has been entered
-                if(_FlooderStatusDataGridView.Rows[row].Cells["FlooderIpAddress"].Value == null)
+                if (_FlooderStatusDataGridView.Rows[row].Cells["FlooderIpAddress"].Value == null)
                 {
                     MessageBox.Show("Flooder IP address required", "Flooder IP Address");
                     _FlooderStatusDataGridView.Rows[row].Cells["FlooderIpAddress"].Selected = true;
                 }
-                else if(_FlooderStatusDataGridView.Rows[row].Cells["FlooderPort"].Value == null)
+                else if (_FlooderStatusDataGridView.Rows[row].Cells["FlooderPort"].Value == null)
                 {
                     MessageBox.Show("Flooder port number required", "Flooder Port Number");
                     _FlooderStatusDataGridView.Rows[row].Cells["FlooderPort"].Selected = true;
                 }
-                else if(_FlooderStatusDataGridView.Rows[row].Cells["FlooderDestination"].Value == null)
+                else if (_FlooderStatusDataGridView.Rows[row].Cells["FlooderDestination"].Value == null)
                 {
                     MessageBox.Show("Flooder destination IP address required", "Flooder Destination IP Address");
                     _FlooderStatusDataGridView.Rows[row].Cells["FlooderDestination"].Selected = true;
@@ -341,6 +342,7 @@ namespace COWE.Client
                     if (cellButton.Value.ToString() == "Start")
                     {
                         DisableConfigurationControls();
+                        DisableFlooderControls();
 
                         if (DatabaseResetCheckBox.Checked == true)
                         {
@@ -405,11 +407,12 @@ namespace COWE.Client
                             MessageBox.Show("Unable to ping flooder!\r\n\r\nCheck to be sure flooder is up and icmp is not blocked.", "Verify Flooder is Reachable", MessageBoxButtons.OK, MessageBoxIcon.Hand);
                         }
                         EnableConfigurationControls();
+                        EnableFlooderControls();
                     }
                     else
                     {
                         // First stop the capture process if it is running
-                        if(_CaptureProcessId > 0)
+                        if (_CaptureProcessId > 0)
                         {
                             try
                             {
@@ -470,6 +473,7 @@ namespace COWE.Client
                         // Move the last packet capture file
                         MovePacketCaptureFile(_CurrentCaptureFileName);
                         EnableConfigurationControls();
+                        EnableFlooderControls();
                     }
                 }
             }
@@ -507,7 +511,7 @@ namespace COWE.Client
         {
             BackgroundWorker bw = sender as BackgroundWorker;
 
-            if(bw.CancellationPending)
+            if (bw.CancellationPending)
             {
                 e.Cancel = true;
             }
@@ -598,7 +602,7 @@ namespace COWE.Client
             {
                 if (IsMarked)
                 {
-                    if(this.ProgressLabel.InvokeRequired)
+                    if (this.ProgressLabel.InvokeRequired)
                     {
                         BeginInvoke(new Action(() => this.ProgressLabel.Text = "Capturing unmarked packet data..."), null);
                     }
@@ -625,14 +629,33 @@ namespace COWE.Client
             // Raise an event to notify the AnalysisEngine that a capture file has been processed
             CurrentCaptureFile ccf = new CurrentCaptureFile(_CurrentCaptureFileName, IsMarked == true ? CaptureState.Marked : CaptureState.Unmarked);
             ccf.ReceivedParsedFile += OnReceivedFileEvent;
-            ccf.ReceiveFile();
-            
+            //ccf.ReceiveFile();
+            ccf.ReceiveFile(ccf);
+
             UpdateParseFilesServiceStatus();
         }
-        private static void OnReceivedFileEvent(string msg)
+        //private static void OnReceivedFileEvent(string msg)
+        //{
+        //    // Method called when parsed file received notification event is raised
+        //    AnalysisControl.OnReceivedFileEvent("received file");
+        //}
+        // static void OnReceivedFileEvent(string fileName)
+        static void OnReceivedFileEvent(CurrentCaptureFile captureFile)
         {
             // Method called when parsed file received notification event is raised
-            AnalysisControl.OnReceivedFileEvent("received file");
+            // Send the file to the BatchIntervalEngine and AnalysisEngine for processing
+            //BatchIntervalEngine biEngine = new BatchIntervalEngine(DbConnectionString, _ParsedFilesPath, captureFileName, 5, InterarrivalInterval.GetIntervalMilliSeconds());
+            BatchIntervalEngine biEngine = new BatchIntervalEngine(DbConnectionString, _ParsedFilesPath, captureFile.FileName, 5, InterarrivalInterval.GetIntervalMilliSeconds());
+            biEngine.ProcessNewBatchIntervals();
+
+            //AnalysisEngine analysisEngine = new AnalysisEngine(AnalysisConfiguration.TrimSmallPackets, AnalysisConfiguration.HistogramBinSize, AnalysisConfiguration.HypothesisTest, captureFileName, file.CaptureState);
+            AnalysisEngine analysisEngine = new AnalysisEngine(AnalysisConfiguration.TrimSmallPackets, AnalysisConfiguration.HistogramBinSize, AnalysisConfiguration.HypothesisTestType, captureFile);
+            analysisEngine.CalculateSingleBatchStatistics();
+            analysisEngine.CalculateCumulativeBatchStatistics();
+            analysisEngine.CalculateSingleHistogramData();
+            analysisEngine.CalculateCumulativeHistogramData();
+            analysisEngine.CalculateCumulativeProbabilityDistribution(captureFile.CaptureState);
+            analysisEngine.CalculateHypothesisTestResults();
         }
         private void StartParseFilesServiceButton_Click(object sender, EventArgs e)
         {
@@ -754,7 +777,7 @@ namespace COWE.Client
                     //string captureFileName = "CaptureFile635674934252530702u.pcap";
                     BatchIntervalEngine biEngine = new BatchIntervalEngine(DbConnectionString, _ParsedFilesPath, captureFileName, 5, InterarrivalInterval.GetIntervalMilliSeconds());
                     biEngine.ProcessNewBatchIntervals();
-                    
+
                     //AnalysisEngine analysisEngine = new AnalysisEngine(AnalysisConfiguration.TrimSmallPackets, AnalysisConfiguration.HistogramBinSize, AnalysisConfiguration.HypothesisTest, captureFileName, file.CaptureState);
                     AnalysisEngine analysisEngine = new AnalysisEngine(AnalysisConfiguration.TrimSmallPackets, AnalysisConfiguration.HistogramBinSize, AnalysisConfiguration.HypothesisTestType, file);
                     analysisEngine.CalculateSingleBatchStatistics();
@@ -768,7 +791,7 @@ namespace COWE.Client
                     analysisEngine = null;
                 }
             }
-           
+
 
             /******************************** Old code ********************************************/
             //DisplayStatisticsData bsd = new DisplayStatisticsData();
@@ -801,11 +824,11 @@ namespace COWE.Client
             //        //int captureBatchId = 0;
 
             //        ProcessCapturePackets pcp = new ProcessCapturePackets();
-                    
+
             //        ClientStatusToolStripStatusLabel.Visible = true;
             //        ClientStatusToolStripProgressBar.Visible = true;
             //        ClientStatusToolStripStatusLabel.Text = "Loading capture packets into data store for file [" + file.FileName + "]...";
-                    
+
             //        try
             //        {
             //            rawPackets = pcp.LoadPackets(file.FileName);
@@ -842,7 +865,7 @@ namespace COWE.Client
             //                MessageBox.Show("Error saving batch interval counts: " + ex.Message, "Save Batch Intervals");
             //            }
             //        }
-                    
+
             //        // Add batch to cumulative totals
             //        if(success)
             //        {
@@ -903,7 +926,7 @@ namespace COWE.Client
             using (SolidBrush brush = new SolidBrush(e.ForeColor))
             {
                 //Brush brush = Brushes.Blue;
-  
+
                 Font font = e.Font;
                 if (e.Index == Convert.ToInt32(_SelectedNetworkInterface.NicNumber))
                 {
@@ -940,7 +963,7 @@ namespace COWE.Client
             if (NetworkInterfaceComboBox.SelectedIndex != -1)
             {
                 string nicNumber = NetworkInterfaceComboBox.SelectedValue.ToString();
-            
+
                 // Display the IP address
                 if (_NetworkInterfaces != null)
                 {
@@ -951,7 +974,7 @@ namespace COWE.Client
                         {
                             foundNic = true;
                             IpAddressLabel.Text = pni.IpAddress;
-                            SelectedNicLabel.Text = pni.PcapDescription.Length > 20 ? pni.PcapDescription.Substring(0,26) : pni.PcapDescription;
+                            SelectedNicLabel.Text = pni.PcapDescription.Length > 20 ? pni.PcapDescription.Substring(0, 26) : pni.PcapDescription;
                             _SelectedNetworkInterface = pni;
                             break;
                         }
@@ -985,6 +1008,12 @@ namespace COWE.Client
                 StopParseCaptureFilesService();
             }
         }
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CoweAboutBox cab = new CoweAboutBox();
+            cab.Show();
+        }
+
         private void StartTimerButton_Click(object sender, EventArgs e)
         {
             if (StartTimerButton.Text == "Start Timer")
@@ -1027,11 +1056,18 @@ namespace COWE.Client
         {
             _FlooderIntervalNew = FlooderIntervalTextBox.Text;
         }
-        private void KsTestRadioButton_CheckedChanged(object sender, EventArgs e)
+        private void KsTestStepRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            if (KsTestRadioButton.Checked)
+            if (KsTestStepRadioButton.Checked)
             {
-                AnalysisConfiguration.HypothesisTestType = HypothesisTestType.KsTest;
+                AnalysisConfiguration.HypothesisTestType = HypothesisTestType.KsTestStep;
+            }
+        }
+        private void KsTestLinearRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            if (KsTestLinearRadioButton.Checked)
+            {
+                AnalysisConfiguration.HypothesisTestType = HypothesisTestType.KsTestLinear;
             }
         }
         private void MeansTestRadioButton_CheckedChanged(object sender, EventArgs e)
@@ -1052,12 +1088,12 @@ namespace COWE.Client
 
             // If entry is not an integer notify user
             Regex notInteger = new Regex(@"\D");
-            if(notInteger.IsMatch(tb.Text))
+            if (notInteger.IsMatch(tb.Text))
             {
                 //tb.BackColor = Color.Yellow;
                 tb.Tag = false;
                 MessageBox.Show("Value must be an integer");
-                
+
                 // Display the original value
                 switch (tb.Name)
                 {
@@ -1094,6 +1130,14 @@ namespace COWE.Client
                 tb.Tag = true;
             }
         }
+        private void DatabaseResetCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (DatabaseResetCheckBox.Checked == true)
+            {
+                //ResetDatabaseAndDeleteCaptureFiles();
+            }
+        }
+       
         #endregion
 
         #region Private Methods
@@ -1201,7 +1245,7 @@ namespace COWE.Client
             //_FlooderStatusDataGridView.AllowUserToAddRows = true;
             //_FlooderStatusDataGridView.AllowUserToDeleteRows = true;
 
-             //AddFlooderRow(pid);
+            //AddFlooderRow(pid);
             int col = 0; // Start with PID
             int row = 0;// Next row
 
@@ -1345,7 +1389,7 @@ namespace COWE.Client
         private void ResizeFlooderGrid()
         {
             int height = 0;
-            
+
 
             foreach (DataGridViewRow row in _FlooderStatusDataGridView.Rows)
             {
@@ -1359,12 +1403,12 @@ namespace COWE.Client
                 width += col.Width;
             }
 
-            if(_FlooderStatusDataGridView.Rows.Count == _MaxGridDisplayRows)
+            if (_FlooderStatusDataGridView.Rows.Count == _MaxGridDisplayRows)
             {
                 _MaxGridHeight = height;
             }
 
-            if(_FlooderStatusDataGridView.Rows.Count > _MaxGridDisplayRows)
+            if (_FlooderStatusDataGridView.Rows.Count > _MaxGridDisplayRows)
             {
                 // Allow additional width for scroll bar
                 _FlooderStatusDataGridView.ClientSize = new Size(width + 20, _MaxGridHeight + 4);
@@ -1419,7 +1463,7 @@ namespace COWE.Client
                 int bytesSent = s.Send(msg);
                 int bytesRecvd = s.Receive(bytes);
                 response = Encoding.ASCII.GetString(bytes, 0, bytesRecvd);
-                if(response.Trim().Substring(0,12) == "ACK-Received")
+                if (response.Trim().Substring(0, 12) == "ACK-Received")
                 {
                     success = true;
                 }
@@ -1586,7 +1630,7 @@ namespace COWE.Client
             string status = string.Empty;
             ServiceController controller = new ServiceController("ParseCaptureFilesService");
 
-            switch(controller.Status)
+            switch (controller.Status)
             {
                 case ServiceControllerStatus.Running:
                     status = "Running";
@@ -1661,9 +1705,8 @@ namespace COWE.Client
         private void ResetDatabaseAndDeleteCaptureFiles()
         {
             // Truncate database capture tables
-
-
-            // Delete old capture files
+            ProcessCapturePackets pcp = new ProcessCapturePackets();
+            pcp.TruncateAllTables();
 
             DisplayProgressMessage("Deleting old capture files...");
             Application.DoEvents();
@@ -1827,7 +1870,7 @@ namespace COWE.Client
                 NetworkInterfaceComboBox.SelectedValueChanged += new EventHandler(NetworkInterfaceComboBox_SelectedValueChanged);
 
                 NetworkInterfaceComboBox.DataSource = nics;
-               
+
                 // Display the NIC description
                 NetworkInterfaceComboBox.DisplayMember = "Key";
                 NetworkInterfaceComboBox.ValueMember = "Value";
@@ -1972,6 +2015,17 @@ namespace COWE.Client
             DatabaseResetCheckBox.Enabled = true;
             StartParseFilesServiceButton.Enabled = true;
         }
+        private void DisableFlooderControls()
+        {
+            AddFlooderButton.Enabled = false;
+            DeleteFlooderButton.Enabled = false;
+        }
+        private void EnableFlooderControls()
+        {
+            AddFlooderButton.Enabled = true;
+            DeleteFlooderButton.Enabled = true;
+        }
         #endregion
-    }
+
+    }    
 }

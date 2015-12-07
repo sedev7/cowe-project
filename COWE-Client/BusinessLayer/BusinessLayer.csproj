@@ -46,6 +46,13 @@
     <Compile Include="BatchIntervalEngine.cs" />
     <Compile Include="CalculateProbability.cs" />
     <Compile Include="CalculateHistogram.cs" />
+    <Compile Include="ExpandPacketCountLinear.cs" />
+    <Compile Include="ExpandPacketCountStep.cs" />
+    <Compile Include="IExpandPacketCount.cs" />
+    <Compile Include="IHypothesisTest.cs" />
+    <Compile Include="KsLinearHypothesisTest.cs" />
+    <Compile Include="KsStepHypothesisTest.cs" />
+    <Compile Include="MeansHypothesisTest.cs" />
     <Compile Include="NewFileNotifier.cs" />
     <Compile Include="ProcessCapturePackets.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

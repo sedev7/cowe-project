@@ -5,12 +5,21 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("COWE-Client")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Virtual Machine Co-Residency Probe")]
+[assembly: AssemblyDescription("The Virtual Machine Co-Residency Probe is a tool " +
+"that can be used to detect two virtual machines " +
+"(VMs) whichreside on the same physical host.  The " +
+"Client communicates with a Flooder via socket " +
+"connection.  The Flooder cycles UDP packet " + 
+"streaming.  The Client contacts the Server, and  " +
+"captures network traffic from the Server.  If the  " +
+"Flooder and the Server are co-resident, the network " +
+"traffic pattern at the Client will be affected by the  " +
+"UDP streaming, and co-residency will be detected.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Hewlett-Packard")]
-[assembly: AssemblyProduct("COWE-Client")]
-[assembly: AssemblyCopyright("Copyright © Hewlett-Packard 2015")]
+[assembly: AssemblyCompany("TSU Department of Engineering, CISE (MS) Program")]
+[assembly: AssemblyProduct("Virtual Machine Co-Residency Probe")]
+[assembly: AssemblyCopyright("Copyright © James A. Savage 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
