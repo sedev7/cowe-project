@@ -20,7 +20,7 @@ namespace COWE.BusinessLayer
 
         int _CurrentCaptureBatchId = 0;
         int _IntervalSize = 0;
-        int _WaitSecondsLimit = 5;
+        int _WaitSecondsLimit = AnalysisConfiguration.TimerInterval - 5;  //5;
 
         string _CaptureFileName = string.Empty;
         string _DbConnectionString = string.Empty;
@@ -85,35 +85,52 @@ namespace COWE.BusinessLayer
             // Wait for capture file to be parsed by ParseCaptureFilesService service
             int waitSeconds = 0;
 
+
             CaptureFileData cfd = new CaptureFileData();
             _CurrentCaptureBatchId = cfd.GetBatchId(_CaptureFileName);
 
-            while (waitSeconds < _WaitSecondsLimit)
-            {
-                if(File.Exists(_ProcessedCaptureFilesPath + "\\" + _CaptureFileName))
-                {
-                    //ClientStatusToolStripStatusLabel.Visible = true;
-                    //ClientStatusToolStripProgressBar.Visible = true;
-                    //ClientStatusToolStripStatusLabel.Text = "Loading capture packets into data store for file [" + file.FileName + "]...";
+            //while (waitSeconds < _WaitSecondsLimit)
+            //{
+            //    if(File.Exists(_ProcessedCaptureFilesPath + "\\" + _CaptureFileName))
+            //    {
+            //        //ClientStatusToolStripStatusLabel.Visible = true;
+            //        //ClientStatusToolStripProgressBar.Visible = true;
+            //        //ClientStatusToolStripStatusLabel.Text = "Loading capture packets into data store for file [" + file.FileName + "]...";
 
-                    BindingList<PacketInterval> batchIntervals = new BindingList<PacketInterval>();
+            //        FileQueue.Dequeue();
+
+            //        BindingList<PacketInterval> batchIntervals = new BindingList<PacketInterval>();
                     
-                    batchIntervals = CreateBatchIntervals(_CaptureFileName);
-                    UpdateCumulativeIntervals(batchIntervals);
-                    UpdateCaptureBatchParseStatus();
-                    break;
-                }
-                else
-                {
-                    Thread.Sleep(1000);
-                    waitSeconds++;
-                }
-            }
+            //        batchIntervals = CreateBatchIntervals(_CaptureFileName);
+            //        UpdateCumulativeIntervals(batchIntervals);
+            //        UpdateCaptureBatchParseStatus();
+            //        break;
+            //    }
+            //    else
+            //    {
+            //        Thread.Sleep(1000);
+            //        waitSeconds++;
+            //    }
+            //}
 
-            if(waitSeconds == _WaitSecondsLimit)
+            bool parsedStatus = cfd.GetParsedFileStatus(_CurrentCaptureBatchId);
+
+            while (!parsedStatus)
             {
-                throw new Exception("BatchIntervalEngine error: time expired - cannot find parsed capture file!");
+                Thread.Sleep(2000);
+                parsedStatus = cfd.GetParsedFileStatus(_CurrentCaptureBatchId);
+
+                if (waitSeconds == _WaitSecondsLimit)
+                {
+                    throw new Exception("BatchIntervalEngine error: time expired - cannot find parsed capture file!");
+                }
             }
+            BindingList<PacketInterval> batchIntervals = new BindingList<PacketInterval>();
+
+            batchIntervals = CreateBatchIntervals(_CaptureFileName);
+            UpdateCumulativeIntervals(batchIntervals);
+            //UpdateCaptureBatchParseStatus();
+            FileQueue.Dequeue();
         }
 
         public void RecalculateBatchIntervals()

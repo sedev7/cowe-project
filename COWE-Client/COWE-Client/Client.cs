@@ -120,6 +120,11 @@ namespace COWE.Client
 
         PcapNetworkInterface _SelectedNetworkInterface = null;
 
+        ProcessedFileNotifier _ProcessedFileNotifier = new ProcessedFileNotifier(_ProcessedFilesPath);
+        Thread processedFileNotifierThread = null;
+
+        //static Queue<CurrentCaptureFile> fileQueue = new Queue<CurrentCaptureFile>();
+
         // Input validation variables
         string _FlooderIntervalOld = string.Empty;
         string _FlooderIntervalNew = string.Empty;
@@ -135,7 +140,7 @@ namespace COWE.Client
         string _CaptureFolderPath = string.Empty;                   // Location where capture files are created
         string _ParseFolderPath = string.Empty;                     // Location to which capture files are moved for parsing
         static string _ParsedFilesPath = string.Empty;                     // Location of optional parsed text files
-        string _ProcessedFilesPath = string.Empty;                  // Location where completed processed files will be created (file names only)
+        static string _ProcessedFilesPath = string.Empty;                  // Location where completed processed files will be created (file names only)
         string _CurrentCaptureFileName = string.Empty;
         string _CurrentClientNetworkInterface = string.Empty;       // Network interface number for currently selected NIC
 
@@ -344,6 +349,9 @@ namespace COWE.Client
                         DisableConfigurationControls();
                         DisableFlooderControls();
 
+                        processedFileNotifierThread = new Thread(new ThreadStart(_ProcessedFileNotifier.Start));
+                        processedFileNotifierThread.Start();
+
                         if (DatabaseResetCheckBox.Checked == true)
                         {
                             ResetDatabaseAndDeleteCaptureFiles();
@@ -358,6 +366,7 @@ namespace COWE.Client
                         {
                             // Get the timer interval (start/stop interval for flooder)
                             _FlooderTimerInterval = Convert.ToInt32(FlooderIntervalTextBox.Text);
+                            AnalysisConfiguration.TimerInterval = _FlooderTimerInterval;
 
                             bool success = false;
                             // Open the socket connection to the flooder
@@ -474,6 +483,7 @@ namespace COWE.Client
                         MovePacketCaptureFile(_CurrentCaptureFileName);
                         EnableConfigurationControls();
                         EnableFlooderControls();
+                        processedFileNotifierThread.Abort();
                     }
                 }
             }
@@ -642,10 +652,12 @@ namespace COWE.Client
         // static void OnReceivedFileEvent(string fileName)
         static void OnReceivedFileEvent(CurrentCaptureFile captureFile)
         {
+            FileQueue.Enqueue(captureFile);
+
             // Method called when parsed file received notification event is raised
             // Send the file to the BatchIntervalEngine and AnalysisEngine for processing
             //BatchIntervalEngine biEngine = new BatchIntervalEngine(DbConnectionString, _ParsedFilesPath, captureFileName, 5, InterarrivalInterval.GetIntervalMilliSeconds());
-            BatchIntervalEngine biEngine = new BatchIntervalEngine(DbConnectionString, _ParsedFilesPath, captureFile.FileName, 5, InterarrivalInterval.GetIntervalMilliSeconds());
+            BatchIntervalEngine biEngine = new BatchIntervalEngine(DbConnectionString, _ParsedFilesPath, captureFile.FileName, AnalysisConfiguration.TimerInterval, InterarrivalInterval.GetIntervalMilliSeconds());
             biEngine.ProcessNewBatchIntervals();
 
             //AnalysisEngine analysisEngine = new AnalysisEngine(AnalysisConfiguration.TrimSmallPackets, AnalysisConfiguration.HistogramBinSize, AnalysisConfiguration.HypothesisTest, captureFileName, file.CaptureState);
@@ -1982,6 +1994,7 @@ namespace COWE.Client
             _FlooderIntervalTimer.Elapsed += new ElapsedEventHandler(OnFlooderTimerElapsedEvent);
             _FlooderIntervalTimer.Start();
             StopWatchStart();
+            AnalysisConfiguration.TimerInterval = _FlooderTimerInterval;
         }
         private void InitializeAnalysisMetricsGroupBox()
         {

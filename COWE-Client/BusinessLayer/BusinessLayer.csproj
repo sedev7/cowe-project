@@ -54,6 +54,7 @@
     <Compile Include="KsStepHypothesisTest.cs" />
     <Compile Include="MeansHypothesisTest.cs" />
     <Compile Include="NewFileNotifier.cs" />
+    <Compile Include="ProcessedFileNotifier.cs" />
     <Compile Include="ProcessCapturePackets.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -108,6 +108,19 @@ namespace COWE.DataLayer
             }
             return BatchId;
         }
+        public bool GetParsedFileStatus(int batchId)
+        {
+            bool parseStatus = false;
+
+            using(var context = new PacketAnalysisEntity())
+            {
+                var status = (from s in context.CaptureBatches
+                              where s.CaptureBatchId == batchId
+                              select s.Parsed).FirstOrDefault();
+                parseStatus = status;
+            }
+            return parseStatus;
+        }
         public BindingList<CurrentCaptureFile> GetAllFiles()
         {
             BindingList<CurrentCaptureFile> files = new BindingList<CurrentCaptureFile>();

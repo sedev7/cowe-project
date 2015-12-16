@@ -51,6 +51,7 @@
     <Compile Include="CumulativeProbabilityDistribution.cs" />
     <Compile Include="CurrentCaptureFile.cs" />
     <Compile Include="DisplayStatistic.cs" />
+    <Compile Include="FileQueue.cs" />
     <Compile Include="HypothesisTest.cs" />
     <Compile Include="SingleHistogram.cs" />
     <Compile Include="MeansTestStatistic.cs" />

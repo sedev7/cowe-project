@@ -19,5 +19,6 @@ namespace COWE.DomainClasses
                                                     // (note: one-tailed test because we are looking at the distribution 
                                                     // for the difference of the means)
         public static string ProcessedCaptureFilesPath { get; set; }
+        public static int TimerInterval { get; set; }
     }
 }
