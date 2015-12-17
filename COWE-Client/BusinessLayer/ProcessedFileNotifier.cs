@@ -38,14 +38,16 @@ namespace COWE.BusinessLayer
 
                         DirectoryInfo di = new DirectoryInfo(_processedFilesPath);
                         fi = di.GetFiles("*.pcap");
-
-                        foreach (var file in fi)
+                        if (fi.Length > 0)
                         {
-                            if (!updatedFiles.ContainsKey(file.Name))
+                            foreach (var file in fi)
                             {
-                                int batchId = cfd.GetBatchId(file.Name);
-                                cfd.UpdateCaptureBatchParseStatus(batchId);
-                                updatedFiles.Add(file.Name, batchId);
+                                if (!updatedFiles.ContainsKey(file.Name))
+                                {
+                                    int batchId = cfd.GetBatchId(file.Name);
+                                    cfd.UpdateCaptureBatchParseStatus(batchId);
+                                    updatedFiles.Add(file.Name, batchId);
+                                }
                             }
                         }
                     }

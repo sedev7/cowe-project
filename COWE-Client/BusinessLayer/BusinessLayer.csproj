@@ -46,6 +46,7 @@
     <Compile Include="BatchIntervalEngine.cs" />
     <Compile Include="CalculateProbability.cs" />
     <Compile Include="CalculateHistogram.cs" />
+    <Compile Include="CreateIntervalsAndAnalysisController.cs" />
     <Compile Include="ExpandPacketCountLinear.cs" />
     <Compile Include="ExpandPacketCountStep.cs" />
     <Compile Include="IExpandPacketCount.cs" />

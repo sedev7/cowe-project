@@ -82,8 +82,8 @@ namespace COWE.BusinessLayer
         {
             // Create new batch intervals from parsed capture data and add new intervals to cumulative intervals
 
-            // Wait for capture file to be parsed by ParseCaptureFilesService service
-            int waitSeconds = 0;
+            //// Wait for capture file to be parsed by ParseCaptureFilesService service
+            //int waitSeconds = 0;
 
 
             CaptureFileData cfd = new CaptureFileData();
@@ -91,19 +91,19 @@ namespace COWE.BusinessLayer
 
             //while (waitSeconds < _WaitSecondsLimit)
             //{
-            //    if(File.Exists(_ProcessedCaptureFilesPath + "\\" + _CaptureFileName))
+            //    if (File.Exists(_ProcessedCaptureFilesPath + "\\" + _CaptureFileName))
             //    {
-            //        //ClientStatusToolStripStatusLabel.Visible = true;
-            //        //ClientStatusToolStripProgressBar.Visible = true;
-            //        //ClientStatusToolStripStatusLabel.Text = "Loading capture packets into data store for file [" + file.FileName + "]...";
+                    //ClientStatusToolStripStatusLabel.Visible = true;
+                    //ClientStatusToolStripProgressBar.Visible = true;
+                    //ClientStatusToolStripStatusLabel.Text = "Loading capture packets into data store for file [" + file.FileName + "]...";
 
-            //        FileQueue.Dequeue();
+                    //FileQueue.Dequeue();
 
-            //        BindingList<PacketInterval> batchIntervals = new BindingList<PacketInterval>();
-                    
-            //        batchIntervals = CreateBatchIntervals(_CaptureFileName);
-            //        UpdateCumulativeIntervals(batchIntervals);
-            //        UpdateCaptureBatchParseStatus();
+                    BindingList<PacketInterval> batchIntervals = new BindingList<PacketInterval>();
+
+                    batchIntervals = CreateBatchIntervals(_CaptureFileName);
+                    UpdateCumulativeIntervals(batchIntervals);
+                    //UpdateCaptureBatchParseStatus();
             //        break;
             //    }
             //    else
@@ -113,24 +113,24 @@ namespace COWE.BusinessLayer
             //    }
             //}
 
-            bool parsedStatus = cfd.GetParsedFileStatus(_CurrentCaptureBatchId);
+            //bool parsedStatus = cfd.GetParsedFileStatus(_CurrentCaptureBatchId);
 
-            while (!parsedStatus)
-            {
-                Thread.Sleep(2000);
-                parsedStatus = cfd.GetParsedFileStatus(_CurrentCaptureBatchId);
+            //while (!parsedStatus)
+            //{
+            //    Thread.Sleep(2000);
+            //    parsedStatus = cfd.GetParsedFileStatus(_CurrentCaptureBatchId);
 
-                if (waitSeconds == _WaitSecondsLimit)
-                {
-                    throw new Exception("BatchIntervalEngine error: time expired - cannot find parsed capture file!");
-                }
-            }
-            BindingList<PacketInterval> batchIntervals = new BindingList<PacketInterval>();
+            //    if (waitSeconds == _WaitSecondsLimit)
+            //    {
+            //        throw new Exception("BatchIntervalEngine error: time expired - cannot find parsed capture file!");
+            //    }
+            //}
+            //BindingList<PacketInterval> batchIntervals = new BindingList<PacketInterval>();
 
-            batchIntervals = CreateBatchIntervals(_CaptureFileName);
-            UpdateCumulativeIntervals(batchIntervals);
-            //UpdateCaptureBatchParseStatus();
-            FileQueue.Dequeue();
+            //batchIntervals = CreateBatchIntervals(_CaptureFileName);
+            //UpdateCumulativeIntervals(batchIntervals);
+            ////UpdateCaptureBatchParseStatus();
+            //FileQueue.Dequeue();
         }
 
         public void RecalculateBatchIntervals()

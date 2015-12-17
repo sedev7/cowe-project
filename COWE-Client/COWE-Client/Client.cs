@@ -120,8 +120,9 @@ namespace COWE.Client
 
         PcapNetworkInterface _SelectedNetworkInterface = null;
 
-        ProcessedFileNotifier _ProcessedFileNotifier = new ProcessedFileNotifier(_ProcessedFilesPath);
-        Thread processedFileNotifierThread = null;
+        ProcessedFileNotifier _ProcessedFileNotifier = null;
+        Thread _ProcessedFileNotifierThread = null;
+        Thread _CreatIntervalsAndAnalysisControllerThread = null;
 
         //static Queue<CurrentCaptureFile> fileQueue = new Queue<CurrentCaptureFile>();
 
@@ -186,6 +187,7 @@ namespace COWE.Client
             DatabaseResetCheckBox.Checked = true;
 
             _AnalysisControl = new AnalysisControl();
+            _ProcessedFileNotifier = new ProcessedFileNotifier(_ProcessedFilesPath);
 
         }
         #endregion
@@ -349,8 +351,12 @@ namespace COWE.Client
                         DisableConfigurationControls();
                         DisableFlooderControls();
 
-                        processedFileNotifierThread = new Thread(new ThreadStart(_ProcessedFileNotifier.Start));
-                        processedFileNotifierThread.Start();
+                        _ProcessedFileNotifierThread = new Thread(new ThreadStart(_ProcessedFileNotifier.Start));
+                        _ProcessedFileNotifierThread.Start();
+
+                        CreateIntervalsAndAnalysisController controller = new CreateIntervalsAndAnalysisController();
+                        _CreatIntervalsAndAnalysisControllerThread = new Thread(new ThreadStart(controller.ProcessFiles));
+                        _CreatIntervalsAndAnalysisControllerThread.Start();
 
                         if (DatabaseResetCheckBox.Checked == true)
                         {
@@ -483,8 +489,15 @@ namespace COWE.Client
                         MovePacketCaptureFile(_CurrentCaptureFileName);
                         EnableConfigurationControls();
                         EnableFlooderControls();
-                        processedFileNotifierThread.Abort();
+                        
+                        while (FileQueue.Count != 0)
+                        {
+                            Thread.Sleep(2000);
+                        }
+                        _ProcessedFileNotifierThread.Abort();
+                        _CreatIntervalsAndAnalysisControllerThread.Abort();
                     }
+
                 }
             }
         }
@@ -652,22 +665,23 @@ namespace COWE.Client
         // static void OnReceivedFileEvent(string fileName)
         static void OnReceivedFileEvent(CurrentCaptureFile captureFile)
         {
+            // Method called when parsed file received notification event is raised
             FileQueue.Enqueue(captureFile);
 
-            // Method called when parsed file received notification event is raised
-            // Send the file to the BatchIntervalEngine and AnalysisEngine for processing
-            //BatchIntervalEngine biEngine = new BatchIntervalEngine(DbConnectionString, _ParsedFilesPath, captureFileName, 5, InterarrivalInterval.GetIntervalMilliSeconds());
-            BatchIntervalEngine biEngine = new BatchIntervalEngine(DbConnectionString, _ParsedFilesPath, captureFile.FileName, AnalysisConfiguration.TimerInterval, InterarrivalInterval.GetIntervalMilliSeconds());
-            biEngine.ProcessNewBatchIntervals();
+            //// Method called when parsed file received notification event is raised
+            //// Send the file to the BatchIntervalEngine and AnalysisEngine for processing
+            ////BatchIntervalEngine biEngine = new BatchIntervalEngine(DbConnectionString, _ParsedFilesPath, captureFileName, 5, InterarrivalInterval.GetIntervalMilliSeconds());
+            //BatchIntervalEngine biEngine = new BatchIntervalEngine(DbConnectionString, _ParsedFilesPath, captureFile.FileName, AnalysisConfiguration.TimerInterval, InterarrivalInterval.GetIntervalMilliSeconds());
+            //biEngine.ProcessNewBatchIntervals();
 
-            //AnalysisEngine analysisEngine = new AnalysisEngine(AnalysisConfiguration.TrimSmallPackets, AnalysisConfiguration.HistogramBinSize, AnalysisConfiguration.HypothesisTest, captureFileName, file.CaptureState);
-            AnalysisEngine analysisEngine = new AnalysisEngine(AnalysisConfiguration.TrimSmallPackets, AnalysisConfiguration.HistogramBinSize, AnalysisConfiguration.HypothesisTestType, captureFile);
-            analysisEngine.CalculateSingleBatchStatistics();
-            analysisEngine.CalculateCumulativeBatchStatistics();
-            analysisEngine.CalculateSingleHistogramData();
-            analysisEngine.CalculateCumulativeHistogramData();
-            analysisEngine.CalculateCumulativeProbabilityDistribution(captureFile.CaptureState);
-            analysisEngine.CalculateHypothesisTestResults();
+            ////AnalysisEngine analysisEngine = new AnalysisEngine(AnalysisConfiguration.TrimSmallPackets, AnalysisConfiguration.HistogramBinSize, AnalysisConfiguration.HypothesisTest, captureFileName, file.CaptureState);
+            //AnalysisEngine analysisEngine = new AnalysisEngine(AnalysisConfiguration.TrimSmallPackets, AnalysisConfiguration.HistogramBinSize, AnalysisConfiguration.HypothesisTestType, captureFile);
+            //analysisEngine.CalculateSingleBatchStatistics();
+            //analysisEngine.CalculateCumulativeBatchStatistics();
+            //analysisEngine.CalculateSingleHistogramData();
+            //analysisEngine.CalculateCumulativeHistogramData();
+            //analysisEngine.CalculateCumulativeProbabilityDistribution(captureFile.CaptureState);
+            //analysisEngine.CalculateHypothesisTestResults();
         }
         private void StartParseFilesServiceButton_Click(object sender, EventArgs e)
         {
@@ -1760,14 +1774,27 @@ namespace COWE.Client
             FileInfo[] parsedTextFiles = CheckForExistingFiles(_ParsedFilesPath);
             foreach (FileInfo file in parsedTextFiles)
             {
-                // Only delete pcap files!
-                if (file.Name.Substring(file.Name.Length - 3, 3) == "txt")
-                {
+                //// Only delete txt files!
+                //if (file.Name.Substring(file.Name.Length - 3, 3) == "txt")
+                //{
                     File.Delete(file.FullName);
                     fileCount++;
-                }
+                //}
             }
             DisplayProgressMessage(fileCount + " parsed text files deleted");
+            Application.DoEvents();
+
+            // Delete old processed capture text files
+            DisplayProgressMessage("Deleting old processed capture files...");
+            Application.DoEvents();
+            fileCount = 0;
+            FileInfo[] processedCaptureFiles = CheckForExistingFiles(_ProcessedFilesPath);
+            foreach (FileInfo file in processedCaptureFiles)
+            {
+                File.Delete(file.FullName);
+                fileCount++;
+            }
+            DisplayProgressMessage(fileCount + " processed capture files deleted");
             Application.DoEvents();
 
             HideProgressMessage();

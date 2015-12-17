@@ -10,15 +10,29 @@ namespace COWE.DomainClasses
     {
         private static Queue<CurrentCaptureFile> fileQueue = new Queue<CurrentCaptureFile>();
 
+        public static int Count
+        {
+            get
+            {
+                return fileQueue.Count;
+            }
+        }
         public static void Enqueue(CurrentCaptureFile captureFile)
         {
             fileQueue.Enqueue(captureFile);
         }
         public static CurrentCaptureFile Dequeue()
         {
-            CurrentCaptureFile captureFile = new CurrentCaptureFile();
-            captureFile = fileQueue.Dequeue();
-            return captureFile;
+            if (fileQueue.Count > 0)
+            {
+                CurrentCaptureFile captureFile = new CurrentCaptureFile();
+                captureFile = fileQueue.Dequeue();
+                return captureFile;
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }
