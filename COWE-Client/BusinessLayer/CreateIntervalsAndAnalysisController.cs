@@ -12,11 +12,14 @@ namespace COWE.BusinessLayer
 {
     public class CreateIntervalsAndAnalysisController
     {
-        public CreateIntervalsAndAnalysisController() { }
+        bool IsRunning = false;
+        //public CreateIntervalsAndAnalysisController() { }
 
         public void ProcessFiles()
         {
-            while (true)
+            IsRunning = true;
+
+            while (IsRunning)
             {
                 if (FileQueue.Count > 0)
                 {
@@ -52,6 +55,11 @@ namespace COWE.BusinessLayer
             analysisEngine.CalculateCumulativeProbabilityDistribution(file.CaptureState);
             analysisEngine.CalculateHypothesisTestResults();
             analysisEngine = null;
+        }
+
+        public void Stop()
+        {
+            IsRunning = false;
         }
     }
 }

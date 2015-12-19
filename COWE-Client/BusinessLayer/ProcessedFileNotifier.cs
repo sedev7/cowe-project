@@ -45,8 +45,11 @@ namespace COWE.BusinessLayer
                                 if (!updatedFiles.ContainsKey(file.Name))
                                 {
                                     int batchId = cfd.GetBatchId(file.Name);
-                                    cfd.UpdateCaptureBatchParseStatus(batchId);
-                                    updatedFiles.Add(file.Name, batchId);
+                                    if (batchId > 0)
+                                    {
+                                        cfd.UpdateCaptureBatchParseStatus(batchId);
+                                        updatedFiles.Add(file.Name, batchId);
+                                    }
                                 }
                             }
                         }

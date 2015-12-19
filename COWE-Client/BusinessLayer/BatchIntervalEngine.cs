@@ -224,7 +224,7 @@ namespace COWE.BusinessLayer
             }
             else
             {
-                throw new Exception("BatchIntervalEngine: UpdateCumulativeIntervals - error updating cumulative intervals for this file  [" + _CaptureFileName + "]: new intervals list contains not data!");
+                throw new Exception("BatchIntervalEngine: UpdateCumulativeIntervals - error updating cumulative intervals for this file  [" + _CaptureFileName + "]: new intervals list contains no data!");
             }
         }
         private void UpdateCaptureBatchParseStatus()

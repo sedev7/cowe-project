@@ -122,7 +122,9 @@ namespace COWE.Client
 
         ProcessedFileNotifier _ProcessedFileNotifier = null;
         Thread _ProcessedFileNotifierThread = null;
-        Thread _CreatIntervalsAndAnalysisControllerThread = null;
+
+        CreateIntervalsAndAnalysisController _CreateIntervalsAndAnalysisController = new CreateIntervalsAndAnalysisController();
+        Thread _CreateIntervalsAndAnalysisControllerThread = null;
 
         //static Queue<CurrentCaptureFile> fileQueue = new Queue<CurrentCaptureFile>();
 
@@ -131,6 +133,22 @@ namespace COWE.Client
         string _FlooderIntervalNew = string.Empty;
         string _TargetPortOld = string.Empty;
         string _TargetPortNew = string.Empty;
+
+        //// Flooder initial values
+        //string _InitialFlooderIP = "10.10.10.46";
+        //string _InitialFlooderPort = "8080";
+        //string _InitialTargetIP = "10.10.10.100";
+        //string _InitialTargetPort = "80";
+        //string _InitialDestinationIP = "10.10.10.208";
+        //string _InitialFlooderInterval = "20";                      // Time period for each flooder interval in seconds
+
+        // Flooder alternate initial values
+        string _InitialFlooderIP = "192.168.0.19";
+        string _InitialFlooderPort = "8080";
+        string _InitialTargetIP = "192.168.0.100";
+        string _InitialTargetPort = "80";
+        string _InitialDestinationIP = "192.168.0.2";
+        string _InitialFlooderInterval = "20";                      // Time period for each flooder interval in seconds
 
         private DispatcherTimer timer = new DispatcherTimer();
         private Stopwatch stopWatch = new Stopwatch();
@@ -354,9 +372,8 @@ namespace COWE.Client
                         _ProcessedFileNotifierThread = new Thread(new ThreadStart(_ProcessedFileNotifier.Start));
                         _ProcessedFileNotifierThread.Start();
 
-                        CreateIntervalsAndAnalysisController controller = new CreateIntervalsAndAnalysisController();
-                        _CreatIntervalsAndAnalysisControllerThread = new Thread(new ThreadStart(controller.ProcessFiles));
-                        _CreatIntervalsAndAnalysisControllerThread.Start();
+                        _CreateIntervalsAndAnalysisControllerThread = new Thread(new ThreadStart(_CreateIntervalsAndAnalysisController.ProcessFiles));
+                        _CreateIntervalsAndAnalysisControllerThread.Start();
 
                         if (DatabaseResetCheckBox.Checked == true)
                         {
@@ -490,12 +507,17 @@ namespace COWE.Client
                         EnableConfigurationControls();
                         EnableFlooderControls();
                         
-                        while (FileQueue.Count != 0)
+                        while (IsStarting && FileQueue.Count != 0)
                         {
                             Thread.Sleep(2000);
                         }
-                        _ProcessedFileNotifierThread.Abort();
-                        _CreatIntervalsAndAnalysisControllerThread.Abort();
+                        //_ProcessedFileNotifierThread.Abort();
+                        _ProcessedFileNotifier.Stop();
+                        _ProcessedFileNotifierThread.Join();
+
+                        _CreateIntervalsAndAnalysisController.Stop();
+                        _CreateIntervalsAndAnalysisControllerThread.Join();
+                        //_CreatIntervalsAndAnalysisControllerThread.Abort();
                     }
 
                 }
@@ -1372,9 +1394,9 @@ namespace COWE.Client
             col = 1;
 
             _FlooderStatusDataGridView.Rows[row].Cells[col++].Value = pid.ToString();   // PID
-            _FlooderStatusDataGridView.Rows[row].Cells[col++].Value = "10.10.10.128";   // Flooder IP Address
-            _FlooderStatusDataGridView.Rows[row].Cells[col++].Value = "8080";           // Flooder port
-            _FlooderStatusDataGridView.Rows[row].Cells[col++].Value = "10.10.10.118";   // Flooder Destination
+            _FlooderStatusDataGridView.Rows[row].Cells[col++].Value = _InitialFlooderIP;   // Flooder IP Address
+            _FlooderStatusDataGridView.Rows[row].Cells[col++].Value = _InitialFlooderPort;           // Flooder port
+            _FlooderStatusDataGridView.Rows[row].Cells[col++].Value = _InitialDestinationIP;   // Flooder Destination
             _FlooderStatusDataGridView.Rows[row].Cells[col++].Value = "0";              // Runtime
             _FlooderStatusDataGridView.Rows[row].Cells[col].Value = "Not Connected";    // Status
             _FlooderStatusDataGridView.Rows[row].Cells[col].Style.BackColor = NotConnected;
@@ -1387,9 +1409,9 @@ namespace COWE.Client
         private void InitializeForm()
         {
             // Set initial values
-            TargetIpAddressTextBox.Text = "10.10.10.100";
-            TargetPortTextBox.Text = "80";
-            FlooderIntervalTextBox.Text = "20";
+            TargetIpAddressTextBox.Text = _InitialTargetIP;
+            TargetPortTextBox.Text = _InitialTargetPort;
+            FlooderIntervalTextBox.Text = _InitialFlooderInterval;
 
             // Capture current values
             _FlooderIntervalOld = FlooderIntervalTextBox.Text;
