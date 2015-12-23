@@ -34,5 +34,12 @@ namespace COWE.DomainClasses
                 return null;
             }
         }
+        public static void Clear()
+        {
+            if(fileQueue.Count > 0)
+            {
+                fileQueue.Clear();
+            }
+        }
     }
 }

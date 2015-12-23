@@ -123,8 +123,14 @@ namespace COWE.Client
         ProcessedFileNotifier _ProcessedFileNotifier = null;
         Thread _ProcessedFileNotifierThread = null;
 
-        CreateIntervalsAndAnalysisController _CreateIntervalsAndAnalysisController = new CreateIntervalsAndAnalysisController();
+        //CreateIntervalsAndAnalysisController _CreateIntervalsAndAnalysisController = new CreateIntervalsAndAnalysisController();
+        CreateIntervalsAndAnalysisController _CreateIntervalsAndAnalysisController = null;
         Thread _CreateIntervalsAndAnalysisControllerThread = null;
+
+        //BackgroundWorker bgWorker = null;
+        //BackgroundWorker bgWorker = new BackgroundWorker();
+        //bgWorker.WorkerReportsProgress = true;
+        //bgWorker.WorkerSupportsCancellation = true;
 
         //static Queue<CurrentCaptureFile> fileQueue = new Queue<CurrentCaptureFile>();
 
@@ -195,7 +201,7 @@ namespace COWE.Client
             this.bgWorker = new BackgroundWorker();
             this.bgWorker.WorkerReportsProgress = true;
             this.bgWorker.WorkerSupportsCancellation = true;
-            InitializeBackgroundWorkerTheads();
+            InitializeBackgroundWorkerTheads();   // Only need this thread when a flooder is running so move it to the start flooder method
             InitializeProgressSpinner();
             InitializeProgressLabel();
             this.ClockButton.Visible = false;
@@ -206,6 +212,7 @@ namespace COWE.Client
 
             _AnalysisControl = new AnalysisControl();
             _ProcessedFileNotifier = new ProcessedFileNotifier(_ProcessedFilesPath);
+            _CreateIntervalsAndAnalysisController = new CreateIntervalsAndAnalysisController();
 
         }
         #endregion
@@ -250,6 +257,9 @@ namespace COWE.Client
         }
         private void Client_FormClosing(object sender, FormClosingEventArgs e)
         {
+            // Stop the background worker thread
+            bgWorker.CancelAsync();
+
             System.Windows.Forms.Application.Exit();
         }
         private void DeleteFlooderButton_Click(object sender, EventArgs e)
@@ -284,6 +294,8 @@ namespace COWE.Client
         }
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            // Stop the background worker thread
+            bgWorker.CancelAsync();
             this.Close();
         }
         private void FlooderStatusDataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -369,9 +381,19 @@ namespace COWE.Client
                         DisableConfigurationControls();
                         DisableFlooderControls();
 
+                        FileQueue.Clear();
+
+                        if(_ProcessedFileNotifierThread == null)
+                        {
+                            _ProcessedFileNotifier = new ProcessedFileNotifier(_ProcessedFilesPath);
+                        }
                         _ProcessedFileNotifierThread = new Thread(new ThreadStart(_ProcessedFileNotifier.Start));
                         _ProcessedFileNotifierThread.Start();
 
+                        if(_CreateIntervalsAndAnalysisController == null)
+                        {
+                            _CreateIntervalsAndAnalysisController = new CreateIntervalsAndAnalysisController();
+                        }
                         _CreateIntervalsAndAnalysisControllerThread = new Thread(new ThreadStart(_CreateIntervalsAndAnalysisController.ProcessFiles));
                         _CreateIntervalsAndAnalysisControllerThread.Start();
 
@@ -419,7 +441,7 @@ namespace COWE.Client
                                 // Get our local IP address
                                 _HostIpAddress = _SelectedNetworkInterface.IpAddress;
 
-                                // Note: source host is web server (target), destination host is client
+                                // Note: source host is web server (target), local host is client
                                 if (StartPacketCapture(TargetIpAddressTextBox.Text.Trim(), _HostIpAddress, _FlooderTimerInterval))
                                 {
                                     // Packet capture started successfully
@@ -507,9 +529,10 @@ namespace COWE.Client
                         EnableConfigurationControls();
                         EnableFlooderControls();
                         
+                        // Finish processing anything in the queue
                         while (IsStarting && FileQueue.Count != 0)
                         {
-                            Thread.Sleep(2000);
+                            Thread.Sleep(3000);
                         }
                         //_ProcessedFileNotifierThread.Abort();
                         _ProcessedFileNotifier.Stop();
@@ -518,6 +541,8 @@ namespace COWE.Client
                         _CreateIntervalsAndAnalysisController.Stop();
                         _CreateIntervalsAndAnalysisControllerThread.Join();
                         //_CreatIntervalsAndAnalysisControllerThread.Abort();
+
+                        
                     }
 
                 }
@@ -568,7 +593,8 @@ namespace COWE.Client
                 {
                     Thread.Sleep(5000);
                     _CurrentCaptureFiles = new BindingList<CurrentCaptureFile>();
-                    _CurrentCaptureFiles = nfn.CheckForNewFiles(_ParseFolderPath, _ProcessedFilesPath);
+                    //_CurrentCaptureFiles = nfn.CheckForNewFiles(_ParseFolderPath, _ProcessedFilesPath);
+                    _CurrentCaptureFiles = nfn.CheckForNewFiles(_ParsedFilesPath, _ProcessedFilesPath);
                 }
             }
         }
@@ -642,6 +668,9 @@ namespace COWE.Client
             // Capture the name of the current capture file
             string currentCaptureFileName = _CurrentCaptureFileName;
 
+            CurrentCaptureFile ccf = new CurrentCaptureFile(_CurrentCaptureFileName, IsMarked == true ? CaptureState.Marked : CaptureState.Unmarked);
+            FileQueue.Enqueue(ccf);
+
             // Start the next packet capture file
             if (IsFlooding)
             {
@@ -668,16 +697,19 @@ namespace COWE.Client
             // Move the current packet capture file to a folder where it will be parsed
             // by the ParseCaptureFilesService
             // Do this at the end of the call so that the file can be closed properly
+            
             MovePacketCaptureFile(currentCaptureFileName);
             //bgWorker.ReportProgress(0);
 
-            // Raise an event to notify the AnalysisEngine that a capture file has been processed
-            CurrentCaptureFile ccf = new CurrentCaptureFile(_CurrentCaptureFileName, IsMarked == true ? CaptureState.Marked : CaptureState.Unmarked);
-            ccf.ReceivedParsedFile += OnReceivedFileEvent;
-            //ccf.ReceiveFile();
-            ccf.ReceiveFile(ccf);
+            //// Raise an event to notify the AnalysisEngine that a capture file has been processed
+            //CurrentCaptureFile ccf = new CurrentCaptureFile(_CurrentCaptureFileName, IsMarked == true ? CaptureState.Marked : CaptureState.Unmarked);
 
-            UpdateParseFilesServiceStatus();
+            
+            //ccf.ReceivedParsedFile += OnReceivedFileEvent;
+            //ccf.ReceiveFile();
+            //ccf.ReceiveFile(ccf);
+
+            //UpdateParseFilesServiceStatus();
         }
         //private static void OnReceivedFileEvent(string msg)
         //{
@@ -687,8 +719,9 @@ namespace COWE.Client
         // static void OnReceivedFileEvent(string fileName)
         static void OnReceivedFileEvent(CurrentCaptureFile captureFile)
         {
-            // Method called when parsed file received notification event is raised
-            FileQueue.Enqueue(captureFile);
+            // No longer using this event / event handler...
+            //// Method called when parsed file received notification event is raised
+            //FileQueue.Enqueue(captureFile);
 
             //// Method called when parsed file received notification event is raised
             //// Send the file to the BatchIntervalEngine and AnalysisEngine for processing
@@ -1584,7 +1617,8 @@ namespace COWE.Client
                 s.Close();
             }
         }
-        private bool StartPacketCapture(string sourceHostIp, string destinationHostIp, int captureInterval)
+        //private bool StartPacketCapture(string sourceHostIp, string destinationHostIp, int captureInterval)
+        private bool StartPacketCapture(string sourceHostIp, string localHostIp, int captureInterval)
         {
             bool result = false;
             int pid = 0;
@@ -1599,7 +1633,8 @@ namespace COWE.Client
                 // Note: the pcap interface number is one-based (not zero-based), so adding a one here
                 int nicNumber = Convert.ToInt32(_CurrentClientNetworkInterface);
                 nicNumber++;
-                ca.StartCaptureSession(sourceHostIp, destinationHostIp, captureInterval, _CaptureFolderPath, fileName, nicNumber.ToString(), out pid);
+                //ca.StartCaptureSession(sourceHostIp, destinationHostIp, captureInterval, _CaptureFolderPath, fileName, nicNumber.ToString(), out pid);
+                ca.StartCaptureSession(sourceHostIp, localHostIp, captureInterval, _CaptureFolderPath, fileName, nicNumber.ToString(), out pid);
                 if (pid > 0) { _CaptureProcessId = pid; }
                 result = true;
                 return result;
@@ -1632,9 +1667,11 @@ namespace COWE.Client
         }
         private void InitializeBackgroundWorkerTheads()
         {
-            this.bgWorker.DoWork += new DoWorkEventHandler(bgWorker_DoWork);
-            this.bgWorker.ProgressChanged += new ProgressChangedEventHandler(bgWorker_ProgressChanged);
-            this.bgWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bgWorker_RunWorkerCompleted);
+            bgWorker.WorkerReportsProgress = true;
+            bgWorker.WorkerSupportsCancellation = true;
+            bgWorker.DoWork += new DoWorkEventHandler(bgWorker_DoWork);
+            bgWorker.ProgressChanged += new ProgressChangedEventHandler(bgWorker_ProgressChanged);
+            bgWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bgWorker_RunWorkerCompleted);
         }
         private void InitializeProgressSpinner()
         {

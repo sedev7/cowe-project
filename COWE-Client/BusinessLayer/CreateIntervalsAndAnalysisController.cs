@@ -13,7 +13,7 @@ namespace COWE.BusinessLayer
     public class CreateIntervalsAndAnalysisController
     {
         bool IsRunning = false;
-        //public CreateIntervalsAndAnalysisController() { }
+        public CreateIntervalsAndAnalysisController() { }
 
         public void ProcessFiles()
         {
@@ -21,11 +21,19 @@ namespace COWE.BusinessLayer
 
             while (IsRunning)
             {
-                if (FileQueue.Count > 0)
+                List<CurrentCaptureFile> files = new List<CurrentCaptureFile>();
+
+                while (FileQueue.Count > 0)
                 {
                     CurrentCaptureFile file = FileQueue.Dequeue();
+                    files.Add(file);
+                }
 
-                    CaptureFileData cfd = new CaptureFileData();
+                CaptureFileData cfd = new CaptureFileData();
+
+                foreach(CurrentCaptureFile file in files)
+                {
+                    file.CaptureBatchId = cfd.GetBatchId(file.FileName);
                     if (cfd.GetParsedFileStatus(file.CaptureBatchId))
                     {
                         BatchIntervalEngine intervalEngine = new BatchIntervalEngine(DatabaseConnections.SqlConnection, AnalysisConfiguration.ProcessedCaptureFilesPath, file.FileName, 5, AnalysisConfiguration.IntervalSize);
@@ -38,10 +46,12 @@ namespace COWE.BusinessLayer
                         FileQueue.Enqueue(file);
                     }
                 }
-                else
+
+                if(files.Count > 0)
                 {
-                    Thread.Sleep(3000);
+                    files.Clear();
                 }
+                Thread.Sleep(3000);
             }
         }
 

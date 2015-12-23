@@ -61,7 +61,8 @@ namespace COWE.BusinessLayer
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception("ParsedFileNotifier unable to find parsed pcap files: " + ex.Message);
+                    // Ignore file not found errors
+                    //throw new Exception("ParsedFileNotifier unable to find parsed pcap files: " + ex.Message);
                 }
             }
         }

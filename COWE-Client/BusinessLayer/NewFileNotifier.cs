@@ -42,6 +42,7 @@ namespace COWE.BusinessLayer
 
                     foreach (var file in fi)
                     {
+                        // Why are we calling the following method?  We are not doing anything with it...
                         pcp.ProcessPacketFile(file.Name);
 
                         if (currentCaptureFileName != file.Name)

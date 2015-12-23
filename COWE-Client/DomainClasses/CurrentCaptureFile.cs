@@ -38,7 +38,7 @@ namespace COWE.DomainClasses
         #endregion
 
         #region Events
-        public event ReceivedParsedFileEventHandler ReceivedParsedFile;
+        //public event ReceivedParsedFileEventHandler ReceivedParsedFile;
         #endregion
 
         #region Private Variables
@@ -76,10 +76,11 @@ namespace COWE.DomainClasses
         //}
         public void ReceiveFile(CurrentCaptureFile captureFile)
         {
-            if (ReceivedParsedFile != null)
-            {
-                ReceivedParsedFile(captureFile);
-            }
+            // No longer using this event
+            //if (ReceivedParsedFile != null)
+            //{
+            //    ReceivedParsedFile(captureFile);
+            //}
         }
     }
 }
