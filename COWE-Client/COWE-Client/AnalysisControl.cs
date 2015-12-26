@@ -108,6 +108,7 @@ namespace COWE.Client
             }
 #endif
                 //Point location = new Point(Client.ActiveForm.Location.X + ((Client.ActiveForm.Width / 2) - 128), Client.ActiveForm.Location.Y + ((Client.ActiveForm.Height / 2) - 45));
+
                 NotifyUserForm.ShowRecalculatingNotice("Retrieving data...", location);
                 RefreshData();
                 NotifyUserForm.CloseForm();
@@ -467,46 +468,49 @@ namespace COWE.Client
             
             foreach (CurrentCaptureFile file in lastBatchIds)
             {
-                //BindingList<BatchIntervalMarked> batchIntervals = new BindingList<BatchIntervalMarked>();
-                
-                // Retrieve the probability data from the database
-                BindingList<SingleHistogram> histogramProbabilityList = new BindingList<SingleHistogram>();
-                histogramProbabilityList = pcp.GetSingleHistogramProbabilityData(file.CaptureBatchId);
-
-                // Convert the histogram probability data 
-                SortedDictionary<int, decimal> probabilities = new SortedDictionary<int, decimal>();
-                //SortedDictionary<int, decimal> markedProbabilities = new SortedDictionary<int, decimal>();
-                //SortedDictionary<int, decimal> unmarkedProbabilities = new SortedDictionary<int, decimal>();
-
-
-                foreach (SingleHistogram hist in histogramProbabilityList)
+                if (file != null)
                 {
-                    probabilities.Add(hist.Interval, hist.Probability);
-                }
+                    //BindingList<BatchIntervalMarked> batchIntervals = new BindingList<BatchIntervalMarked>();
 
-                //// Calculate probabilities
-                //batchIntervals = pcp.GetMarkedBatchIntervals(file.CaptureBatchId);
-                //int histogramBinSize = Convert.ToInt32(HistogramBinSize);
-                ////SortedDictionary<int, decimal> probabilities = new CalculateProbability(batchIntervals).GetProbabilityByPacketRange(_trimZeroPacketIntervals, histogramBinSize);
-                //SortedDictionary<int, decimal> probabilities = new CalculateProbability(batchIntervals).GetProbabilityByPacketRange(_trimZeroPacketIntervals, histogramBinSize);
+                    // Retrieve the probability data from the database
+                    BindingList<SingleHistogram> histogramProbabilityList = new BindingList<SingleHistogram>();
+                    histogramProbabilityList = pcp.GetSingleHistogramProbabilityData(file.CaptureBatchId);
 
-                // Update the chart
-                if (file.CaptureState == CaptureState.Marked)
-                {
-                    SingleChart.Series["MarkedProbabilities"].Color = Color.CornflowerBlue;
+                    // Convert the histogram probability data 
+                    SortedDictionary<int, decimal> probabilities = new SortedDictionary<int, decimal>();
+                    //SortedDictionary<int, decimal> markedProbabilities = new SortedDictionary<int, decimal>();
+                    //SortedDictionary<int, decimal> unmarkedProbabilities = new SortedDictionary<int, decimal>();
 
-                    foreach (KeyValuePair<int, decimal> pair in probabilities)
+
+                    foreach (SingleHistogram hist in histogramProbabilityList)
                     {
-                        SingleChart.Series["MarkedProbabilities"].Points.AddXY(Convert.ToDouble(pair.Key), Convert.ToDouble(pair.Value));
+                        probabilities.Add(hist.Interval, hist.Probability);
                     }
-                }
-                else
-                {
-                    SingleChart.Series["UnmarkedProbabilities"].Color = Color.Red;
 
-                    foreach (KeyValuePair<int, decimal> pair in probabilities)
+                    //// Calculate probabilities
+                    //batchIntervals = pcp.GetMarkedBatchIntervals(file.CaptureBatchId);
+                    //int histogramBinSize = Convert.ToInt32(HistogramBinSize);
+                    ////SortedDictionary<int, decimal> probabilities = new CalculateProbability(batchIntervals).GetProbabilityByPacketRange(_trimZeroPacketIntervals, histogramBinSize);
+                    //SortedDictionary<int, decimal> probabilities = new CalculateProbability(batchIntervals).GetProbabilityByPacketRange(_trimZeroPacketIntervals, histogramBinSize);
+
+                    // Update the chart
+                    if (file.CaptureState == CaptureState.Marked)
                     {
-                        SingleChart.Series["UnmarkedProbabilities"].Points.AddXY(Convert.ToDouble(pair.Key), Convert.ToDouble(pair.Value));
+                        SingleChart.Series["MarkedProbabilities"].Color = Color.CornflowerBlue;
+
+                        foreach (KeyValuePair<int, decimal> pair in probabilities)
+                        {
+                            SingleChart.Series["MarkedProbabilities"].Points.AddXY(Convert.ToDouble(pair.Key), Convert.ToDouble(pair.Value));
+                        }
+                    }
+                    else
+                    {
+                        SingleChart.Series["UnmarkedProbabilities"].Color = Color.Red;
+
+                        foreach (KeyValuePair<int, decimal> pair in probabilities)
+                        {
+                            SingleChart.Series["UnmarkedProbabilities"].Points.AddXY(Convert.ToDouble(pair.Key), Convert.ToDouble(pair.Value));
+                        }
                     }
                 }
             }

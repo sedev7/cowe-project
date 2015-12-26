@@ -535,12 +535,12 @@ namespace COWE.BusinessLayer
             var lastMarkedBatchId = (from m in batch
                                      where m.CaptureState == CaptureState.Marked
                                      orderby m.CaptureBatchId descending
-                                     select m).First();
+                                     select m).FirstOrDefault();
 
             var lastUnmarkedBatchId = (from m in batch
                                      where m.CaptureState == CaptureState.Unmarked
                                      orderby m.CaptureBatchId descending
-                                     select m).First();
+                                       select m).FirstOrDefault();
 
             lastBatchIds.Add(lastMarkedBatchId);
             lastBatchIds.Add(lastUnmarkedBatchId);

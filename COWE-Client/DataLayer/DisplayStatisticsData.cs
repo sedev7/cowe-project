@@ -33,18 +33,21 @@ namespace COWE.DataLayer
         {
             DisplayStatistic statistics = new DisplayStatistic();
 
-            using (var context = new PacketAnalysisEntity())
+            if (GetSingleMarkedDisplayStatistics().Count > 0)
             {
-                // Get the last Id value for single marked statistic data
-                var maxid = (from m in context.DisplayStatistics
-                             where m.Marked == true && m.BatchType == 1
-                             select m.DisplayStatisticId).Max();
+                using (var context = new PacketAnalysisEntity())
+                {
+                    // Get the last Id value for single marked statistic data
+                    var maxid = (from m in context.DisplayStatistics
+                                 where m.Marked == true && m.BatchType == 1
+                                 select m.DisplayStatisticId).Max();
 
-                var data = (from d in context.DisplayStatistics
-                            where d.DisplayStatisticId == maxid
-                            select d).FirstOrDefault();
+                    var data = (from d in context.DisplayStatistics
+                                where d.DisplayStatisticId == maxid
+                                select d).FirstOrDefault();
 
-                statistics = data;
+                    statistics = data;
+                }
             }
             return statistics;
         }
@@ -64,18 +67,21 @@ namespace COWE.DataLayer
         {
             DisplayStatistic statistics = new DisplayStatistic();
 
-            using (var context = new PacketAnalysisEntity())
+            if (GetSingleUnmarkedDisplayStatistics().Count > 0)
             {
-                // Get the last Id value for single unmarked statistic data
-                var maxid = (from m in context.DisplayStatistics
-                             where m.Marked == false && m.BatchType == 1
-                             select m.DisplayStatisticId).Max();
+                using (var context = new PacketAnalysisEntity())
+                {
+                    // Get the last Id value for single unmarked statistic data
+                    var maxid = (from m in context.DisplayStatistics
+                                 where m.Marked == false && m.BatchType == 1
+                                 select m.DisplayStatisticId).Max();
 
-                var data = (from d in context.DisplayStatistics
-                            where d.DisplayStatisticId == maxid
-                            select d).FirstOrDefault();
+                    var data = (from d in context.DisplayStatistics
+                                where d.DisplayStatisticId == maxid
+                                select d).FirstOrDefault();
 
-                statistics = data;
+                    statistics = data;
+                }
             }
             return statistics;
         }
