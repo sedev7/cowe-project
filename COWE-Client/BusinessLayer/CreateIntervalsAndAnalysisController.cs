@@ -12,9 +12,13 @@ namespace COWE.BusinessLayer
 {
     public class CreateIntervalsAndAnalysisController
     {
+        #region Global Variables
         bool IsRunning = false;
+        #endregion
+        #region Constructors
         public CreateIntervalsAndAnalysisController() { }
-
+        #endregion
+        #region Public Methods
         public void ProcessFiles()
         {
             IsRunning = true;
@@ -54,7 +58,12 @@ namespace COWE.BusinessLayer
                 Thread.Sleep(3000);
             }
         }
-
+        public void Stop()
+        {
+            IsRunning = false;
+        }
+        #endregion
+        #region Private Methods
         private void CreateAnalysisData(CurrentCaptureFile file)
         {
             AnalysisEngine analysisEngine = new AnalysisEngine(AnalysisConfiguration.TrimSmallPackets, AnalysisConfiguration.HistogramBinSize, AnalysisConfiguration.HypothesisTestType, file);
@@ -66,10 +75,6 @@ namespace COWE.BusinessLayer
             analysisEngine.CalculateHypothesisTestResults();
             analysisEngine = null;
         }
-
-        public void Stop()
-        {
-            IsRunning = false;
-        }
+        #endregion
     }
 }

@@ -65,6 +65,7 @@ namespace COWE.Client
         private void RefreshButton_Click(object sender, EventArgs e)
         {
             GrayOutGridAndChartsWhileRecalculating();
+            AnalysisConfiguration.FoundCoresidentVm = false;
 
             // Locate form in the current center of the Client form
             Point location = new Point();

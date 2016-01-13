@@ -85,12 +85,13 @@ namespace COWE.Client
 
         #region Events
         //public event ReceivedParsedFileEventHandler ReceivedParsedFile;
-       
+        
         #endregion
 
         #region Global Variables
 
         private AnalysisControl _AnalysisControl = null;
+        //AnalysisEngine _AnalysisEngine = null;
 
         BindingList<CurrentCaptureFile> _CurrentCaptureFiles = null;     // Capture file(s) currently being processed
         BindingList<PcapNetworkInterface> _NetworkInterfaces = null;
@@ -106,6 +107,8 @@ namespace COWE.Client
         int _MaxGridHeight = 0;                 // Height of grid when maximum number of rows are displayed
         int _SelectedRow = 0;                   // Row index of currently selected grid row
         int _FlooderTimerInterval = 0;          // Number of seconds to run flooder
+        int _MarkedFileCount = 0;               // Number of marked capture files
+        int _UnmarkedFileCount = 0;             // Number of unmarked capture files
 
         BindingList<Flooder> _Flooders = new BindingList<Flooder>();
 
@@ -140,21 +143,21 @@ namespace COWE.Client
         string _TargetPortOld = string.Empty;
         string _TargetPortNew = string.Empty;
 
-        //// Flooder initial values
-        //string _InitialFlooderIP = "10.10.10.46";
-        //string _InitialFlooderPort = "8080";
-        //string _InitialTargetIP = "10.10.10.100";
-        //string _InitialTargetPort = "80";
-        //string _InitialDestinationIP = "10.10.10.208";
-        //string _InitialFlooderInterval = "20";                      // Time period for each flooder interval in seconds
-
-        // Flooder alternate initial values
-        string _InitialFlooderIP = "192.168.0.19";
+        // Flooder initial values
+        string _InitialFlooderIP = "10.10.10.46";
         string _InitialFlooderPort = "8080";
-        string _InitialTargetIP = "192.168.0.100";
+        string _InitialTargetIP = "10.10.10.100";
         string _InitialTargetPort = "80";
-        string _InitialDestinationIP = "192.168.0.2";
+        string _InitialDestinationIP = "10.10.10.208";
         string _InitialFlooderInterval = "20";                      // Time period for each flooder interval in seconds
+
+        //// Flooder alternate initial values
+        //string _InitialFlooderIP = "192.168.0.19";
+        //string _InitialFlooderPort = "8080";
+        //string _InitialTargetIP = "192.168.0.100";
+        //string _InitialTargetPort = "80";
+        //string _InitialDestinationIP = "192.168.0.2";
+        //string _InitialFlooderInterval = "20";                      // Time period for each flooder interval in seconds
 
         private DispatcherTimer timer = new DispatcherTimer();
         private Stopwatch stopWatch = new Stopwatch();
@@ -218,6 +221,17 @@ namespace COWE.Client
         #endregion
 
         #region Event Handlers
+
+        //private void OnFoundCoresidentVm(bool foundCoresVm)
+        //{
+        //    if(foundCoresVm)
+        //    {
+        //        // Update the UI the grid
+
+        //        // Temporary code
+        //        MessageBox.Show("Received Hypothesis Test = True"); 
+        //    }
+        //}
         private void AddFlooderButton_Click(object sender, EventArgs e)
         {
             int pid = _PID++;
@@ -251,6 +265,11 @@ namespace COWE.Client
             AnalysisConfiguration.Zvalue = 1.65M;    // Z value for (1-_alpha), from standard normal distribution table
             // (note: one-tailed test because we are looking at the distribution 
             // for the difference of the means)
+
+            ProcessCapturePackets pcp = new ProcessCapturePackets();
+            _MarkedFileCount = pcp.GetRawFileCountMarked();
+            _UnmarkedFileCount = pcp.GetRawFileCountUnmarked();
+            DisplayCapturedFileCount();
 
             // Start the background worker thread for the new file notifier
             bgWorker.RunWorkerAsync();
@@ -382,6 +401,7 @@ namespace COWE.Client
                         DisableFlooderControls();
 
                         FileQueue.Clear();
+                        AnalysisConfiguration.FoundCoresidentVm = false;
 
                         if(_ProcessedFileNotifierThread == null)
                         {
@@ -446,6 +466,9 @@ namespace COWE.Client
                                 {
                                     // Packet capture started successfully
                                     DisplayProgressMessage("Capturing marked packet data...");
+                                    InitializeFileCount();
+                                    DisplayCapturedFileCount();
+                                    Application.DoEvents();
 
                                     //// Start the timer (ms increments)
                                     //_FlooderIntervalTimer = new System.Timers.Timer(_FlooderTimerInterval * 1000);
@@ -671,6 +694,17 @@ namespace COWE.Client
             CurrentCaptureFile ccf = new CurrentCaptureFile(_CurrentCaptureFileName, IsMarked == true ? CaptureState.Marked : CaptureState.Unmarked);
             FileQueue.Enqueue(ccf);
 
+            // Increment the file count
+            if(ccf.CaptureState  == CaptureState.Marked)
+            {
+                _MarkedFileCount++;
+            }
+            else
+            {
+                _UnmarkedFileCount++;
+            }
+            DisplayCapturedFileCount();
+
             // Start the next packet capture file
             if (IsFlooding)
             {
@@ -710,6 +744,30 @@ namespace COWE.Client
             //ccf.ReceiveFile(ccf);
 
             //UpdateParseFilesServiceStatus();
+
+            // Check to see if we found a coresident VM
+            int activeRow = 0;
+            foreach (DataGridViewRow row in _FlooderStatusDataGridView.Rows)
+            {
+                if (row.Cells["FlooderStatus"].Value.ToString() == "Running")
+                {
+                    activeRow = row.Index;
+                    break;
+                }
+            }
+
+            if(AnalysisConfiguration.FoundCoresidentVm)
+            {
+                _FlooderStatusDataGridView.Rows[activeRow].Cells["FlooderStatus"].Value = "Co-Resident";   // Status
+                _FlooderStatusDataGridView.Rows[activeRow].Cells["FlooderStatus"].Style.BackColor = CoResident;
+                Application.DoEvents();
+            }
+            else
+            {
+                _FlooderStatusDataGridView.Rows[activeRow].Cells["FlooderStatus"].Value = "Running";   // Status
+                _FlooderStatusDataGridView.Rows[activeRow].Cells["FlooderStatus"].Style.BackColor = NonResident;
+                Application.DoEvents();
+            }
         }
         //private static void OnReceivedFileEvent(string msg)
         //{
@@ -823,7 +881,8 @@ namespace COWE.Client
                         row.Cells[6].Style.BackColor = NotConnected;
                         break;
                     case "Running":
-                        row.Cells[6].Style.BackColor = NonResident;
+                        //row.Cells[6].Style.BackColor = NonResident;
+                        row.Cells[6].Style.BackColor = AnalysisConfiguration.FoundCoresidentVm ? CoResident : NonResident;
                         break;
                     case "Co-Resident":
                         row.Cells[6].Style.BackColor = CoResident;
@@ -1466,6 +1525,9 @@ namespace COWE.Client
             this.FlooderIntervalTextBox.Validating += new CancelEventHandler(TextBoxIntegerEntry_Validating);
             this.TargetPortTextBox.Validating += new CancelEventHandler(TextBoxIntegerEntry_Validating);
 
+            //// Subscribe to Coresident VM notification event
+            //this._AnalysisEngine = new AnalysisEngine();
+            //_AnalysisEngine.FoundCoresidentVm += new AnalysisEngine.FoundCoresidentVmEventHandler(OnFoundCoresidentVm);
         }
         private void ResizeFlooderGrid()
         {
@@ -1786,6 +1848,20 @@ namespace COWE.Client
             this.ProgressSpinnerPictureBox.Visible = false;
             this.ProgressLabel.Text = "";
             this.ProgressLabel.Visible = false;
+        }
+        private void InitializeFileCount()
+        {
+            _MarkedFileCount = _UnmarkedFileCount = 0;
+        }
+        private void DisplayCapturedFileCount()
+        {
+            this.ClientStatusToolStripStatusLabel.Visible = true;
+            this.ClientStatusToolStripStatusLabel.Text = string.Format("File Count: Marked: {0}     Unmarked: {1}          ", _MarkedFileCount, _UnmarkedFileCount);
+            Application.DoEvents();
+        }
+        private void HideCapturedFileCount()
+        {
+            this.ClientStatusToolStripStatusLabel.Visible = false;
         }
         private void ResetDatabaseAndDeleteCaptureFiles()
         {

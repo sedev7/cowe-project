@@ -20,5 +20,6 @@ namespace COWE.DomainClasses
                                                     // for the difference of the means)
         public static string ProcessedCaptureFilesPath { get; set; }
         public static int TimerInterval { get; set; }
+        public static bool FoundCoresidentVm { get; set; }
     }
 }

@@ -31,6 +31,12 @@ namespace COWE.BusinessLayer
         SortedDictionary<int, decimal> _CumulativeMarkedProbabilities = new SortedDictionary<int, decimal>();
         SortedDictionary<int, decimal> _CumulativeUnmarkedProbabilities = new SortedDictionary<int, decimal>();
         #endregion
+        #region Delegates
+        //public delegate void FoundCoresidentVmEventHandler(bool result);
+        //#endregion
+        //#region Events
+        //public event FoundCoresidentVmEventHandler FoundCoresidentVm;
+        #endregion
 
         #region Constructors
         public AnalysisEngine() { }
@@ -549,6 +555,24 @@ namespace COWE.BusinessLayer
                     break;
             }
         }
+
+        //protected void OnFoundCoresidentVm(bool foundCoresidentVm)
+        //{
+        //    if (FoundCoresidentVm != null)
+        //    {
+        //        FoundCoresidentVm(foundCoresidentVm);
+
+        //    }
+        //}
+
+        //public void CoresidentVm()
+        //{
+        //    if (FoundCoresidentVm != null)
+        //    {
+        //        FoundCoresidentVm(true);
+        //    }
+        //}
+        
         public void CalculateHypothesisTestResults()
         {
             // Only perform these calculations if files have been processed and a pair of files (marked and unmarked) are available
@@ -566,7 +590,8 @@ namespace COWE.BusinessLayer
                 HasValues = ht.HasValues;
             }
 
-            if (markedFileCount >= 1 && unmarkedFileCount >= 1 && (markedFileCount + unmarkedFileCount) % 2 == 0)
+            //if (markedFileCount >= 1 && unmarkedFileCount >= 1 && (markedFileCount + unmarkedFileCount) % 2 == 0)
+            if (markedFileCount >= 1 && unmarkedFileCount >= 1)
             {
                 // Get mean of means test results
                 HypothesisTest htMeans = new HypothesisTest();
@@ -576,6 +601,15 @@ namespace COWE.BusinessLayer
                 ht.MeansTestResult = htMeans.MeansTestResult;
                 ht.MeanOfMeansVariance = htMeans.MeanOfMeansVariance;
                 ht.MeansVarianceStandardDeviation = htMeans.MeansVarianceStandardDeviation;
+
+                if(AnalysisConfiguration.HypothesisTestType == HypothesisTestType.MeansTest && htMeans.MeansTestResult)
+                {
+                    AnalysisConfiguration.FoundCoresidentVm = true;
+                }
+                else
+                {
+                    AnalysisConfiguration.FoundCoresidentVm = false;
+                }
 
                 if (AnalysisConfiguration.HypothesisTestType == HypothesisTestType.KsTestStep)
                 {
@@ -589,8 +623,18 @@ namespace COWE.BusinessLayer
                     ht.KsTestResult = htKsStep.KsTestResult;
                     ht.HasValues = true;
                     IsDirty = true;
+
+                    if(htKsStep.KsTestResult)
+                    {
+                        AnalysisConfiguration.FoundCoresidentVm = true;
+                    }
+                    else
+                    {
+                        AnalysisConfiguration.FoundCoresidentVm = false;
+                    }
                 }
-                else
+                //else
+                else if(AnalysisConfiguration.HypothesisTestType == HypothesisTestType.KsTestLinear)
                 {
                     // Default: Get the K-S test results (using linear extrapolation between probability data points)
                     HypothesisTest htKsLinear = new HypothesisTest();
@@ -602,6 +646,15 @@ namespace COWE.BusinessLayer
                     ht.KsTestResult = htKsLinear.KsTestResult;
                     ht.HasValues = true;
                     IsDirty = true;
+
+                    if (htKsLinear.KsTestResult)
+                    {
+                        AnalysisConfiguration.FoundCoresidentVm = true;
+                    }
+                    else
+                    {
+                        AnalysisConfiguration.FoundCoresidentVm = false;
+                    }
                 }
             }
             else if(!HasValues)

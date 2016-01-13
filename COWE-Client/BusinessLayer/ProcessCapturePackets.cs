@@ -620,6 +620,20 @@ namespace COWE.BusinessLayer
             fileCount = cfd.GetProcessedFilesCountUnmarked();
             return fileCount;
         }
+        public int GetRawFileCountMarked()
+        {
+            int fileCount = 0;
+            CaptureFileData cfd = new CaptureFileData();
+            fileCount = cfd.GetRawFileCountMarked();
+            return fileCount;
+        }
+        public int GetRawFileCountUnmarked()
+        {
+            int fileCount = 0;
+            CaptureFileData cfd = new CaptureFileData();
+            fileCount = cfd.GetRawFileCountUnmarked();
+            return fileCount;
+        }
         public BindingList<SingleHistogram> GetSingleHistogramProbabilityData(int captureBatchId)
         {
             BindingList<SingleHistogram> probabilities = new BindingList<SingleHistogram>();

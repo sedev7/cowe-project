@@ -26,6 +26,12 @@ namespace COWE.DataLayer
                 var data = (from d in context.DisplayStatistics
                             where d.Marked ==  true && d.BatchType == 1
                             select d).ToList();
+
+                foreach (var stat in data)
+                {
+                    DisplayStatistic statistic = stat;
+                    statistics.Add(stat);
+                }
             }
             return statistics;
         }
@@ -60,6 +66,12 @@ namespace COWE.DataLayer
                 var data = (from d in context.DisplayStatistics
                             where d.Marked == false && d.BatchType == 1
                             select d).ToList();
+
+                foreach (var stat in data)
+                {
+                    DisplayStatistic statistic = stat;
+                    statistics.Add(stat);
+                }
             }
             return statistics;
         }

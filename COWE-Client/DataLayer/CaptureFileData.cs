@@ -197,6 +197,36 @@ namespace COWE.DataLayer
             }
             return fileCount;
         }
+        public int GetRawFileCountMarked()
+        {
+            // Gets the total number of marked files
+            int fileCount = 0;
+
+            using (var context = new PacketAnalysisEntity())
+            {
+                var count = (from c in context.CaptureBatches
+                             where c.Marked == true
+                             select c).Count();
+
+                fileCount = Convert.ToInt32(count);
+            }
+            return fileCount;
+        }
+        public int GetRawFileCountUnmarked()
+        {
+            // Gets the total number of marked files
+            int fileCount = 0;
+
+            using (var context = new PacketAnalysisEntity())
+            {
+                var count = (from c in context.CaptureBatches
+                             where c.Marked == false
+                             select c).Count();
+
+                fileCount = Convert.ToInt32(count);
+            }
+            return fileCount;
+        }
 
         public bool UpdateBatchMean(int captureBatchId, decimal mean, decimal trimmedMean)
         {

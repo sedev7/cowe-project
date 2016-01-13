@@ -49,7 +49,7 @@
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationManifest>obj\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="EntityFramework">
@@ -101,6 +101,7 @@
     </Compile>
     <Compile Include="Flooder.cs" />
     <Compile Include="FlooderIntervalTimer.cs" />
+    <Compile Include="FoundCoresidentVmEventArgs.cs" />
     <Compile Include="InterarrivalInterval.cs" />
     <Compile Include="PcapNetworkInterface.cs" />
     <Compile Include="Program.cs" />
@@ -144,7 +145,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <None Include="app.manifest" />
+    <None Include="obj\app.manifest" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
