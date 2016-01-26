@@ -204,7 +204,7 @@ namespace COWE.BusinessLayer
             }
             catch (Exception ex)
             {
-                throw new Exception("Error retrieving capture packet data: " + ex.Message);
+                throw new Exception("Error processing packet file: " + ex.Message);
             }
         }
 

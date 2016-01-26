@@ -145,7 +145,7 @@ namespace COWE.BusinessLayer
                 int binCount = Convert.ToInt32(Math.Round(Math.Sqrt(sampleCount)));
                 //double interval = maxValue.Subtract(minValue).TotalMilliseconds;
                 decimal interval = maxValue - minValue;
-                // Note: use ceilin function to add one millisecond to binSize to account for rounding (no fractional milliseconds in a TimeSpan - must be Int64)
+                // Note: use ceiling function to add one millisecond to binSize to account for rounding (no fractional milliseconds in a TimeSpan - must be Int64)
                 //TimeSpan binSize = new TimeSpan(Convert.ToInt64(Math.Ceiling(interval / binCount)) * Convert.ToInt64(TimeSpan.TicksPerMillisecond));
                 //TimeSpan binSize = new TimeSpan(Convert.ToInt64(Math.Ceiling(interval / binCount)));
                 long binSize = (Convert.ToInt64(Math.Ceiling(interval / binCount)));
@@ -167,7 +167,7 @@ namespace COWE.BusinessLayer
                 var endTime = (from t in capturePackets select t.TimeStamp).Max();
                 DateTime currentBin = startTime.AddTicks(binSize);
 
-                // Assign values to then bins
+                // Assign values to the bins
                 foreach (CapturePacket cp in capturePackets)
                 {
                     if (j <= binCount)
