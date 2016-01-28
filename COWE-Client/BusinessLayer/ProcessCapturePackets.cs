@@ -567,8 +567,15 @@ namespace COWE.BusinessLayer
         public BindingList<CumulativeProbabilityDistribution> GetCumulativeProbabilityDistributionData(CaptureState captureState)
         {
             BindingList<CumulativeProbabilityDistribution> distribution = new BindingList<CumulativeProbabilityDistribution>();
-            CumulativeProbabilityDistributionData cpdd = new CumulativeProbabilityDistributionData();
-            distribution = cpdd.GetCumulativeProbabilityDistribution(captureState);
+            //CumulativeProbabilityDistributionData cpdd = new CumulativeProbabilityDistributionData();
+            //distribution = cpdd.GetCumulativeProbabilityDistribution(captureState);
+            using (var cpdRepository = new CumulativeProbabilityDistributionRepository(new UnitOfWorkCumulativeProbability()))
+            {
+                foreach(CumulativeProbabilityDistribution cpd in cpdRepository.All.ToList())
+                {
+                    distribution.Add(cpd);
+                }
+            }
             return distribution;
         }
  

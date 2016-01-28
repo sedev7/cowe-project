@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnalysisConfiguration.cs" />
+    <Compile Include="BaseStatistics.cs" />
     <Compile Include="BatchInterval.cs" />
     <Compile Include="BatchIntervalMarked.cs" />
     <Compile Include="BatchStatistics.cs" />

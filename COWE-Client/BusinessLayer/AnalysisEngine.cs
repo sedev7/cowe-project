@@ -126,7 +126,6 @@ namespace COWE.BusinessLayer
             return result;
         }
 
-        //public bool CalculateBatchStatistics()
         public bool CalculateCumulativeBatchStatistics()
         {
             bool result = false;
@@ -277,74 +276,35 @@ namespace COWE.BusinessLayer
 
             // Calculate statistics for the batch
             BatchStatistics bs = new BatchStatistics();
-            double varianceSum = 0;
-            double variance = 0;
 
             if (AnalysisConfiguration.TrimSmallPackets)
             {
-                bs.IntervalCountTrimmed = batchIntervalsTrimmed.Count;
-                var maxValue = (from t in batchIntervalsTrimmed select t.PacketCount).Max();
-                var minValue = (from t in batchIntervalsTrimmed select t.PacketCount).Min();
-                var meanValue = (from t in batchIntervalsTrimmed select t.PacketCount).Average();
-
-                // Calculate standard deviation
-                var packets = (from t in batchIntervalsTrimmed select t.PacketCount).ToList();
-                var packetAverage = packets.Sum() / (double)batchIntervalsTrimmed.Count;
-
-                foreach (var item in packets)
-                {
-                    double packetVariance = Math.Pow((Convert.ToDouble(item) - Convert.ToDouble(packetAverage)), 2);
-                    //double packetVariance = Math.Pow((Convert.ToDouble(item) - Convert.ToDouble(meanValue)), 2);
-                    varianceSum += packetVariance;
-                }
-                variance = (Convert.ToDouble(varianceSum) / (bs.IntervalCountTrimmed - 1));
-                var stdDevValue = Math.Sqrt(variance);
-
-                bs.IntervalCount = (from t in batchIntervals select t).Count();
-                bs.PacketCountMaximum = maxValue;
-                bs.PacketCountMinimum = minValue;
-                bs.PacketCountMean = Convert.ToDecimal(Convert.ToDouble(meanValue));
-                bs.PacketCountStandardDeviation = Convert.ToDecimal(stdDevValue);
+                BaseStatistics stats = new BaseStatistics(batchIntervalsTrimmed);
+                bs.IntervalCount = stats.Count;
+                bs.PacketCountMaximum = stats.Maximum;
+                bs.PacketCountMinimum = stats.Minimum;
+                bs.PacketCountMean = stats.Mean;
+                bs.PacketCountStandardDeviation = stats.StdDev;
 
                 // Calculate both means for updating the capture batch intervals
-                batchIntervalsTrimmedMean = bs.PacketCountMean;
-                var untrimmedMean = (from t in batchIntervals select t.PacketCount).Average();
-                batchIntervalsMean = Convert.ToDecimal(untrimmedMean);
+                batchIntervalsTrimmedMean = stats.Mean;
+                batchIntervalsMean = Convert.ToDecimal((from t in batchIntervals select t.PacketCount).Average());
             }
             else
             {
-                bs.IntervalCount = batchIntervals.Count;
-                var maxValue = (from t in batchIntervals select t.PacketCount).Max();
-                var minValue = (from t in batchIntervals select t.PacketCount).Min();
-                var meanValue = (from t in batchIntervals select t.PacketCount).Average();
-
-                // Calculate standard deviation
-                var packets = (from t in batchIntervals select t.PacketCount).ToList();
-                var packetAverage = packets.Sum() / (double)batchIntervals.Count;
-
-
-                foreach (var item in packets)
-                {
-                    double packetVariance = Math.Pow((Convert.ToDouble(item) - Convert.ToDouble(packetAverage)), 2);
-                    //double packetVariance = Math.Pow((Convert.ToDouble(item) - Convert.ToDouble(meanValue)), 2);
-                    varianceSum += packetVariance;
-                }
-                variance = Convert.ToDouble(varianceSum) / (bs.IntervalCount - 1);
-                var stdDevValue = Math.Sqrt(variance);
-
-                bs.PacketCountMaximum = maxValue;
-                bs.PacketCountMinimum = minValue;
-                bs.PacketCountMean = Convert.ToDecimal(meanValue);
-                bs.PacketCountStandardDeviation = Convert.ToDecimal(stdDevValue);
+                BaseStatistics stats = new BaseStatistics(batchIntervals);
+                bs.IntervalCount = stats.Count;
+                bs.PacketCountMaximum = stats.Maximum;
+                bs.PacketCountMinimum = stats.Minimum;
+                bs.PacketCountMean = stats.Mean;
+                bs.PacketCountStandardDeviation = stats.StdDev;
 
                 // Calculate both means for updating the capture batch intervals
                 batchIntervalsMean = bs.PacketCountMean;
-                var trimmedMean = (from t in batchIntervalsTrimmed select t.PacketCount).Average();
-                batchIntervalsTrimmedMean = Convert.ToDecimal(trimmedMean);
+                batchIntervalsTrimmedMean = Convert.ToDecimal((from t in batchIntervalsTrimmed select t.PacketCount).Average());
             }
 
-            //// Update the batch mean - only for single batches, not cumulative batches
-            //var captureBatchId = (from c in batchIntervals select c.CaptureBatchId).FirstOrDefault();
+            // Update the batch mean - only for single batches, not cumulative batches
             CurrentCaptureFile captureFile = new CurrentCaptureFile();
             ProcessCapturePackets pcp = new ProcessCapturePackets();
             captureFile = pcp.GetCurrentCaptureFile(_CaptureFileName);
@@ -411,17 +371,6 @@ namespace COWE.BusinessLayer
                     break;
             }
         }
-
-        /*********************************************************************************************
-         * 
-         * Need to split this into two methods according to BatchType, then call the method below and
-         * pass in BatchType and BatchIntervals (single or cumulative).  Are batch intervals the same type???
-         * 
-         * ==> add CaptureBatchId field when inserting histogram data for single batches
-         * 
-         * 
-         *********************************************************************************************/
-
         public void CalculateSingleHistogramData()
         {
             ProcessCapturePackets pcp = new ProcessCapturePackets();
@@ -444,7 +393,6 @@ namespace COWE.BusinessLayer
             //        break;
             //}
         }
-
         public void CalculateCumulativeHistogramData()
         {
             // Delete existing cumulative histogram data - it will be replaced with new data
@@ -507,72 +455,68 @@ namespace COWE.BusinessLayer
             BindingList<BatchIntervalMarked> unmarkedBatchIntervals = new BindingList<BatchIntervalMarked>();
             BindingList<BatchIntervalMarked> markedBatchIntervals = new BindingList<BatchIntervalMarked>();
             BindingList<CumulativeProbabilityDistribution> distribution = new BindingList<CumulativeProbabilityDistribution>();
-            CumulativeProbabilityDistributionData cumProbDistData = new CumulativeProbabilityDistributionData();
+            //CumulativeProbabilityDistributionData cumProbDistData = new CumulativeProbabilityDistributionData();
 
-            // Delete any existing cumulative probability distribution data for the captureState
-            cumProbDistData.DeleteCumulativeProbabilityDistribution(captureState);
-
-            // Add the newly calculated cumulative probability distribution
-            switch (captureState)
+            using (var uow = new UnitOfWorkCumulativeProbability())
             {
-                case CaptureState.Marked:
-                    if (_CumulativeMarkedProbabilities != null)
+                //using (var cpdRepository = new CumulativeProbabilityDistributionRepository(new UnitOfWorkCumulativeProbability()))
+                using (var cpdRepository = new CumulativeProbabilityDistributionRepository(uow))
+                {
+                    //// Delete any existing cumulative probability distribution data for the captureState
+                    //cumProbDistData.DeleteCumulativeProbabilityDistribution(captureState);
+                    cpdRepository.DeleteAll();
+
+
+                    // Add the newly calculated cumulative probability distribution
+                    switch (captureState)
                     {
-                        SortedDictionary<int, decimal> markedProbabilities = new CalculateProbability(markedBatchIntervals).GetCumulativeProbabilityDistribution(_CumulativeMarkedProbabilities);
+                        case CaptureState.Marked:
+                            if (_CumulativeMarkedProbabilities != null)
+                            {
+                                SortedDictionary<int, decimal> markedProbabilities = new CalculateProbability(markedBatchIntervals).GetCumulativeProbabilityDistribution(_CumulativeMarkedProbabilities);
 
-                        // Convert to CumulativeProbabilityDistribution type
-                        foreach (KeyValuePair<int, decimal> item in markedProbabilities)
-                        {
-                            CumulativeProbabilityDistribution cpd = new CumulativeProbabilityDistribution();
-                            cpd.CaptureState = (int)CaptureState.Marked;
-                            cpd.Interval = item.Key;
-                            cpd.Probability = Math.Round(item.Value, 10);
-                            distribution.Add(cpd);
-                        }
+                                // Convert to CumulativeProbabilityDistribution type
+                                foreach (KeyValuePair<int, decimal> item in markedProbabilities)
+                                {
+                                    CumulativeProbabilityDistribution cpd = new CumulativeProbabilityDistribution();
+                                    cpd.CaptureState = (int)CaptureState.Marked;
+                                    cpd.Interval = item.Key;
+                                    cpd.Probability = Math.Round(item.Value, 10);
+                                    //distribution.Add(cpd);
+                                    cpdRepository.InsertOrUpdate(cpd);
+                                    uow.Save();
+                                }
+                            }
+                            //// Save to database
+                            //cumProbDistData.InsertCumulativeProbabilityDistribution(distribution);
+                            break;
+
+                        case CaptureState.Unmarked:
+                            if (_CumulativeUnmarkedProbabilities != null)
+                            {
+                                SortedDictionary<int, decimal> unmarkedProbabilities = new CalculateProbability(unmarkedBatchIntervals).GetCumulativeProbabilityDistribution(_CumulativeUnmarkedProbabilities);
+
+                                // Convert to CumulativeProbabilityDistribution type
+                                foreach (KeyValuePair<int, decimal> item in unmarkedProbabilities)
+                                {
+                                    CumulativeProbabilityDistribution cpd = new CumulativeProbabilityDistribution();
+                                    cpd.CaptureState = (int)CaptureState.Unmarked;
+                                    cpd.Interval = item.Key;
+                                    //cpd.Probability = Convert.ToDecimal(String.Format("{0,10}", item.Value.ToString("D")));
+                                    cpd.Probability = Math.Round(item.Value, 10);
+                                    //distribution.Add(cpd);
+                                    cpdRepository.InsertOrUpdate(cpd);
+                                    uow.Save();
+                                }
+
+                            }
+                            //// Save to database
+                            //cumProbDistData.InsertCumulativeProbabilityDistribution(distribution);
+                            break;
                     }
-                    // Save to database
-                    cumProbDistData.InsertCumulativeProbabilityDistribution(distribution);
-                    break;
-
-                case CaptureState.Unmarked:
-                    if (_CumulativeUnmarkedProbabilities != null)
-                    {
-                        SortedDictionary<int, decimal> unmarkedProbabilities = new CalculateProbability(unmarkedBatchIntervals).GetCumulativeProbabilityDistribution(_CumulativeUnmarkedProbabilities);
-
-                        // Convert to CumulativeProbabilityDistribution type
-                        foreach (KeyValuePair<int, decimal> item in unmarkedProbabilities)
-                        {
-                            CumulativeProbabilityDistribution cpd = new CumulativeProbabilityDistribution();
-                            cpd.CaptureState = (int)CaptureState.Unmarked;
-                            cpd.Interval = item.Key;
-                            //cpd.Probability = Convert.ToDecimal(String.Format("{0,10}", item.Value.ToString("D")));
-                            cpd.Probability = Math.Round(item.Value,10);
-                            distribution.Add(cpd);
-                        }
-                    }
-                    // Save to database
-                    cumProbDistData.InsertCumulativeProbabilityDistribution(distribution);
-                    break;
+                }
             }
         }
-
-        //protected void OnFoundCoresidentVm(bool foundCoresidentVm)
-        //{
-        //    if (FoundCoresidentVm != null)
-        //    {
-        //        FoundCoresidentVm(foundCoresidentVm);
-
-        //    }
-        //}
-
-        //public void CoresidentVm()
-        //{
-        //    if (FoundCoresidentVm != null)
-        //    {
-        //        FoundCoresidentVm(true);
-        //    }
-        //}
-        
         public void CalculateHypothesisTestResults()
         {
             // Only perform these calculations if files have been processed and a pair of files (marked and unmarked) are available
@@ -682,7 +626,6 @@ namespace COWE.BusinessLayer
         #endregion
 
         #region Private Methods
-        //private void CalculateHistogramDataByType(BindingList<BatchIntervalMarked> batchIntervalsCollection, BatchType batchType, CaptureState captureState)
         private void CalculateSingleHistogramProbability(BindingList<BatchIntervalMarked> batchIntervalsCollection, BatchType batchType, CurrentCaptureFile captureFile)
         {
             BindingList<BatchIntervalMarked> batchIntervals = new BindingList<BatchIntervalMarked>();
@@ -710,7 +653,6 @@ namespace COWE.BusinessLayer
             SingleHistogramData shd = new SingleHistogramData(singleHistogramProbabilityData);
             shd.InsertSingleHistogramData();
         }
-
         private void CalculateCumulativeHistogramProbability(BindingList<BatchIntervalMarked> batchIntervalsCollection, BatchType batchType, CaptureState captureState)
         {
             BindingList<BatchIntervalMarked> batchIntervals = new BindingList<BatchIntervalMarked>();

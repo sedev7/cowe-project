@@ -66,6 +66,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Windows.Forms.DataVisualization" />
@@ -103,6 +104,7 @@
     <Compile Include="FlooderIntervalTimer.cs" />
     <Compile Include="FoundCoresidentVmEventArgs.cs" />
     <Compile Include="InterarrivalInterval.cs" />
+    <Compile Include="Models\CumulativeProbabilityDistributionRepository.cs" />
     <Compile Include="PcapNetworkInterface.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

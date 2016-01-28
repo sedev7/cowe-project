@@ -50,11 +50,13 @@
   <ItemGroup>
     <Compile Include="BatchIntervalData.cs" />
     <Compile Include="CumulativeHistogramData.cs" />
+    <Compile Include="CumulativeProbabilityContext.cs" />
     <Compile Include="CumulativeProbabilityDistributionData.cs" />
     <Compile Include="DatabaseConnections.cs" />
     <Compile Include="DisplayStatisticsData.cs" />
     <Compile Include="CaptureFileData.cs" />
     <Compile Include="CumulativeIntervalData.cs" />
+    <Compile Include="Models\CumulativeProbabilityDistributionRepository.cs" />
     <Compile Include="SingleHistogramData.cs" />
     <Compile Include="PacketAnalysisModel.Context.cs">
       <AutoGen>True</AutoGen>
@@ -74,6 +76,7 @@
     </Compile>
     <Compile Include="PacketCaptureContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UnitOfWorkCumulativeProbability.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.Config">
