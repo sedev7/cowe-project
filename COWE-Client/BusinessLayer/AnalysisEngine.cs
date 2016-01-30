@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using COWE.DataLayer;
+using COWE.DataLayer.Models;
 using COWE.DomainClasses;
 using COWE.Enumerations;
 

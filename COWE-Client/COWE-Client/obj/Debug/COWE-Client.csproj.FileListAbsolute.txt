@@ -61,10 +61,10 @@ C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\COWE-Client\obj\Debug\COWE-Client.csprojResolveAssemblyReference.cache
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\COWE-Client\obj\Debug\COWE.Client.AnalysisControl.resources
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\COWE-Client\obj\Debug\COWE.Client.Client.resources
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\COWE-Client\obj\Debug\COWE.Client.CoweAboutBox.resources
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\COWE-Client\obj\Debug\COWE.Client.Properties.Resources.resources
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\COWE-Client\obj\Debug\COWE.Client.NotifyUserForm.resources
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\COWE-Client\obj\Debug\COWE.Client.Resources.resources
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\COWE-Client\obj\Debug\COWE-Client.csproj.GenerateResource.Cache
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\COWE-Client\obj\Debug\COWE-Client.exe
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\COWE-Client\obj\Debug\COWE-Client.pdb
-C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\COWE-Client\obj\Debug\COWE.Client.NotifyUserForm.resources
-C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\COWE-Client\obj\Debug\COWE.Client.CoweAboutBox.resources

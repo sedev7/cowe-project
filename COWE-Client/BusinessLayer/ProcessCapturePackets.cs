@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using COWE.DataLayer;
+using COWE.DataLayer.Models;
 using COWE.DomainClasses;
 using COWE.Enumerations;
 
@@ -571,7 +572,8 @@ namespace COWE.BusinessLayer
             //distribution = cpdd.GetCumulativeProbabilityDistribution(captureState);
             using (var cpdRepository = new CumulativeProbabilityDistributionRepository(new UnitOfWorkCumulativeProbability()))
             {
-                foreach(CumulativeProbabilityDistribution cpd in cpdRepository.All.ToList())
+                //foreach(CumulativeProbabilityDistribution cpd in cpdRepository.All.ToList())
+                foreach (var cpd in cpdRepository.All.Where(c => c.CaptureState == (captureState == CaptureState.Marked ? 1 : 0) ).ToList())
                 {
                     distribution.Add(cpd);
                 }

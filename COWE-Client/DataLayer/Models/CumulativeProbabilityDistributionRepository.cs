@@ -9,12 +9,13 @@ using System.Web;
 using COWE.DomainClasses;
 using COWE.DataLayer;
 
-namespace COWE.DataLayer
+namespace COWE.DataLayer.Models
 { 
     public class CumulativeProbabilityDistributionRepository : ICumulativeProbabilityDistributionRepository
     {
         //CumulativeProbabilityContext context = new CumulativeProbabilityContext();
         private CumulativeProbabilityContext context;
+        //private PacketCaptureContext context;
         public CumulativeProbabilityDistributionRepository(UnitOfWorkCumulativeProbability uow)
         {
             context = uow.Context;

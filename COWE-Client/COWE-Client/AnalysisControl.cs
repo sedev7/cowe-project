@@ -1007,6 +1007,7 @@ namespace COWE.Client
             SingleChart.Legends[0].Alignment = StringAlignment.Center;
             SingleChart.ChartAreas[0].AxisX.Title = "Packets per Interval";
             SingleChart.ChartAreas[0].AxisX.Minimum = 0;
+            //SingleChart.ChartAreas[0].AxisX.Interval = 50;
             //SingleChart.ChartAreas[0].AxisX.Maximum = 
 
             // Get the type of chart to display

@@ -104,7 +104,6 @@
     <Compile Include="FlooderIntervalTimer.cs" />
     <Compile Include="FoundCoresidentVmEventArgs.cs" />
     <Compile Include="InterarrivalInterval.cs" />
-    <Compile Include="Models\CumulativeProbabilityDistributionRepository.cs" />
     <Compile Include="PcapNetworkInterface.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -208,6 +207,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Client Backups\" />
+    <Folder Include="Models\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

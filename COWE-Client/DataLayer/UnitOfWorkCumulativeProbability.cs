@@ -11,13 +11,16 @@ namespace COWE.DataLayer
     public class UnitOfWorkCumulativeProbability: IDisposable
     {
         private readonly CumulativeProbabilityContext _context;
+        //private readonly PacketCaptureContext _context;
 
         public UnitOfWorkCumulativeProbability()
         {
             _context = new CumulativeProbabilityContext();
+            //_context = new PacketCaptureContext();
         }
 
         public UnitOfWorkCumulativeProbability(CumulativeProbabilityContext context)
+        //public UnitOfWorkCumulativeProbability(PacketCaptureContext context)
         {
             _context = context;
         }
@@ -27,7 +30,9 @@ namespace COWE.DataLayer
             return _context.SaveChanges();
         }
 
-        internal CumulativeProbabilityContext Context
+        //internal CumulativeProbabilityContext Context
+        public CumulativeProbabilityContext Context
+        //public PacketCaptureContext Context
         {
             get { return _context; }
         }

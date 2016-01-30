@@ -8,7 +8,7 @@ using COWE.DomainClasses;
 
 namespace COWE.DataLayer
 {
-    public class CumulativeProbabilityContext: DbContext
+    public class CumulativeProbabilityContext: BaseContext<CumulativeProbabilityContext>
     {
         public DbSet<CumulativeProbabilityDistribution> CumulativeProbabilityDistributions { get; set; }
     }
