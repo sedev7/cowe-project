@@ -1,0 +1,164 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="PacketAnalysisModelStoreContainer" CdmEntityContainer="PacketAnalysisEntity">
+    <EntitySetMapping Name="CapturePackets">
+      <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.CapturePacket">
+        <MappingFragment StoreEntitySet="CapturePacket">
+          <ScalarProperty Name="CaptureBatchId" ColumnName="CaptureBatchId" />
+          <ScalarProperty Name="CapturePacketId" ColumnName="CapturePacketId" />
+          <ScalarProperty Name="PacketNumber" ColumnName="PacketNumber" />
+          <ScalarProperty Name="TimeStamp" ColumnName="TimeStamp" />
+          <ScalarProperty Name="Marked" ColumnName="Marked" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <FunctionImportMapping FunctionImportName="CaptureBatchInsert" FunctionName="PacketAnalysisModel.Store.CaptureBatchInsert" />
+    <FunctionImportMapping FunctionImportName="CumulativeIntervalDelete" FunctionName="PacketAnalysisModel.Store.CumulativeIntervalDelete" />
+    <FunctionImportMapping FunctionImportName="TruncateAllIntervalTables" FunctionName="PacketAnalysisModel.Store.TruncateAllIntervalTables" />
+    <FunctionImportMapping FunctionImportName="DisplayStatisticsInsert" FunctionName="PacketAnalysisModel.Store.DisplayStatisticsInsert" />
+    <EntitySetMapping Name="BatchIntervals">
+      <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.BatchInterval">
+        <MappingFragment StoreEntitySet="BatchInterval">
+          <ScalarProperty Name="PacketCount" ColumnName="PacketCount" />
+          <ScalarProperty Name="IntervalNumber" ColumnName="IntervalNumber" />
+          <ScalarProperty Name="CaptureBatchId" ColumnName="CaptureBatchId" />
+          <ScalarProperty Name="BatchIntervalId" ColumnName="BatchIntervalId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <FunctionImportMapping FunctionImportName="DisplayStatisticsDelete" FunctionName="PacketAnalysisModel.Store.DisplayStatisticsDelete" />
+    <EntitySetMapping Name="CumulativeIntervals">
+      <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.CumulativeInterval">
+        <MappingFragment StoreEntitySet="CumulativeInterval">
+          <ScalarProperty Name="Marked" ColumnName="Marked" />
+          <ScalarProperty Name="PacketCount" ColumnName="PacketCount" />
+          <ScalarProperty Name="CumulativeIntervalNumber" ColumnName="CumulativeIntervalNumber" />
+          <ScalarProperty Name="CumulativeIntervalId" ColumnName="CumulativeIntervalId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <FunctionImportMapping FunctionImportName="CumulativeProbabilityDistributionDelete" FunctionName="PacketAnalysisModel.Store.CumulativeProbabilityDistributionDelete" />
+    <FunctionImportMapping FunctionImportName="HistogramDelete" FunctionName="PacketAnalysisModel.Store.HistogramDelete" />
+    <FunctionImportMapping FunctionImportName="CumulativeProbabilityDistributionInsert" FunctionName="PacketAnalysisModel.Store.CumulativeProbabilityDistributionInsert" />
+    <FunctionImportMapping FunctionImportName="HistogramInsert" FunctionName="PacketAnalysisModel.Store.HistogramInsert" />
+    <EntitySetMapping Name="CaptureBatches">
+      <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.CaptureBatch">
+        <MappingFragment StoreEntitySet="CaptureBatch">
+          <ScalarProperty Name="CumulativeStatistics" ColumnName="CumulativeStatistics" />
+          <ScalarProperty Name="SingleStatistics" ColumnName="SingleStatistics" />
+          <ScalarProperty Name="Parsed" ColumnName="Parsed" />
+          <ScalarProperty Name="TrimmedMean" ColumnName="TrimmedMean" />
+          <ScalarProperty Name="Mean" ColumnName="Mean" />
+          <ScalarProperty Name="Marked" ColumnName="Marked" />
+          <ScalarProperty Name="FileName" ColumnName="FileName" />
+          <ScalarProperty Name="CaptureBatchId" ColumnName="CaptureBatchId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+      <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.CaptureBatch">
+        <ModificationFunctionMapping>
+          <InsertFunction FunctionName="PacketAnalysisModel.Store.CaptureBatchInsert" RowsAffectedParameter="NewCaptureBatchId">
+            <ScalarProperty Name="TrimmedMean" ParameterName="TrimmedMean" />
+            <ScalarProperty Name="Mean" ParameterName="Mean" />
+            <ScalarProperty Name="Marked" ParameterName="Marked" />
+            <ScalarProperty Name="FileName" ParameterName="FileName" />
+          </InsertFunction>
+          <UpdateFunction FunctionName="PacketAnalysisModel.Store.CaptureBatchUpdate_for_CaptureBatchId">
+            <ScalarProperty Name="CumulativeStatistics" ParameterName="CumulativeStatistics" Version="Current" />
+            <ScalarProperty Name="SingleStatistics" ParameterName="SingleStatistics" Version="Current" />
+            <ScalarProperty Name="Parsed" ParameterName="Parsed" Version="Current" />
+            <ScalarProperty Name="TrimmedMean" ParameterName="TrimmedMean" Version="Current" />
+            <ScalarProperty Name="Mean" ParameterName="Mean" Version="Current" />
+            <ScalarProperty Name="Marked" ParameterName="Marked" Version="Current" />
+            <ScalarProperty Name="FileName" ParameterName="FileName" Version="Current" />
+            <ScalarProperty Name="CaptureBatchId" ParameterName="CaptureBatchId" Version="Current" />
+          </UpdateFunction>
+        </ModificationFunctionMapping>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <FunctionImportMapping FunctionImportName="CaptureBatchUpdate_for_CaptureBatchId" FunctionName="PacketAnalysisModel.Store.CaptureBatchUpdate_for_CaptureBatchId" />
+    <EntitySetMapping Name="DisplayStatistics">
+      <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.DisplayStatistic">
+        <MappingFragment StoreEntitySet="DisplayStatistic">
+          <ScalarProperty Name="BatchType" ColumnName="BatchType" />
+          <ScalarProperty Name="Marked" ColumnName="Marked" />
+          <ScalarProperty Name="MeanOfMeansStandardDeviation" ColumnName="MeanOfMeansStandardDeviation" />
+          <ScalarProperty Name="MeanOfMeans" ColumnName="MeanOfMeans" />
+          <ScalarProperty Name="MaxPacketsPerInterval" ColumnName="MaxPacketsPerInterval" />
+          <ScalarProperty Name="MinPacketsPerInterval" ColumnName="MinPacketsPerInterval" />
+          <ScalarProperty Name="StandardDeviation" ColumnName="StandardDeviation" />
+          <ScalarProperty Name="MeanPacketsPerInterval" ColumnName="MeanPacketsPerInterval" />
+          <ScalarProperty Name="TrimmedIntervalCount" ColumnName="TrimmedIntervalCount" />
+          <ScalarProperty Name="IntervalCount" ColumnName="IntervalCount" />
+          <ScalarProperty Name="DisplayStatisticId" ColumnName="DisplayStatisticId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+      <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.DisplayStatistic">
+        <ModificationFunctionMapping>
+          <InsertFunction FunctionName="PacketAnalysisModel.Store.DisplayStatisticsInsert">
+            <ScalarProperty Name="BatchType" ParameterName="BatchType" />
+            <ScalarProperty Name="Marked" ParameterName="Marked" />
+            <ScalarProperty Name="MeanOfMeansStandardDeviation" ParameterName="MeanOfMeansStandardDeviation" />
+            <ScalarProperty Name="MeanOfMeans" ParameterName="MeanOfMeans" />
+            <ScalarProperty Name="MaxPacketsPerInterval" ParameterName="MaxPacketsPerInterval" />
+            <ScalarProperty Name="MinPacketsPerInterval" ParameterName="MinPacketsPerInterval" />
+            <ScalarProperty Name="StandardDeviation" ParameterName="StandardDeviation" />
+            <ScalarProperty Name="MeanPacketsPerInterval" ParameterName="MeanPacketsPerInterval" />
+            <ScalarProperty Name="TrimmedIntervalCount" ParameterName="TrimmedIntervalCount" />
+            <ScalarProperty Name="IntervalCount" ParameterName="IntervalCount" />
+          </InsertFunction>
+          <DeleteFunction FunctionName="PacketAnalysisModel.Store.DisplayStatisticsDelete">
+            <ScalarProperty Name="BatchType" ParameterName="BatchType" />
+            <ScalarProperty Name="Marked" ParameterName="Marked" />
+          </DeleteFunction>
+        </ModificationFunctionMapping>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="CumulativeHistograms">
+      <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.CumulativeHistogram">
+        <MappingFragment StoreEntitySet="CumulativeHistogram">
+          <ScalarProperty Name="CaptureState" ColumnName="CaptureState" />
+          <ScalarProperty Name="Probability" ColumnName="Probability" />
+          <ScalarProperty Name="Interval" ColumnName="Interval" />
+          <ScalarProperty Name="CumulativeHistogramId" ColumnName="CumulativeHistogramId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="SingleHistograms">
+      <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.SingleHistogram">
+        <MappingFragment StoreEntitySet="SingleHistogram">
+          <ScalarProperty Name="CaptureState" ColumnName="CaptureState" />
+          <ScalarProperty Name="Probability" ColumnName="Probability" />
+          <ScalarProperty Name="Interval" ColumnName="Interval" />
+          <ScalarProperty Name="CaptureBatchId" ColumnName="CaptureBatchId" />
+          <ScalarProperty Name="SingleHistogramId" ColumnName="SingleHistogramId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="CumulativeProbabilityDistributions">
+      <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.CumulativeProbabilityDistribution">
+        <MappingFragment StoreEntitySet="CumulativeProbabilityDistribution">
+          <ScalarProperty Name="CaptureState" ColumnName="CaptureState" />
+          <ScalarProperty Name="Probability" ColumnName="Probability" />
+          <ScalarProperty Name="Interval" ColumnName="Interval" />
+          <ScalarProperty Name="CumulativeProbabilityDistributionId" ColumnName="CumulativeProbabilityDistributionId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <FunctionImportMapping FunctionImportName="TruncateAllIntervalStatisticAndTestTables" FunctionName="PacketAnalysisModel.Store.TruncateAllIntervalStatisticAndTestTables" />
+    <EntitySetMapping Name="HypothesisTests">
+      <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.HypothesisTest">
+        <MappingFragment StoreEntitySet="HypothesisTest">
+          <ScalarProperty Name="HasValues" ColumnName="HasValues" />
+          <ScalarProperty Name="KsTestResult" ColumnName="KsTestResult" />
+          <ScalarProperty Name="MeansTestResult" ColumnName="MeansTestResult" />
+          <ScalarProperty Name="MaxCpdVariance" ColumnName="MaxCpdVariance" />
+          <ScalarProperty Name="KsStatistic" ColumnName="KsStatistic" />
+          <ScalarProperty Name="MeansVarianceStandardDeviation" ColumnName="MeansVarianceStandardDeviation" />
+          <ScalarProperty Name="MeanOfMeansVariance" ColumnName="MeanOfMeansVariance" />
+          <ScalarProperty Name="HypothesisTestId" ColumnName="HypothesisTestId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <FunctionImportMapping FunctionImportName="TruncateAllTables" FunctionName="PacketAnalysisModel.Store.TruncateAllTables" />
+  </EntityContainerMapping>
+</Mapping>

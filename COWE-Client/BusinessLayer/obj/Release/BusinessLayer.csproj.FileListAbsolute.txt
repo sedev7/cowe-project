@@ -1,0 +1,13 @@
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\BusinessLayer\bin\Release\EntityFramework.dll
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\BusinessLayer\bin\Release\BusinessLayer.dll
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\BusinessLayer\bin\Release\BusinessLayer.pdb
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\BusinessLayer\bin\Release\DataLayer.dll
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\BusinessLayer\bin\Release\DomainClasses.dll
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\BusinessLayer\bin\Release\Enumerations.dll
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\BusinessLayer\bin\Release\DataLayer.pdb
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\BusinessLayer\bin\Release\DomainClasses.pdb
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\BusinessLayer\bin\Release\Enumerations.pdb
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\BusinessLayer\bin\Release\EntityFramework.xml
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\BusinessLayer\obj\Release\BusinessLayer.csprojResolveAssemblyReference.cache
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\BusinessLayer\obj\Release\BusinessLayer.dll
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\BusinessLayer\obj\Release\BusinessLayer.pdb

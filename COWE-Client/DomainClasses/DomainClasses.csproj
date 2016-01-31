@@ -40,13 +40,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnalysisConfiguration.cs" />
+    <Compile Include="BaseStatistics.cs" />
     <Compile Include="BatchInterval.cs" />
     <Compile Include="BatchIntervalMarked.cs" />
     <Compile Include="BatchStatistics.cs" />
     <Compile Include="CaptureBatch.cs" />
     <Compile Include="CapturePacket.cs" />
+    <Compile Include="CumulativeHistogram.cs" />
     <Compile Include="CumulativeInterval.cs" />
+    <Compile Include="CumulativeProbabilityDistribution.cs" />
     <Compile Include="CurrentCaptureFile.cs" />
+    <Compile Include="DisplayStatistic.cs" />
+    <Compile Include="FileQueue.cs" />
+    <Compile Include="HypothesisTest.cs" />
+    <Compile Include="SingleHistogram.cs" />
+    <Compile Include="MeansTestStatistic.cs" />
+    <Compile Include="PacketAnalysisModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PacketAnalysisModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="ParsedCaptureBatch.cs" />
     <Compile Include="PacketInterval.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

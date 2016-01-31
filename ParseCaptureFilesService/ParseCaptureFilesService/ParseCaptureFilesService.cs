@@ -116,7 +116,6 @@ namespace COWE.ParseCaptureFilesService
             }
             catch (Exception ex)
             {
-                //Console.WriteLine("Error reading app.config file: " + ex.Message);
                 EventLog.WriteEntry("Error reading app.config file: " + ex.Message);
             }
 

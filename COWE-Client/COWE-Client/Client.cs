@@ -32,10 +32,13 @@
  *  - Add timer flooder for run-time.
  *  
  * TO DO:
+ *  - Add the flooder Id (PID) to the database tables (need to track by flooder instance)? 
+ *    This might be a future enhancement - can only run one flooder instance at a time for now.
  *  - Get the client ip address to use for packet capture
  *  x Reset UI when socket connection fails (i.e., throws exception).
  *  x Add Flooder class.
  *  x On start/stop flooder, check flooders list for existence before adding to list.
+ *  - Disable changes to the statistical analysis configuration controls while a capture session is running.
  * 
  */
 #endregion
@@ -55,6 +58,7 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.ServiceProcess;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
@@ -73,23 +77,38 @@ namespace COWE.Client
 {
     public partial class Client : Form
     {
+        #region Delegates
+        //delegate void DisplayCaptureProgressCallback(Label l);
+        //private delegate void ReceivedParsedFileEventHandler(object sender, ReceivedParsedFileEventArgs e);
+        //private delegate void ReceivedParsedFileEventHandler(string msg);
+        #endregion
+
+        #region Events
+        //public event ReceivedParsedFileEventHandler ReceivedParsedFile;
+        
+        #endregion
+
         #region Global Variables
 
         private AnalysisControl _AnalysisControl = null;
+        //AnalysisEngine _AnalysisEngine = null;
 
         BindingList<CurrentCaptureFile> _CurrentCaptureFiles = null;     // Capture file(s) currently being processed
         BindingList<PcapNetworkInterface> _NetworkInterfaces = null;
 
-        bool IsFlooding = false;        // True while a flooder is running
-        bool IsMarked = false;          // True when a flooder is sending packets
+        bool IsFlooding = false;                // True while a flooder is running
+        bool IsMarked = false;                  // True when a flooder is sending packets
+        //bool _trimZeroPacketIntervals = true;
 
-        //int _BatchId = 0;               // Batch Id assigned to the group of interval counts for a capture file - assigned by database
-        int _CaptureProcessId = 0;      // Process Id for the packet capture process
-        int _PID = 1;                   // Process Id for flooder
-        int _MaxGridDisplayRows = 8;    // Maximum number of rows to display in grid
-        int _MaxGridHeight = 0;         // Height of grid when maximum number of rows are displayed
-        int _SelectedRow = 0;           // Row index of currently selected grid row
-        int _FlooderTimerInterval = 0;  // Number of seconds to run flooder
+        //int _BatchId = 0;                     // Batch Id assigned to the group of interval counts for a capture file - assigned by database
+        int _CaptureProcessId = 0;              // Process Id for the packet capture process
+        int _PID = 1;                           // Process Id for flooder
+        int _MaxGridDisplayRows = 8;            // Maximum number of rows to display in grid
+        int _MaxGridHeight = 0;                 // Height of grid when maximum number of rows are displayed
+        int _SelectedRow = 0;                   // Row index of currently selected grid row
+        int _FlooderTimerInterval = 0;          // Number of seconds to run flooder
+        int _MarkedFileCount = 0;               // Number of marked capture files
+        int _UnmarkedFileCount = 0;             // Number of unmarked capture files
 
         BindingList<Flooder> _Flooders = new BindingList<Flooder>();
 
@@ -104,23 +123,69 @@ namespace COWE.Client
 
         PcapNetworkInterface _SelectedNetworkInterface = null;
 
+        ProcessedFileNotifier _ProcessedFileNotifier = null;
+        Thread _ProcessedFileNotifierThread = null;
+
+        //CreateIntervalsAndAnalysisController _CreateIntervalsAndAnalysisController = new CreateIntervalsAndAnalysisController();
+        CreateIntervalsAndAnalysisController _CreateIntervalsAndAnalysisController = null;
+        Thread _CreateIntervalsAndAnalysisControllerThread = null;
+
+        //BackgroundWorker bgWorker = null;
+        //BackgroundWorker bgWorker = new BackgroundWorker();
+        //bgWorker.WorkerReportsProgress = true;
+        //bgWorker.WorkerSupportsCancellation = true;
+
+        //static Queue<CurrentCaptureFile> fileQueue = new Queue<CurrentCaptureFile>();
+
+        // Input validation variables
+        string _FlooderIntervalOld = string.Empty;
+        string _FlooderIntervalNew = string.Empty;
+        string _TargetPortOld = string.Empty;
+        string _TargetPortNew = string.Empty;
+
+        // Flooder initial values
+        string _InitialFlooderIP = "10.10.10.46";
+        string _InitialFlooderPort = "8080";
+        string _InitialTargetIP = "10.10.10.100";
+        string _InitialTargetPort = "80";
+        string _InitialDestinationIP = "10.10.10.208";
+        string _InitialFlooderInterval = "20";                      // Time period for each flooder interval in seconds
+
+        //// Flooder alternate initial values
+        //string _InitialFlooderIP = "192.168.0.19";
+        //string _InitialFlooderPort = "8080";
+        //string _InitialTargetIP = "192.168.0.100";
+        //string _InitialTargetPort = "80";
+        //string _InitialDestinationIP = "192.168.0.2";
+        //string _InitialFlooderInterval = "20";                      // Time period for each flooder interval in seconds
+
         private DispatcherTimer timer = new DispatcherTimer();
         private Stopwatch stopWatch = new Stopwatch();
 
         string currentTime = string.Empty;
-        string DbConnectionString = string.Empty;   // Database connection string for bulk-loading data (not using Entity Framework for bulk-loading data)
-        string _HostIpAddress = string.Empty;       // The IP address on the selected NIC for this client
-        string _CaptureFolderPath = string.Empty;   // Location where capture files are created
-        string _ParseFolderPath = string.Empty;     // Location to which capture files are moved for parsing
-        string _ParsedFilesPath = string.Empty;     // Location of optional parsed text files
-        string _ProcessedFilesPath = string.Empty;  // Location where completed processed files will be created (file names only)
+        static string DbConnectionString = string.Empty;                   // Database connection string for bulk-loading data (not using Entity Framework for bulk-loading data)
+        string _HostIpAddress = string.Empty;                       // The IP address on the selected NIC for this client
+        string _CaptureFolderPath = string.Empty;                   // Location where capture files are created
+        string _ParseFolderPath = string.Empty;                     // Location to which capture files are moved for parsing
+        static string _ParsedFilesPath = string.Empty;                     // Location of optional parsed text files
+        static string _ProcessedFilesPath = string.Empty;                  // Location where completed processed files will be created (file names only)
         string _CurrentCaptureFileName = string.Empty;
-        string _CurrentClientNetworkInterface = string.Empty;   // Network interface number for currently selected NIC
+        string _CurrentClientNetworkInterface = string.Empty;       // Network interface number for currently selected NIC
 
         private BackgroundWorker bgWorker;
 
         private static System.Timers.Timer _FlooderIntervalTimer;
 
+        #endregion
+
+        #region Properties
+        //public bool TrimSmallPackets
+        //{
+        //    get
+        //    {
+        //        return _trimZeroPacketIntervals;
+        //    }
+        //}
         #endregion
 
         #region Public Methods
@@ -139,21 +204,34 @@ namespace COWE.Client
             this.bgWorker = new BackgroundWorker();
             this.bgWorker.WorkerReportsProgress = true;
             this.bgWorker.WorkerSupportsCancellation = true;
-            InitializeBackgroundWorkerTheads();
+            InitializeBackgroundWorkerTheads();   // Only need this thread when a flooder is running so move it to the start flooder method
             InitializeProgressSpinner();
             InitializeProgressLabel();
             this.ClockButton.Visible = false;
             this.ProcessCaptureDataButton.Visible = true;
-            this.AnalyzeDataButton.Visible = false;
+            this.StartTimerButton.Visible = true;
             UpdateParseFilesServiceStatus();
             DatabaseResetCheckBox.Checked = true;
 
             _AnalysisControl = new AnalysisControl();
+            _ProcessedFileNotifier = new ProcessedFileNotifier(_ProcessedFilesPath);
+            _CreateIntervalsAndAnalysisController = new CreateIntervalsAndAnalysisController();
 
         }
         #endregion
 
         #region Event Handlers
+
+        //private void OnFoundCoresidentVm(bool foundCoresVm)
+        //{
+        //    if(foundCoresVm)
+        //    {
+        //        // Update the UI the grid
+
+        //        // Temporary code
+        //        MessageBox.Show("Received Hypothesis Test = True"); 
+        //    }
+        //}
         private void AddFlooderButton_Click(object sender, EventArgs e)
         {
             int pid = _PID++;
@@ -165,7 +243,7 @@ namespace COWE.Client
 
             // Resize the row height to match the other rows
             _FlooderStatusDataGridView.Rows[row].Height = 30;
-     
+
             // Expand the grid to accommodate the new row
             ResizeFlooderGrid();
 
@@ -176,8 +254,32 @@ namespace COWE.Client
         }
         private void Client_Load(object sender, EventArgs e)
         {
+            InitializeAnalysisMetricsGroupBox();
+            AnalysisIntervalSizeTextBox.Text = InterarrivalInterval.GetIntervalMilliSeconds().ToString();
+            HistogramBinSizeTextBox.Text = "5";
+            TrimIntervalsCheckBox.Checked = true;
+            TrimSmallestBinsToolTip.SetToolTip(TrimIntervalsCheckBox, "Trim any intervals with a packet count less than or equal to the histogram bin size");
+            //KsTestStepRadioButton.Checked = true;
+            KsTestLinearRadioButton.Checked = true;
+            AnalysisConfiguration.Alpha = 0.05;      // Hypothesis test significance level
+            AnalysisConfiguration.Zvalue = 1.65M;    // Z value for (1-_alpha), from standard normal distribution table
+            // (note: one-tailed test because we are looking at the distribution 
+            // for the difference of the means)
+
+            ProcessCapturePackets pcp = new ProcessCapturePackets();
+            _MarkedFileCount = pcp.GetRawFileCountMarked();
+            _UnmarkedFileCount = pcp.GetRawFileCountUnmarked();
+            DisplayCapturedFileCount();
+
             // Start the background worker thread for the new file notifier
             bgWorker.RunWorkerAsync();
+        }
+        private void Client_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            // Stop the background worker thread
+            bgWorker.CancelAsync();
+
+            System.Windows.Forms.Application.Exit();
         }
         private void DeleteFlooderButton_Click(object sender, EventArgs e)
         {
@@ -211,6 +313,8 @@ namespace COWE.Client
         }
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            // Stop the background worker thread
+            bgWorker.CancelAsync();
             this.Close();
         }
         private void FlooderStatusDataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -227,17 +331,17 @@ namespace COWE.Client
                 _SelectedRow = e.RowIndex;
 
                 // Verify that flooder data has been entered
-                if(_FlooderStatusDataGridView.Rows[row].Cells["FlooderIpAddress"].Value == null)
+                if (_FlooderStatusDataGridView.Rows[row].Cells["FlooderIpAddress"].Value == null)
                 {
                     MessageBox.Show("Flooder IP address required", "Flooder IP Address");
                     _FlooderStatusDataGridView.Rows[row].Cells["FlooderIpAddress"].Selected = true;
                 }
-                else if(_FlooderStatusDataGridView.Rows[row].Cells["FlooderPort"].Value == null)
+                else if (_FlooderStatusDataGridView.Rows[row].Cells["FlooderPort"].Value == null)
                 {
                     MessageBox.Show("Flooder port number required", "Flooder Port Number");
                     _FlooderStatusDataGridView.Rows[row].Cells["FlooderPort"].Selected = true;
                 }
-                else if(_FlooderStatusDataGridView.Rows[row].Cells["FlooderDestination"].Value == null)
+                else if (_FlooderStatusDataGridView.Rows[row].Cells["FlooderDestination"].Value == null)
                 {
                     MessageBox.Show("Flooder destination IP address required", "Flooder Destination IP Address");
                     _FlooderStatusDataGridView.Rows[row].Cells["FlooderDestination"].Selected = true;
@@ -293,6 +397,26 @@ namespace COWE.Client
 
                     if (cellButton.Value.ToString() == "Start")
                     {
+                        DisableConfigurationControls();
+                        DisableFlooderControls();
+
+                        FileQueue.Clear();
+                        AnalysisConfiguration.FoundCoresidentVm = false;
+
+                        if(_ProcessedFileNotifierThread == null)
+                        {
+                            _ProcessedFileNotifier = new ProcessedFileNotifier(_ProcessedFilesPath);
+                        }
+                        _ProcessedFileNotifierThread = new Thread(new ThreadStart(_ProcessedFileNotifier.Start));
+                        _ProcessedFileNotifierThread.Start();
+
+                        if(_CreateIntervalsAndAnalysisController == null)
+                        {
+                            _CreateIntervalsAndAnalysisController = new CreateIntervalsAndAnalysisController();
+                        }
+                        _CreateIntervalsAndAnalysisControllerThread = new Thread(new ThreadStart(_CreateIntervalsAndAnalysisController.ProcessFiles));
+                        _CreateIntervalsAndAnalysisControllerThread.Start();
+
                         if (DatabaseResetCheckBox.Checked == true)
                         {
                             ResetDatabaseAndDeleteCaptureFiles();
@@ -300,55 +424,72 @@ namespace COWE.Client
 
                         IsStarting = true;
 
-                        // Get the timer interval (start/stop interval for flooder)
-                        _FlooderTimerInterval = Convert.ToInt32(FlooderIntervalTextBox.Text);
-
-                        bool success = false;
-                        // Open the socket connection to the flooder
-                        if (OpenFlooderConnection(IsStarting, flooder, _FlooderTimerInterval))
+                        // Check to see if the flooder is running
+                        Ping verifyPing = new Ping();
+                        PingReply reply = verifyPing.Send(flooderIpAddress, 1000);
+                        if (reply.Status.ToString() != "TimedOut")
                         {
-                            cellButton.UseColumnTextForButtonValue = false;
-                            cellButton.Value = "Stop";
-                            cellButton.Style.BackColor = System.Drawing.Color.Red;
+                            // Get the timer interval (start/stop interval for flooder)
+                            _FlooderTimerInterval = Convert.ToInt32(FlooderIntervalTextBox.Text);
+                            AnalysisConfiguration.TimerInterval = _FlooderTimerInterval;
 
-                            // Update the status column for this row (i.e., this flooder instance)
-                            _FlooderStatusDataGridView.Rows[row].Cells["FlooderStatus"].Value = "Running";
-                            _FlooderStatusDataGridView.Rows[row].Cells["FlooderStatus"].Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                            _FlooderStatusDataGridView["FlooderStatus", row].Style.BackColor = NonResident;
-                            success = true;
-                            IsFlooding = true;
-                            IsMarked = true;
+                            bool success = false;
+                            // Open the socket connection to the flooder
+                            if (OpenFlooderConnection(IsStarting, flooder, _FlooderTimerInterval))
+                            {
+                                cellButton.UseColumnTextForButtonValue = false;
+                                cellButton.Value = "Stop";
+                                cellButton.Style.BackColor = System.Drawing.Color.Red;
+
+                                // Update the status column for this row (i.e., this flooder instance)
+                                _FlooderStatusDataGridView.Rows[row].Cells["FlooderStatus"].Value = "Running";
+                                _FlooderStatusDataGridView.Rows[row].Cells["FlooderStatus"].Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                                _FlooderStatusDataGridView["FlooderStatus", row].Style.BackColor = NonResident;
+                                success = true;
+                                IsFlooding = true;
+                                IsMarked = true;
+                            }
+                            else
+                            {
+                                MessageBox.Show("Unable to start flooder", "Start Flooder");
+                            }
+
+                            if (success)
+                            {
+                                // Start the packet capture
+
+                                // Get our local IP address
+                                _HostIpAddress = _SelectedNetworkInterface.IpAddress;
+
+                                // Note: source host is web server (target), local host is client
+                                if (StartPacketCapture(TargetIpAddressTextBox.Text.Trim(), _HostIpAddress, _FlooderTimerInterval))
+                                {
+                                    // Packet capture started successfully
+                                    DisplayProgressMessage("Capturing marked packet data...");
+                                    InitializeFileCount();
+                                    DisplayCapturedFileCount();
+                                    Application.DoEvents();
+
+                                    //// Start the timer (ms increments)
+                                    //_FlooderIntervalTimer = new System.Timers.Timer(_FlooderTimerInterval * 1000);
+                                    //_FlooderIntervalTimer.Elapsed += new ElapsedEventHandler(OnFlooderTimerElapsedEvent);
+                                    //_FlooderIntervalTimer.Start();
+                                    //StopWatchStart();
+                                    TimerStart(_FlooderTimerInterval);
+                                }
+                            }
                         }
                         else
                         {
-                            MessageBox.Show("Unable to start flooder", "Start Flooder");
+                            MessageBox.Show("Unable to ping flooder!\r\n\r\nCheck to be sure flooder is up and icmp is not blocked.", "Verify Flooder is Reachable", MessageBoxButtons.OK, MessageBoxIcon.Hand);
                         }
-
-                        if (success)
-                        {
-                            // Start the packet capture
-
-                            // Get our local IP address
-                            _HostIpAddress = _SelectedNetworkInterface.IpAddress;
-
-                            // Note: source host is web server (target), destination host is client
-                            if (StartPacketCapture(TargetIpAddressTextBox.Text.Trim(), _HostIpAddress, _FlooderTimerInterval))
-                            {
-                                // Packet capture started successfully
-                                DisplayProgressMessage("Capturing marked packet data...");
-
-                                // Start the timer (ms increments)
-                                _FlooderIntervalTimer = new System.Timers.Timer(_FlooderTimerInterval * 1000);
-                                _FlooderIntervalTimer.Elapsed += new ElapsedEventHandler(OnFlooderTimerElapsedEvent);
-                                _FlooderIntervalTimer.Start();
-                                StopWatchStart();
-                            }
-                        }
+                        EnableConfigurationControls();
+                        EnableFlooderControls();
                     }
                     else
                     {
                         // First stop the capture process if it is running
-                        if(_CaptureProcessId > 0)
+                        if (_CaptureProcessId > 0)
                         {
                             try
                             {
@@ -408,7 +549,25 @@ namespace COWE.Client
 
                         // Move the last packet capture file
                         MovePacketCaptureFile(_CurrentCaptureFileName);
+                        EnableConfigurationControls();
+                        EnableFlooderControls();
+                        
+                        // Finish processing anything in the queue
+                        while (IsStarting && FileQueue.Count != 0)
+                        {
+                            Thread.Sleep(3000);
+                        }
+                        //_ProcessedFileNotifierThread.Abort();
+                        _ProcessedFileNotifier.Stop();
+                        _ProcessedFileNotifierThread.Join();
+
+                        _CreateIntervalsAndAnalysisController.Stop();
+                        _CreateIntervalsAndAnalysisControllerThread.Join();
+                        //_CreatIntervalsAndAnalysisControllerThread.Abort();
+
+                        
                     }
+
                 }
             }
         }
@@ -445,7 +604,7 @@ namespace COWE.Client
         {
             BackgroundWorker bw = sender as BackgroundWorker;
 
-            if(bw.CancellationPending)
+            if (bw.CancellationPending)
             {
                 e.Cancel = true;
             }
@@ -457,7 +616,8 @@ namespace COWE.Client
                 {
                     Thread.Sleep(5000);
                     _CurrentCaptureFiles = new BindingList<CurrentCaptureFile>();
-                    _CurrentCaptureFiles = nfn.CheckForNewFiles(_ParseFolderPath, _ProcessedFilesPath);
+                    //_CurrentCaptureFiles = nfn.CheckForNewFiles(_ParseFolderPath, _ProcessedFilesPath);
+                    _CurrentCaptureFiles = nfn.CheckForNewFiles(_ParsedFilesPath, _ProcessedFilesPath);
                 }
             }
         }
@@ -500,45 +660,57 @@ namespace COWE.Client
                 }
             }
         }
-
-        delegate void DisplayCaptureProgressCallback(Label l);
-        
         private void DisplayCaptureProgress(Label l)
         {
             // Method to update the capture progress label
 
             if (this.ProgressLabel.InvokeRequired)
             {
-                // Use try-catch block to avoid cross-threading exception while debugging
-                try
-                {
-                    DisplayCaptureProgressCallback d = new DisplayCaptureProgressCallback(DisplayCaptureProgress);
-                    this.Invoke(d, new object[] { l });
-                }
-                catch (InvalidOperationException ioe)
-                { }
+                //    // Use try-catch block to avoid cross-threading exception while debugging
+                //    try
+                //    {
+                //        DisplayCaptureProgressCallback d = new DisplayCaptureProgressCallback(DisplayCaptureProgress);
+                //        this.Invoke(d, new object[] { l });
+                //    }
+                //    catch (InvalidOperationException ioe)
+                //    { }
+                //}
+                //else
+                //    try
+                //    {
+                //        string progress = string.Format("Capturing{0}marked packet data...", IsMarked ? " " : " un");
+                //        this.ProgressLabel.Text = progress;
+                //        IsMarked = IsMarked ? false : true;
+                //    }
+                //    catch (InvalidOperationException ioe)
+                //    { }
             }
-            else
-                try
-                {
-                    string progress = string.Format("Capturing{0}marked packet data...", IsMarked ? " " : " un");
-                    this.ProgressLabel.Text = progress;
-                    IsMarked = IsMarked ? false : true;
-                }
-                catch (InvalidOperationException ioe)
-                { }
         }
         private void OnFlooderTimerElapsedEvent(object sender, ElapsedEventArgs e)
         {
             // Capture the name of the current capture file
             string currentCaptureFileName = _CurrentCaptureFileName;
 
+            CurrentCaptureFile ccf = new CurrentCaptureFile(_CurrentCaptureFileName, IsMarked == true ? CaptureState.Marked : CaptureState.Unmarked);
+            FileQueue.Enqueue(ccf);
+
+            // Increment the file count
+            if(ccf.CaptureState  == CaptureState.Marked)
+            {
+                _MarkedFileCount++;
+            }
+            else
+            {
+                _UnmarkedFileCount++;
+            }
+            DisplayCapturedFileCount();
+
             // Start the next packet capture file
             if (IsFlooding)
             {
                 if (IsMarked)
                 {
-                    if(this.ProgressLabel.InvokeRequired)
+                    if (this.ProgressLabel.InvokeRequired)
                     {
                         BeginInvoke(new Action(() => this.ProgressLabel.Text = "Capturing unmarked packet data..."), null);
                     }
@@ -557,12 +729,72 @@ namespace COWE.Client
             }
 
             // Move the current packet capture file to a folder where it will be parsed
+            // by the ParseCaptureFilesService
             // Do this at the end of the call so that the file can be closed properly
+            
             MovePacketCaptureFile(currentCaptureFileName);
             //bgWorker.ReportProgress(0);
 
-            // Check the status of the ParseCaptureFiles service
-            UpdateParseFilesServiceStatus();
+            //// Raise an event to notify the AnalysisEngine that a capture file has been processed
+            //CurrentCaptureFile ccf = new CurrentCaptureFile(_CurrentCaptureFileName, IsMarked == true ? CaptureState.Marked : CaptureState.Unmarked);
+
+            
+            //ccf.ReceivedParsedFile += OnReceivedFileEvent;
+            //ccf.ReceiveFile();
+            //ccf.ReceiveFile(ccf);
+
+            //UpdateParseFilesServiceStatus();
+
+            // Check to see if we found a coresident VM
+            int activeRow = 0;
+            foreach (DataGridViewRow row in _FlooderStatusDataGridView.Rows)
+            {
+                if (row.Cells["FlooderStatus"].Value.ToString() == "Running")
+                {
+                    activeRow = row.Index;
+                    break;
+                }
+            }
+
+            if(AnalysisConfiguration.FoundCoresidentVm)
+            {
+                _FlooderStatusDataGridView.Rows[activeRow].Cells["FlooderStatus"].Value = "Co-Resident";   // Status
+                _FlooderStatusDataGridView.Rows[activeRow].Cells["FlooderStatus"].Style.BackColor = CoResident;
+                Application.DoEvents();
+            }
+            else
+            {
+                _FlooderStatusDataGridView.Rows[activeRow].Cells["FlooderStatus"].Value = "Running";   // Status
+                _FlooderStatusDataGridView.Rows[activeRow].Cells["FlooderStatus"].Style.BackColor = NonResident;
+                Application.DoEvents();
+            }
+        }
+        //private static void OnReceivedFileEvent(string msg)
+        //{
+        //    // Method called when parsed file received notification event is raised
+        //    AnalysisControl.OnReceivedFileEvent("received file");
+        //}
+        // static void OnReceivedFileEvent(string fileName)
+        static void OnReceivedFileEvent(CurrentCaptureFile captureFile)
+        {
+            // No longer using this event / event handler...
+            //// Method called when parsed file received notification event is raised
+            //FileQueue.Enqueue(captureFile);
+
+            //// Method called when parsed file received notification event is raised
+            //// Send the file to the BatchIntervalEngine and AnalysisEngine for processing
+            ////BatchIntervalEngine biEngine = new BatchIntervalEngine(DbConnectionString, _ParsedFilesPath, captureFileName, 5, InterarrivalInterval.GetIntervalMilliSeconds());
+            //BatchIntervalEngine biEngine = new BatchIntervalEngine(DbConnectionString, _ParsedFilesPath, captureFile.FileName, AnalysisConfiguration.TimerInterval, InterarrivalInterval.GetIntervalMilliSeconds());
+            //biEngine.ProcessNewBatchIntervals();
+
+            ////AnalysisEngine analysisEngine = new AnalysisEngine(AnalysisConfiguration.TrimSmallPackets, AnalysisConfiguration.HistogramBinSize, AnalysisConfiguration.HypothesisTest, captureFileName, file.CaptureState);
+            //AnalysisEngine analysisEngine = new AnalysisEngine(AnalysisConfiguration.TrimSmallPackets, AnalysisConfiguration.HistogramBinSize, AnalysisConfiguration.HypothesisTestType, captureFile);
+            //analysisEngine.CalculateSingleBatchStatistics();
+            //analysisEngine.CalculateCumulativeBatchStatistics();
+            //analysisEngine.CalculateSingleHistogramData();
+            //analysisEngine.CalculateCumulativeHistogramData();
+            //analysisEngine.CalculateCumulativeProbabilityDistribution(captureFile.CaptureState);
+            //analysisEngine.CalculateHypothesisTestResults();
         }
         private void StartParseFilesServiceButton_Click(object sender, EventArgs e)
         {
@@ -584,132 +816,239 @@ namespace COWE.Client
             switch (ClientTabControl.SelectedTab.Name)
             {
                 case "FlooderTabPage":
+                    RestoreClientControlsColorWhenSwitchingTabs();
                     break;
+
                 case "AnalysisTabPage":
-                    if (AnalysisMainPanel.Controls.Contains(_AnalysisControl))
-                    {
-                        _AnalysisControl.BringToFront();
-                    }
-                    else
+                    GrayOutClientControlsWhenSwitchingTabs();
+                    if (!AnalysisMainPanel.Controls.Contains(_AnalysisControl))
                     {
                         _AnalysisControl = new AnalysisControl();
                         _AnalysisControl.Dock = DockStyle.Fill;
+                        //_AnalysisControl.HistogramBinSize = HistogramBinSizeTextBox.Text;
                         AnalysisMainPanel.Controls.Add(_AnalysisControl);
                         _AnalysisControl.BringToFront();
                     }
                     break;
             }
         }
+
+        private void GrayOutClientControlsWhenSwitchingTabs()
+        {
+            // Gray out the data grid, background panel, and other controls
+            _FlooderStatusDataGridView.BackgroundColor = System.Drawing.Color.LightGray;
+            _FlooderStatusDataGridView.DefaultCellStyle.BackColor = SystemColors.Control;
+            _FlooderStatusDataGridView.DefaultCellStyle.ForeColor = SystemColors.GrayText;
+            _FlooderStatusDataGridView.ColumnHeadersDefaultCellStyle.BackColor = SystemColors.Control;
+            _FlooderStatusDataGridView.ColumnHeadersDefaultCellStyle.ForeColor = SystemColors.GrayText;
+            _FlooderStatusDataGridView.CurrentCell = null;
+            _FlooderStatusDataGridView.ReadOnly = true;
+            _FlooderStatusDataGridView.EnableHeadersVisualStyles = false;
+
+            mainPanel.BackColor = SystemColors.Control;
+            TargetIpAddressTextBox.BackColor = SystemColors.Control;
+            TargetPortTextBox.BackColor = SystemColors.Control;
+            FlooderIntervalTextBox.BackColor = SystemColors.Control;
+            // Gray out the status cell value for each flooder instance
+            foreach (DataGridViewRow row in _FlooderStatusDataGridView.Rows)
+            {
+                row.Cells[6].Style.BackColor = SystemColors.Control;
+            }
+            Application.DoEvents();
+        }
+
+        private void RestoreClientControlsColorWhenSwitchingTabs()
+        {
+            // Restore the colors for the data grid, background panel, and other controls
+            _FlooderStatusDataGridView.BackgroundColor = SystemColors.AppWorkspace;
+            _FlooderStatusDataGridView.DefaultCellStyle.BackColor = SystemColors.Window;
+            _FlooderStatusDataGridView.DefaultCellStyle.ForeColor = SystemColors.ControlText;
+            _FlooderStatusDataGridView.ColumnHeadersDefaultCellStyle.BackColor = SystemColors.Window;
+            _FlooderStatusDataGridView.ColumnHeadersDefaultCellStyle.ForeColor = SystemColors.ControlText;
+            _FlooderStatusDataGridView.ReadOnly = false;
+            _FlooderStatusDataGridView.EnableHeadersVisualStyles = true;
+
+            mainPanel.BackColor = SystemColors.GradientInactiveCaption;
+            TargetIpAddressTextBox.BackColor = SystemColors.Window;
+            TargetPortTextBox.BackColor = SystemColors.Window;
+            FlooderIntervalTextBox.BackColor = SystemColors.Window;
+            // Gray out the status cell value for each flooder instance
+            foreach (DataGridViewRow row in _FlooderStatusDataGridView.Rows)
+            {
+                switch (row.Cells[6].Value.ToString())
+                {
+                    case "Not Connected":
+                        row.Cells[6].Style.BackColor = NotConnected;
+                        break;
+                    case "Running":
+                        //row.Cells[6].Style.BackColor = NonResident;
+                        row.Cells[6].Style.BackColor = AnalysisConfiguration.FoundCoresidentVm ? CoResident : NonResident;
+                        break;
+                    case "Co-Resident":
+                        row.Cells[6].Style.BackColor = CoResident;
+                        break;
+                }
+            }
+            Application.DoEvents();
+        }
         private void ProcessCaptureDataButton_Click(object sender, EventArgs e)
         {
-            bool success = false;
-
-            //int intervalSizeMs = 30 ;
-            int intervalSizeMs = InterarrivalInterval.GetIntervalMilliSeconds();
+            // For testing - code to be moved to background worker thread 
+            // For production: use the OnFileReceived event handler to notify the BatchIntervalEngine that a new file has been received
 
             // For testing:
             BindingList<CurrentCaptureFile> _CurrentCaptureFiles = new BindingList<CurrentCaptureFile>();
-            CurrentCaptureFile ccf = new CurrentCaptureFile("CaptureFile635674934042778589d.pcap", CaptureState.Marked);
-            CurrentCaptureFile ccf1 = new CurrentCaptureFile("CaptureFile635674934252530702u.pcap", CaptureState.Unmarked);
-            CurrentCaptureFile ccf2 = new CurrentCaptureFile("CaptureFile635674934452612146d.pcap", CaptureState.Marked);
+            CurrentCaptureFile ccf = new CurrentCaptureFile("CaptureFile635674934252530702u.pcap", CaptureState.Unmarked);
+            CurrentCaptureFile ccf1 = new CurrentCaptureFile("CaptureFile635674934452612146d.pcap", CaptureState.Marked);
+            CurrentCaptureFile ccf2 = new CurrentCaptureFile("CaptureFile635674934652743658u.pcap", CaptureState.Unmarked);
+            CurrentCaptureFile ccf3 = new CurrentCaptureFile("CaptureFile635674934852905142d.pcap", CaptureState.Marked);
             _CurrentCaptureFiles.Add(ccf);
             _CurrentCaptureFiles.Add(ccf1);
             _CurrentCaptureFiles.Add(ccf2);
+            _CurrentCaptureFiles.Add(ccf3);
 
             if (_CurrentCaptureFiles.Count > 0)
             {
                 foreach (CurrentCaptureFile file in _CurrentCaptureFiles)
                 {
-                    BindingList<RawPacket> rawPackets = new BindingList<RawPacket>();
-                    BindingList<PacketInterval> intervalCounts = new BindingList<PacketInterval>();
+                    string captureFileName = file.FileName;
 
-                    //int captureBatchId = 0;
+                    //BatchIntervalEngine biEngine = new BatchIntervalEngine(DbConnectionString, _ParsedFilesPath, _CurrentCaptureFileName, 5, InterarrivalInterval.GetIntervalMilliSeconds());
+                    //string captureFileName = "CaptureFile635674934252530702u.pcap";
+                    BatchIntervalEngine biEngine = new BatchIntervalEngine(DbConnectionString, _ParsedFilesPath, captureFileName, 5, InterarrivalInterval.GetIntervalMilliSeconds());
+                    biEngine.ProcessNewBatchIntervals();
 
-                    ProcessCapturePackets pcp = new ProcessCapturePackets();
-                    
-                    ClientStatusToolStripStatusLabel.Visible = true;
-                    ClientStatusToolStripProgressBar.Visible = true;
-                    ClientStatusToolStripStatusLabel.Text = "Loading capture packets into data store for file [" + file.FileName + "]...";
-                    
-                    try
-                    {
-                        rawPackets = pcp.LoadPackets(file.FileName);
-                        if (rawPackets.Count > 0) { success = true; }
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Error loading raw packet data for file [" + file.FileName + "]: " + ex.Message, "Process Capture Packets - Load Packets");
-                    }
-                    try
-                    {
-                        if (success)
-                        {
-                            intervalCounts = pcp.CalculateIntervalCounts(rawPackets, intervalSizeMs);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        success = false;
-                        MessageBox.Show("Error calculating interval counts for file [" + file.FileName + "]: " + ex.Message, "Process Capture Packets - Calculate Interval Counts");
-                    }
+                    //AnalysisEngine analysisEngine = new AnalysisEngine(AnalysisConfiguration.TrimSmallPackets, AnalysisConfiguration.HistogramBinSize, AnalysisConfiguration.HypothesisTest, captureFileName, file.CaptureState);
+                    AnalysisEngine analysisEngine = new AnalysisEngine(AnalysisConfiguration.TrimSmallPackets, AnalysisConfiguration.HistogramBinSize, AnalysisConfiguration.HypothesisTestType, file);
+                    analysisEngine.CalculateSingleBatchStatistics();
+                    analysisEngine.CalculateCumulativeBatchStatistics();
+                    analysisEngine.CalculateSingleHistogramData();
+                    analysisEngine.CalculateCumulativeHistogramData();
+                    analysisEngine.CalculateCumulativeProbabilityDistribution(file.CaptureState);
+                    analysisEngine.CalculateHypothesisTestResults();
 
-                    // Load the batch intervals into the database
-                    if (success)
-                    {
-                        try
-                        {
-                            //success = pcp.SaveBatchIntervals(DbConnectionString, intervalCounts, file.FileName, captureBatchId, file.Marked);
-                            success = pcp.SaveBatchIntervals(DbConnectionString, intervalCounts);
-                        }
-                        catch (Exception ex)
-                        {
-                            success = false;
-                            MessageBox.Show("Error saving batch interval counts: " + ex.Message, "Save Batch Intervals");
-                        }
-                    }
-                    
-                    // Add batch to cumulative totals
-                    if(success)
-                    {
-                        try
-                        {
-                            success = pcp.UpdateCumulativeIntervals(DbConnectionString, intervalCounts, file.Marked);
-                        }
-                        catch (Exception ex)
-                        {
-                            success = false;
-                            MessageBox.Show("Error updating cumulative intervals for this file  [" + file.FileName + "]: " + ex.Message);
-                        }
-                    }
-
-                    BindingList<BatchIntervalMarked> markedIntervals = new BindingList<BatchIntervalMarked>();
-                    var captureBatchId = (from i in intervalCounts
-                                          select i.CaptureBatchId).FirstOrDefault();
-
-                    markedIntervals = pcp.GetMarkedBatchIntervals(captureBatchId);
-                    AnalyzeData ad = new AnalyzeData(markedIntervals);
-
-                    Histogram h = new Histogram();
-                    Dictionary<int, int> histValues = new Dictionary<int, int>();
-                    //histValues = h.CalculateHistogramValues(markedIntervals);
-
-                    BindingList<CapturePacket> capturePackets = new BindingList<CapturePacket>();
-                    capturePackets = pcp.GetCapturePackets(file.FileName);
-                    histValues = h.CalculateHistogramValues(capturePackets);
-
-                    //Dictionary<int, decimal> probabilities = new CalculateProbability(histValues).GetProbabilityValues();
-                    SortedDictionary<int, decimal> probabilities = new CalculateProbability(markedIntervals).GetProbabilityByPacketRange();
-
-                    // Display the batch in the graph:
-                    // - One batch each of marked and unmarked - alternate as a new batch becomes available
-                    // - One batch each of cumulative marked and unmarked - alternate as a new batch becomes available
-                    // - Add to cumulative distribution and display
+                    biEngine = null;
+                    analysisEngine = null;
                 }
             }
-            else
-            {
-                MessageBox.Show("No capture files found to process!", "Process Capture Files");
-            }
+
+
+            /******************************** Old code ********************************************/
+            //DisplayStatisticsData bsd = new DisplayStatisticsData();
+            //BindingList<DisplayStatistic> ds = new BindingList<DisplayStatistic>();
+            //ds = bsd.GetSingleMarkedDisplayStatistics();
+
+            //bool success = false;
+
+            ////int intervalSizeMs = 30 ;
+            //int intervalSizeMs = InterarrivalInterval.GetIntervalMilliSeconds();
+
+            //// For testing:
+            //BindingList<CurrentCaptureFile> _CurrentCaptureFiles = new BindingList<CurrentCaptureFile>();
+            //CurrentCaptureFile ccf = new CurrentCaptureFile("CaptureFile635674934252530702u.pcap", CaptureState.Unmarked);
+            //CurrentCaptureFile ccf1 = new CurrentCaptureFile("CaptureFile635674934452612146d.pcap", CaptureState.Marked);
+            //CurrentCaptureFile ccf2 = new CurrentCaptureFile("CaptureFile635674934652743658u.pcap", CaptureState.Unmarked);
+            //CurrentCaptureFile ccf3 = new CurrentCaptureFile("CaptureFile635674934852905142d.pcap", CaptureState.Marked);
+            //_CurrentCaptureFiles.Add(ccf);
+            //_CurrentCaptureFiles.Add(ccf1);
+            //_CurrentCaptureFiles.Add(ccf2);
+            //_CurrentCaptureFiles.Add(ccf3);
+
+            //if (_CurrentCaptureFiles.Count > 0)
+            //{
+            //    foreach (CurrentCaptureFile file in _CurrentCaptureFiles)
+            //    {
+            //        BindingList<RawPacket> rawPackets = new BindingList<RawPacket>();
+            //        BindingList<PacketInterval> intervalCounts = new BindingList<PacketInterval>();
+
+            //        //int captureBatchId = 0;
+
+            //        ProcessCapturePackets pcp = new ProcessCapturePackets();
+
+            //        ClientStatusToolStripStatusLabel.Visible = true;
+            //        ClientStatusToolStripProgressBar.Visible = true;
+            //        ClientStatusToolStripStatusLabel.Text = "Loading capture packets into data store for file [" + file.FileName + "]...";
+
+            //        try
+            //        {
+            //            rawPackets = pcp.LoadPackets(file.FileName);
+            //            if (rawPackets.Count > 0) { success = true; }
+            //        }
+            //        catch (Exception ex)
+            //        {
+            //            MessageBox.Show("Error loading raw packet data for file [" + file.FileName + "]: " + ex.Message, "Process Capture Packets - Load Packets");
+            //        }
+            //        try
+            //        {
+            //            if (success)
+            //            {
+            //                intervalCounts = pcp.CalculateIntervalCounts(rawPackets, intervalSizeMs);
+            //            }
+            //        }
+            //        catch (Exception ex)
+            //        {
+            //            success = false;
+            //            MessageBox.Show("Error calculating interval counts for file [" + file.FileName + "]: " + ex.Message, "Process Capture Packets - Calculate Interval Counts");
+            //        }
+
+            //        // Load the batch intervals into the database
+            //        if (success)
+            //        {
+            //            try
+            //            {
+            //                //success = pcp.SaveBatchIntervals(DbConnectionString, intervalCounts, file.FileName, captureBatchId, file.Marked);
+            //                success = pcp.SaveBatchIntervals(DbConnectionString, intervalCounts);
+            //            }
+            //            catch (Exception ex)
+            //            {
+            //                success = false;
+            //                MessageBox.Show("Error saving batch interval counts: " + ex.Message, "Save Batch Intervals");
+            //            }
+            //        }
+
+            //        // Add batch to cumulative totals
+            //        if(success)
+            //        {
+            //            try
+            //            {
+            //                //success = pcp.UpdateCumulativeIntervals(DbConnectionString, intervalCounts, file.Marked);
+            //                success = pcp.UpdateCumulativeIntervals(DbConnectionString, intervalCounts);
+            //            }
+            //            catch (Exception ex)
+            //            {
+            //                success = false;
+            //                MessageBox.Show("Error updating cumulative intervals for this file  [" + file.FileName + "]: " + ex.Message);
+            //            }
+            //        }
+
+            //        BindingList<BatchIntervalMarked> markedIntervals = new BindingList<BatchIntervalMarked>();
+            //        var captureBatchId = (from i in intervalCounts
+            //                              select i.CaptureBatchId).FirstOrDefault();
+
+            //        markedIntervals = pcp.GetMarkedBatchIntervals(captureBatchId);
+            //        //AnalyzeData ad = new AnalyzeData(markedIntervals);
+
+            //        CalculateHistogram h = new CalculateHistogram();
+            //        Dictionary<int, int> histValues = new Dictionary<int, int>();
+            //        //histValues = h.CalculateHistogramValues(markedIntervals);
+
+            //        BindingList<CapturePacket> capturePackets = new BindingList<CapturePacket>();
+            //        capturePackets = pcp.GetCapturePackets(file.FileName);
+            //        histValues = h.CalculateHistogramValues(capturePackets);
+
+            //        //Dictionary<int, decimal> probabilities = new CalculateProbability(histValues).GetProbabilityValues();
+            //        //SortedDictionary<int, decimal> probabilities = new CalculateProbability(markedIntervals).GetProbabilityByPacketRange();
+
+            //        // Display the batch in the graph:
+            //        // - One batch each of marked and unmarked - alternate as a new batch becomes available
+            //        // - One batch each of cumulative marked and unmarked - alternate as a new batch becomes available
+            //        // - Add to cumulative distribution and display
+            //    }
+            //}
+            //else
+            //{
+            //    MessageBox.Show("No capture files found to process!", "Process Capture Files");
+            //}
         }
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -727,7 +1066,7 @@ namespace COWE.Client
             using (SolidBrush brush = new SolidBrush(e.ForeColor))
             {
                 //Brush brush = Brushes.Blue;
-  
+
                 Font font = e.Font;
                 if (e.Index == Convert.ToInt32(_SelectedNetworkInterface.NicNumber))
                 {
@@ -764,7 +1103,7 @@ namespace COWE.Client
             if (NetworkInterfaceComboBox.SelectedIndex != -1)
             {
                 string nicNumber = NetworkInterfaceComboBox.SelectedValue.ToString();
-            
+
                 // Display the IP address
                 if (_NetworkInterfaces != null)
                 {
@@ -775,7 +1114,7 @@ namespace COWE.Client
                         {
                             foundNic = true;
                             IpAddressLabel.Text = pni.IpAddress;
-                            SelectedNicLabel.Text = pni.PcapDescription;
+                            SelectedNicLabel.Text = pni.PcapDescription.Length > 20 ? pni.PcapDescription.Substring(0, 26) : pni.PcapDescription;
                             _SelectedNetworkInterface = pni;
                             break;
                         }
@@ -809,6 +1148,136 @@ namespace COWE.Client
                 StopParseCaptureFilesService();
             }
         }
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CoweAboutBox cab = new CoweAboutBox();
+            cab.Show();
+        }
+
+        private void StartTimerButton_Click(object sender, EventArgs e)
+        {
+            if (StartTimerButton.Text == "Start Timer")
+            {
+                TimerStart(Convert.ToInt32(FlooderIntervalTextBox.Text));
+                StartTimerButton.Text = "Stop Timer";
+            }
+            else
+            {
+                _FlooderIntervalTimer.Stop();
+                StopWatchStop();
+                StartTimerButton.Text = "Start Timer";
+            }
+
+
+        }
+        //private void OnReceivedParsedFile(object sender, ReceivedParsedFileEventArgs e)
+        //{
+        //    if(ReceivedParsedFile != null)
+        //    {
+        //        ReceivedParsedFile(sender, e);
+        //    }
+        //}
+        private void TrimIntervalsCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            //_trimZeroPacketIntervals = TrimIntervalsCheckBox.Checked ? true : false;
+            AnalysisConfiguration.TrimSmallPackets = TrimIntervalsCheckBox.Checked ? true : false;
+        }
+        private void AnalysisIntervalSizeTextBox_TextChanged(object sender, EventArgs e)
+        {
+            // Validate the data using regex - if not an integer, replace the data with the original value
+            // (which is still in AnalysisConfiguration.IntervalSize)
+            AnalysisConfiguration.IntervalSize = Convert.ToInt32(AnalysisIntervalSizeTextBox.Text.Trim());
+        }
+        private void HistogramBinSizeTextBox_TextChanged(object sender, EventArgs e)
+        {
+            AnalysisConfiguration.HistogramBinSize = Convert.ToInt32(HistogramBinSizeTextBox.Text.Trim());
+        }
+        private void FlooderIntervalTextBox_TextChanged(object sender, EventArgs e)
+        {
+            _FlooderIntervalNew = FlooderIntervalTextBox.Text;
+        }
+        private void KsTestStepRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            if (KsTestStepRadioButton.Checked)
+            {
+                AnalysisConfiguration.HypothesisTestType = HypothesisTestType.KsTestStep;
+            }
+        }
+        private void KsTestLinearRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            if (KsTestLinearRadioButton.Checked)
+            {
+                AnalysisConfiguration.HypothesisTestType = HypothesisTestType.KsTestLinear;
+            }
+        }
+        private void MeansTestRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            if (MeansTestRadioButton.Checked)
+            {
+                AnalysisConfiguration.HypothesisTestType = HypothesisTestType.MeansTest;
+            }
+        }
+        private void TargetPortTextBox_TextChanged(object sender, EventArgs e)
+        {
+            _TargetPortNew = TargetPortTextBox.Text;
+        }
+        private void TextBoxIntegerEntry_Validating(object sender, CancelEventArgs e)
+        {
+            // Cast sender to a textbox
+            TextBox tb = (TextBox)sender;
+
+            // If entry is not an integer notify user
+            Regex notInteger = new Regex(@"\D");
+            if (notInteger.IsMatch(tb.Text))
+            {
+                //tb.BackColor = Color.Yellow;
+                tb.Tag = false;
+                MessageBox.Show("Value must be an integer");
+
+                // Display the original value
+                switch (tb.Name)
+                {
+                    case "AnalysisIntervalSizeTextBox":
+                        tb.Text = AnalysisConfiguration.IntervalSize.ToString();
+                        break;
+                    case "HistogramBinSizeTextBox":
+                        tb.Text = AnalysisConfiguration.HistogramBinSize.ToString();
+                        break;
+                    case "FlooderIntervalTextBox":
+                        tb.Text = _FlooderIntervalOld;
+                        break;
+                    case "TargetPortTextBox":
+                        tb.Text = _TargetPortOld;
+                        break;
+                }
+                tb.Focus();
+            }
+            else
+            {
+                // Entry is an integer
+                //tb.BackColor = System.Drawing.SystemColors.Window;
+
+                // Update the global variables
+                switch (tb.Name)
+                {
+                    case "FlooderIntervalTextBox":
+                        _FlooderIntervalOld = _FlooderIntervalNew;
+                        break;
+                    case "TargetPortTextBox":
+                        _TargetPortOld = _TargetPortNew;
+                        break;
+                }
+                tb.Tag = true;
+            }
+        }
+        private void DatabaseResetCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (DatabaseResetCheckBox.Checked == true)
+            {
+                //ResetDatabaseAndDeleteCaptureFiles();
+            }
+        }
+       
         #endregion
 
         #region Private Methods
@@ -916,7 +1385,7 @@ namespace COWE.Client
             //_FlooderStatusDataGridView.AllowUserToAddRows = true;
             //_FlooderStatusDataGridView.AllowUserToDeleteRows = true;
 
-             //AddFlooderRow(pid);
+            //AddFlooderRow(pid);
             int col = 0; // Start with PID
             int row = 0;// Next row
 
@@ -1017,9 +1486,9 @@ namespace COWE.Client
             col = 1;
 
             _FlooderStatusDataGridView.Rows[row].Cells[col++].Value = pid.ToString();   // PID
-            _FlooderStatusDataGridView.Rows[row].Cells[col++].Value = "10.10.10.208";   // Flooder IP Address
-            _FlooderStatusDataGridView.Rows[row].Cells[col++].Value = "8080";           // Flooder port
-            _FlooderStatusDataGridView.Rows[row].Cells[col++].Value = "10.10.10.118";   // Flooder Destination
+            _FlooderStatusDataGridView.Rows[row].Cells[col++].Value = _InitialFlooderIP;   // Flooder IP Address
+            _FlooderStatusDataGridView.Rows[row].Cells[col++].Value = _InitialFlooderPort;           // Flooder port
+            _FlooderStatusDataGridView.Rows[row].Cells[col++].Value = _InitialDestinationIP;   // Flooder Destination
             _FlooderStatusDataGridView.Rows[row].Cells[col++].Value = "0";              // Runtime
             _FlooderStatusDataGridView.Rows[row].Cells[col].Value = "Not Connected";    // Status
             _FlooderStatusDataGridView.Rows[row].Cells[col].Style.BackColor = NotConnected;
@@ -1032,18 +1501,38 @@ namespace COWE.Client
         private void InitializeForm()
         {
             // Set initial values
-            TargetIpAddressTextBox.Text = "10.10.10.100";
-            TargetPortTextBox.Text = "80";
-            FlooderIntervalTextBox.Text = "20";
+            TargetIpAddressTextBox.Text = _InitialTargetIP;
+            TargetPortTextBox.Text = _InitialTargetPort;
+            FlooderIntervalTextBox.Text = _InitialFlooderInterval;
+
+            // Capture current values
+            _FlooderIntervalOld = FlooderIntervalTextBox.Text;
+            _TargetPortOld = TargetPortTextBox.Text;
 
             // Hide the process files progress bar and label
             ClientStatusToolStripStatusLabel.Visible = false;
             ClientStatusToolStripProgressBar.Visible = false;
+
+            // Tag values for data validation
+            this.HistogramBinSizeTextBox.Tag = false;
+            this.AnalysisIntervalSizeTextBox.Tag = false;
+            this.FlooderIntervalTextBox.Tag = false;
+            this.TargetPortTextBox.Tag = false;
+
+            // Subscribe to data validation events
+            this.HistogramBinSizeTextBox.Validating += new CancelEventHandler(TextBoxIntegerEntry_Validating);
+            this.AnalysisIntervalSizeTextBox.Validating += new CancelEventHandler(TextBoxIntegerEntry_Validating);
+            this.FlooderIntervalTextBox.Validating += new CancelEventHandler(TextBoxIntegerEntry_Validating);
+            this.TargetPortTextBox.Validating += new CancelEventHandler(TextBoxIntegerEntry_Validating);
+
+            //// Subscribe to Coresident VM notification event
+            //this._AnalysisEngine = new AnalysisEngine();
+            //_AnalysisEngine.FoundCoresidentVm += new AnalysisEngine.FoundCoresidentVmEventHandler(OnFoundCoresidentVm);
         }
         private void ResizeFlooderGrid()
         {
             int height = 0;
-            
+
 
             foreach (DataGridViewRow row in _FlooderStatusDataGridView.Rows)
             {
@@ -1057,12 +1546,12 @@ namespace COWE.Client
                 width += col.Width;
             }
 
-            if(_FlooderStatusDataGridView.Rows.Count == _MaxGridDisplayRows)
+            if (_FlooderStatusDataGridView.Rows.Count == _MaxGridDisplayRows)
             {
                 _MaxGridHeight = height;
             }
 
-            if(_FlooderStatusDataGridView.Rows.Count > _MaxGridDisplayRows)
+            if (_FlooderStatusDataGridView.Rows.Count > _MaxGridDisplayRows)
             {
                 // Allow additional width for scroll bar
                 _FlooderStatusDataGridView.ClientSize = new Size(width + 20, _MaxGridHeight + 4);
@@ -1117,7 +1606,7 @@ namespace COWE.Client
                 int bytesSent = s.Send(msg);
                 int bytesRecvd = s.Receive(bytes);
                 response = Encoding.ASCII.GetString(bytes, 0, bytesRecvd);
-                if(response.Trim().Substring(0,12) == "ACK-Received")
+                if (response.Trim().Substring(0, 12) == "ACK-Received")
                 {
                     success = true;
                 }
@@ -1190,7 +1679,8 @@ namespace COWE.Client
                 s.Close();
             }
         }
-        private bool StartPacketCapture(string sourceHostIp, string destinationHostIp, int captureInterval)
+        //private bool StartPacketCapture(string sourceHostIp, string destinationHostIp, int captureInterval)
+        private bool StartPacketCapture(string sourceHostIp, string localHostIp, int captureInterval)
         {
             bool result = false;
             int pid = 0;
@@ -1205,7 +1695,8 @@ namespace COWE.Client
                 // Note: the pcap interface number is one-based (not zero-based), so adding a one here
                 int nicNumber = Convert.ToInt32(_CurrentClientNetworkInterface);
                 nicNumber++;
-                ca.StartCaptureSession(sourceHostIp, destinationHostIp, captureInterval, _CaptureFolderPath, fileName, nicNumber.ToString(), out pid);
+                //ca.StartCaptureSession(sourceHostIp, destinationHostIp, captureInterval, _CaptureFolderPath, fileName, nicNumber.ToString(), out pid);
+                ca.StartCaptureSession(sourceHostIp, localHostIp, captureInterval, _CaptureFolderPath, fileName, nicNumber.ToString(), out pid);
                 if (pid > 0) { _CaptureProcessId = pid; }
                 result = true;
                 return result;
@@ -1218,7 +1709,9 @@ namespace COWE.Client
         }
         private void MovePacketCaptureFile(string currentCaptureFileName)
         {
-            // Move the packet capture file to the parser service folder
+            // Move the packet capture file to the ParseCaptureFiles folder specified in app.config
+            // The ParseCaptureFilesService will read the file(s) in this folder and parse them,
+            // then move the parsed file to the ProcessedCaptureFiles folder.
 
             // Wait for any process to finish writing to the file
             Thread.Sleep(500);
@@ -1236,9 +1729,11 @@ namespace COWE.Client
         }
         private void InitializeBackgroundWorkerTheads()
         {
-            this.bgWorker.DoWork += new DoWorkEventHandler(bgWorker_DoWork);
-            this.bgWorker.ProgressChanged += new ProgressChangedEventHandler(bgWorker_ProgressChanged);
-            this.bgWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bgWorker_RunWorkerCompleted);
+            bgWorker.WorkerReportsProgress = true;
+            bgWorker.WorkerSupportsCancellation = true;
+            bgWorker.DoWork += new DoWorkEventHandler(bgWorker_DoWork);
+            bgWorker.ProgressChanged += new ProgressChangedEventHandler(bgWorker_ProgressChanged);
+            bgWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bgWorker_RunWorkerCompleted);
         }
         private void InitializeProgressSpinner()
         {
@@ -1282,7 +1777,7 @@ namespace COWE.Client
             string status = string.Empty;
             ServiceController controller = new ServiceController("ParseCaptureFilesService");
 
-            switch(controller.Status)
+            switch (controller.Status)
             {
                 case ServiceControllerStatus.Running:
                     status = "Running";
@@ -1322,7 +1817,9 @@ namespace COWE.Client
                 _ParseFolderPath = nvc["PARSE_FILE_PATH"];
                 _ParsedFilesPath = nvc["PARSED_FILES_PATH"];
                 _ProcessedFilesPath = nvc["PROCESSED_FILES_PATH"];
+                AnalysisConfiguration.ProcessedCaptureFilesPath = _ProcessedFilesPath;
                 DbConnectionString = nvc["DB_CONN_STR"];
+                DatabaseConnections.SqlConnection = DbConnectionString;
             }
             catch (Exception ex)
             {
@@ -1352,12 +1849,25 @@ namespace COWE.Client
             this.ProgressLabel.Text = "";
             this.ProgressLabel.Visible = false;
         }
+        private void InitializeFileCount()
+        {
+            _MarkedFileCount = _UnmarkedFileCount = 0;
+        }
+        private void DisplayCapturedFileCount()
+        {
+            this.ClientStatusToolStripStatusLabel.Visible = true;
+            this.ClientStatusToolStripStatusLabel.Text = string.Format("File Count: Marked: {0}     Unmarked: {1}          ", _MarkedFileCount, _UnmarkedFileCount);
+            Application.DoEvents();
+        }
+        private void HideCapturedFileCount()
+        {
+            this.ClientStatusToolStripStatusLabel.Visible = false;
+        }
         private void ResetDatabaseAndDeleteCaptureFiles()
         {
             // Truncate database capture tables
-
-
-            // Delete old capture files
+            ProcessCapturePackets pcp = new ProcessCapturePackets();
+            pcp.TruncateAllTables();
 
             DisplayProgressMessage("Deleting old capture files...");
             Application.DoEvents();
@@ -1399,14 +1909,27 @@ namespace COWE.Client
             FileInfo[] parsedTextFiles = CheckForExistingFiles(_ParsedFilesPath);
             foreach (FileInfo file in parsedTextFiles)
             {
-                // Only delete pcap files!
-                if (file.Name.Substring(file.Name.Length - 3, 3) == "txt")
-                {
+                //// Only delete txt files!
+                //if (file.Name.Substring(file.Name.Length - 3, 3) == "txt")
+                //{
                     File.Delete(file.FullName);
                     fileCount++;
-                }
+                //}
             }
             DisplayProgressMessage(fileCount + " parsed text files deleted");
+            Application.DoEvents();
+
+            // Delete old processed capture text files
+            DisplayProgressMessage("Deleting old processed capture files...");
+            Application.DoEvents();
+            fileCount = 0;
+            FileInfo[] processedCaptureFiles = CheckForExistingFiles(_ProcessedFilesPath);
+            foreach (FileInfo file in processedCaptureFiles)
+            {
+                File.Delete(file.FullName);
+                fileCount++;
+            }
+            DisplayProgressMessage(fileCount + " processed capture files deleted");
             Application.DoEvents();
 
             HideProgressMessage();
@@ -1521,7 +2044,7 @@ namespace COWE.Client
                 NetworkInterfaceComboBox.SelectedValueChanged += new EventHandler(NetworkInterfaceComboBox_SelectedValueChanged);
 
                 NetworkInterfaceComboBox.DataSource = nics;
-               
+
                 // Display the NIC description
                 NetworkInterfaceComboBox.DisplayMember = "Key";
                 NetworkInterfaceComboBox.ValueMember = "Value";
@@ -1571,12 +2094,19 @@ namespace COWE.Client
         }
         private void StartParseCaptureFilesService()
         {
-            ServiceController sc = new ServiceController("ParseCaptureFilesService");
-            sc.Start();
+            try
+            {
+                ServiceController sc = new ServiceController("ParseCaptureFilesService");
+                sc.Start();
 
-            // Allow time for serivce to start, otherwise status will not show "stopped"
-            Thread.Sleep(1000);
-            UpdateParseFilesServiceStatus();
+                // Allow time for serivce to start, otherwise status will not show "stopped"
+                Thread.Sleep(1000);
+                UpdateParseFilesServiceStatus();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error starting [Parse Capture Files Service]: " + ex.Message, "Start Parse Capture Files Service", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
         private void StopParseCaptureFilesService()
         {
@@ -1619,6 +2149,58 @@ namespace COWE.Client
                     break;
             }
         }
+        private void TimerStart(int _FlooderTimerInterval)
+        {
+            // Start the timer (ms increments)
+            _FlooderIntervalTimer = new System.Timers.Timer(_FlooderTimerInterval * 1000);
+            _FlooderIntervalTimer.Elapsed += new ElapsedEventHandler(OnFlooderTimerElapsedEvent);
+            _FlooderIntervalTimer.Start();
+            StopWatchStart();
+            AnalysisConfiguration.TimerInterval = _FlooderTimerInterval;
+        }
+        private void InitializeAnalysisMetricsGroupBox()
+        {
+            // Set the font size for the GroupBox (but not for the controls it contains)
+            Font analysisMetricsFont = new Font("Microsoft Sans Serif", 8);
+            AnalysisMetricsGroupBox.Font = analysisMetricsFont;
+        }
+        private void DisableConfigurationControls()
+        {
+            NetworkInterfaceComboBox.Enabled = false;
+            AnalysisIntervalSizeTextBox.Enabled = false;
+            HistogramBinSizeTextBox.Enabled = false;
+            TrimIntervalsCheckBox.Enabled = false;
+            HypothesisTestGroupBox.Enabled = false;
+            TargetIpAddressTextBox.Enabled = false;
+            TargetPortTextBox.Enabled = false;
+            FlooderIntervalTextBox.Enabled = false;
+            DatabaseResetCheckBox.Enabled = false;
+            StartParseFilesServiceButton.Enabled = false;
+        }
+        private void EnableConfigurationControls()
+        {
+            NetworkInterfaceComboBox.Enabled = true;
+            AnalysisIntervalSizeTextBox.Enabled = true;
+            HistogramBinSizeTextBox.Enabled = true;
+            TrimIntervalsCheckBox.Enabled = true;
+            HypothesisTestGroupBox.Enabled = true;
+            TargetIpAddressTextBox.Enabled = true;
+            TargetPortTextBox.Enabled = true;
+            FlooderIntervalTextBox.Enabled = true;
+            DatabaseResetCheckBox.Enabled = true;
+            StartParseFilesServiceButton.Enabled = true;
+        }
+        private void DisableFlooderControls()
+        {
+            AddFlooderButton.Enabled = false;
+            DeleteFlooderButton.Enabled = false;
+        }
+        private void EnableFlooderControls()
+        {
+            AddFlooderButton.Enabled = true;
+            DeleteFlooderButton.Enabled = true;
+        }
         #endregion
-    }
+
+    }    
 }

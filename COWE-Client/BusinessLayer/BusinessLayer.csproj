@@ -42,10 +42,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AnalyzeData.cs" />
+    <Compile Include="AnalysisEngine.cs" />
+    <Compile Include="BatchIntervalEngine.cs" />
     <Compile Include="CalculateProbability.cs" />
-    <Compile Include="Histogram.cs" />
+    <Compile Include="CalculateHistogram.cs" />
+    <Compile Include="CreateIntervalsAndAnalysisController.cs" />
+    <Compile Include="ExpandPacketCountLinear.cs" />
+    <Compile Include="ExpandPacketCountStep.cs" />
+    <Compile Include="IExpandPacketCount.cs" />
+    <Compile Include="IHypothesisTest.cs" />
+    <Compile Include="KsLinearHypothesisTest.cs" />
+    <Compile Include="KsStepHypothesisTest.cs" />
+    <Compile Include="MeansHypothesisTest.cs" />
     <Compile Include="NewFileNotifier.cs" />
+    <Compile Include="ProcessedFileNotifier.cs" />
     <Compile Include="ProcessCapturePackets.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

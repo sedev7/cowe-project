@@ -28,8 +28,19 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.topPanel = new System.Windows.Forms.Panel();
+            this.AnalysisMetricsGroupBox = new System.Windows.Forms.GroupBox();
+            this.HypothesisTestGroupBox = new System.Windows.Forms.GroupBox();
+            this.KsTestLinearRadioButton = new System.Windows.Forms.RadioButton();
+            this.MeansTestRadioButton = new System.Windows.Forms.RadioButton();
+            this.KsTestStepRadioButton = new System.Windows.Forms.RadioButton();
+            this.HistogramBinSizeTextBox = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.TrimIntervalsCheckBox = new System.Windows.Forms.CheckBox();
+            this.AnalysisIntervalSizeTextBox = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.label3 = new System.Windows.Forms.Label();
             this.IpAddressLabel = new System.Windows.Forms.Label();
@@ -62,7 +73,7 @@
             this.DeleteFlooderButton = new System.Windows.Forms.Button();
             this.AddFlooderButton = new System.Windows.Forms.Button();
             this.mainPanel = new System.Windows.Forms.Panel();
-            this.AnalyzeDataButton = new System.Windows.Forms.Button();
+            this.StartTimerButton = new System.Windows.Forms.Button();
             this.ProcessCaptureDataButton = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.FlooderTimerIntervalGroupBox = new System.Windows.Forms.GroupBox();
@@ -92,7 +103,11 @@
             this.CientStatusStrip = new System.Windows.Forms.StatusStrip();
             this.ClientStatusToolStripProgressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.ClientStatusToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.TrimSmallestBinsToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.HypothesisTestToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.topPanel.SuspendLayout();
+            this.AnalysisMetricsGroupBox.SuspendLayout();
+            this.HypothesisTestGroupBox.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.bottonPanel.SuspendLayout();
@@ -117,14 +132,133 @@
             // 
             this.topPanel.BackColor = System.Drawing.SystemColors.Control;
             this.topPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.topPanel.Controls.Add(this.AnalysisMetricsGroupBox);
             this.topPanel.Controls.Add(this.groupBox3);
             this.topPanel.Controls.Add(this.label1);
             this.topPanel.Controls.Add(this.menuStrip1);
             this.topPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.topPanel.Location = new System.Drawing.Point(0, 0);
             this.topPanel.Name = "topPanel";
-            this.topPanel.Size = new System.Drawing.Size(1013, 138);
+            this.topPanel.Size = new System.Drawing.Size(1013, 181);
             this.topPanel.TabIndex = 0;
+            // 
+            // AnalysisMetricsGroupBox
+            // 
+            this.AnalysisMetricsGroupBox.Controls.Add(this.HypothesisTestGroupBox);
+            this.AnalysisMetricsGroupBox.Controls.Add(this.HistogramBinSizeTextBox);
+            this.AnalysisMetricsGroupBox.Controls.Add(this.label5);
+            this.AnalysisMetricsGroupBox.Controls.Add(this.TrimIntervalsCheckBox);
+            this.AnalysisMetricsGroupBox.Controls.Add(this.AnalysisIntervalSizeTextBox);
+            this.AnalysisMetricsGroupBox.Controls.Add(this.label4);
+            this.AnalysisMetricsGroupBox.Location = new System.Drawing.Point(833, 27);
+            this.AnalysisMetricsGroupBox.Name = "AnalysisMetricsGroupBox";
+            this.AnalysisMetricsGroupBox.Size = new System.Drawing.Size(170, 149);
+            this.AnalysisMetricsGroupBox.TabIndex = 6;
+            this.AnalysisMetricsGroupBox.TabStop = false;
+            this.AnalysisMetricsGroupBox.Text = "Analysis Metrics";
+            // 
+            // HypothesisTestGroupBox
+            // 
+            this.HypothesisTestGroupBox.Controls.Add(this.KsTestLinearRadioButton);
+            this.HypothesisTestGroupBox.Controls.Add(this.MeansTestRadioButton);
+            this.HypothesisTestGroupBox.Controls.Add(this.KsTestStepRadioButton);
+            this.HypothesisTestGroupBox.Location = new System.Drawing.Point(8, 100);
+            this.HypothesisTestGroupBox.Name = "HypothesisTestGroupBox";
+            this.HypothesisTestGroupBox.Size = new System.Drawing.Size(162, 41);
+            this.HypothesisTestGroupBox.TabIndex = 8;
+            this.HypothesisTestGroupBox.TabStop = false;
+            this.HypothesisTestGroupBox.Text = "Hypothesis Test";
+            this.HypothesisTestToolTip.SetToolTip(this.HypothesisTestGroupBox, "KS compares cumulative probability distributions (marked vs unmarked) - KS-S uses" +
+        " step function, KS-L uses linear function;\r\nMeans compares the mean of means for" +
+        " each distribution (marked vs unmarked)");
+            // 
+            // KsTestLinearRadioButton
+            // 
+            this.KsTestLinearRadioButton.AutoSize = true;
+            this.KsTestLinearRadioButton.Location = new System.Drawing.Point(51, 17);
+            this.KsTestLinearRadioButton.Name = "KsTestLinearRadioButton";
+            this.KsTestLinearRadioButton.Size = new System.Drawing.Size(48, 17);
+            this.KsTestLinearRadioButton.TabIndex = 2;
+            this.KsTestLinearRadioButton.TabStop = true;
+            this.KsTestLinearRadioButton.Text = "KS-L";
+            this.KsTestLinearRadioButton.UseVisualStyleBackColor = true;
+            this.KsTestLinearRadioButton.CheckedChanged += new System.EventHandler(this.KsTestLinearRadioButton_CheckedChanged);
+            // 
+            // MeansTestRadioButton
+            // 
+            this.MeansTestRadioButton.AutoSize = true;
+            this.MeansTestRadioButton.Location = new System.Drawing.Point(100, 17);
+            this.MeansTestRadioButton.Name = "MeansTestRadioButton";
+            this.MeansTestRadioButton.Size = new System.Drawing.Size(57, 17);
+            this.MeansTestRadioButton.TabIndex = 1;
+            this.MeansTestRadioButton.TabStop = true;
+            this.MeansTestRadioButton.Text = "Means";
+            this.MeansTestRadioButton.UseVisualStyleBackColor = true;
+            this.MeansTestRadioButton.CheckedChanged += new System.EventHandler(this.MeansTestRadioButton_CheckedChanged);
+            // 
+            // KsTestStepRadioButton
+            // 
+            this.KsTestStepRadioButton.AutoSize = true;
+            this.KsTestStepRadioButton.Location = new System.Drawing.Point(5, 17);
+            this.KsTestStepRadioButton.Name = "KsTestStepRadioButton";
+            this.KsTestStepRadioButton.Size = new System.Drawing.Size(49, 17);
+            this.KsTestStepRadioButton.TabIndex = 0;
+            this.KsTestStepRadioButton.TabStop = true;
+            this.KsTestStepRadioButton.Text = "KS-S";
+            this.KsTestStepRadioButton.UseVisualStyleBackColor = true;
+            this.KsTestStepRadioButton.CheckedChanged += new System.EventHandler(this.KsTestStepRadioButton_CheckedChanged);
+            // 
+            // HistogramBinSizeTextBox
+            // 
+            this.HistogramBinSizeTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.HistogramBinSizeTextBox.Location = new System.Drawing.Point(138, 45);
+            this.HistogramBinSizeTextBox.Name = "HistogramBinSizeTextBox";
+            this.HistogramBinSizeTextBox.Size = new System.Drawing.Size(27, 22);
+            this.HistogramBinSizeTextBox.TabIndex = 7;
+            this.HistogramBinSizeTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.HistogramBinSizeTextBox.TextChanged += new System.EventHandler(this.HistogramBinSizeTextBox_TextChanged);
+            // 
+            // label5
+            // 
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Location = new System.Drawing.Point(5, 40);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(129, 35);
+            this.label5.TabIndex = 6;
+            this.label5.Text = "Histogram Bin Size\r\n(packets/interval)";
+            // 
+            // TrimIntervalsCheckBox
+            // 
+            this.TrimIntervalsCheckBox.AutoSize = true;
+            this.TrimIntervalsCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.TrimIntervalsCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TrimIntervalsCheckBox.Location = new System.Drawing.Point(2, 76);
+            this.TrimIntervalsCheckBox.Name = "TrimIntervalsCheckBox";
+            this.TrimIntervalsCheckBox.Size = new System.Drawing.Size(162, 20);
+            this.TrimIntervalsCheckBox.TabIndex = 3;
+            this.TrimIntervalsCheckBox.Text = "Trim Smallest Intervals";
+            this.TrimIntervalsCheckBox.UseVisualStyleBackColor = true;
+            this.TrimIntervalsCheckBox.CheckedChanged += new System.EventHandler(this.TrimIntervalsCheckBox_CheckedChanged);
+            // 
+            // AnalysisIntervalSizeTextBox
+            // 
+            this.AnalysisIntervalSizeTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AnalysisIntervalSizeTextBox.Location = new System.Drawing.Point(138, 17);
+            this.AnalysisIntervalSizeTextBox.Name = "AnalysisIntervalSizeTextBox";
+            this.AnalysisIntervalSizeTextBox.Size = new System.Drawing.Size(27, 22);
+            this.AnalysisIntervalSizeTextBox.TabIndex = 1;
+            this.AnalysisIntervalSizeTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.AnalysisIntervalSizeTextBox.TextChanged += new System.EventHandler(this.AnalysisIntervalSizeTextBox_TextChanged);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(5, 20);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(109, 16);
+            this.label4.TabIndex = 0;
+            this.label4.Text = "Interval Size (ms)";
             // 
             // groupBox3
             // 
@@ -133,9 +267,9 @@
             this.groupBox3.Controls.Add(this.NetworkInterfaceComboBox);
             this.groupBox3.Controls.Add(this.label2);
             this.groupBox3.Controls.Add(this.SelectedNicLabel);
-            this.groupBox3.Location = new System.Drawing.Point(684, 29);
+            this.groupBox3.Location = new System.Drawing.Point(526, 27);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(301, 104);
+            this.groupBox3.Size = new System.Drawing.Size(301, 149);
             this.groupBox3.TabIndex = 5;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Client Network Interface Adaptor";
@@ -293,6 +427,7 @@
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(52, 20);
             this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // bottonPanel
             // 
@@ -302,7 +437,7 @@
             this.bottonPanel.Controls.Add(this.groupBox1);
             this.bottonPanel.Controls.Add(this.AddDeleteFlooderGroupBox);
             this.bottonPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.bottonPanel.Location = new System.Drawing.Point(0, 434);
+            this.bottonPanel.Location = new System.Drawing.Point(0, 453);
             this.bottonPanel.Name = "bottonPanel";
             this.bottonPanel.Size = new System.Drawing.Size(994, 100);
             this.bottonPanel.TabIndex = 1;
@@ -431,7 +566,7 @@
             // 
             this.mainPanel.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.mainPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.mainPanel.Controls.Add(this.AnalyzeDataButton);
+            this.mainPanel.Controls.Add(this.StartTimerButton);
             this.mainPanel.Controls.Add(this.ProcessCaptureDataButton);
             this.mainPanel.Controls.Add(this.bottonPanel);
             this.mainPanel.Controls.Add(this.groupBox2);
@@ -440,17 +575,18 @@
             this.mainPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mainPanel.Location = new System.Drawing.Point(3, 3);
             this.mainPanel.Name = "mainPanel";
-            this.mainPanel.Size = new System.Drawing.Size(996, 536);
+            this.mainPanel.Size = new System.Drawing.Size(996, 555);
             this.mainPanel.TabIndex = 2;
             // 
-            // AnalyzeDataButton
+            // StartTimerButton
             // 
-            this.AnalyzeDataButton.Location = new System.Drawing.Point(878, 383);
-            this.AnalyzeDataButton.Name = "AnalyzeDataButton";
-            this.AnalyzeDataButton.Size = new System.Drawing.Size(99, 43);
-            this.AnalyzeDataButton.TabIndex = 13;
-            this.AnalyzeDataButton.Text = "Analyze Data";
-            this.AnalyzeDataButton.UseVisualStyleBackColor = true;
+            this.StartTimerButton.Location = new System.Drawing.Point(878, 383);
+            this.StartTimerButton.Name = "StartTimerButton";
+            this.StartTimerButton.Size = new System.Drawing.Size(99, 43);
+            this.StartTimerButton.TabIndex = 13;
+            this.StartTimerButton.Text = "Start Timer";
+            this.StartTimerButton.UseVisualStyleBackColor = true;
+            this.StartTimerButton.Click += new System.EventHandler(this.StartTimerButton_Click);
             // 
             // ProcessCaptureDataButton
             // 
@@ -496,6 +632,7 @@
             this.FlooderIntervalTextBox.TabIndex = 6;
             this.FlooderIntervalTextBox.Text = "120";
             this.FlooderIntervalTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.FlooderIntervalTextBox.TextChanged += new System.EventHandler(this.FlooderIntervalTextBox_TextChanged);
             // 
             // FlooderTargetGroupBox
             // 
@@ -528,6 +665,7 @@
             this.TargetPortTextBox.TabIndex = 3;
             this.TargetPortTextBox.Text = "65536";
             this.TargetPortTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.TargetPortTextBox.TextChanged += new System.EventHandler(this.TargetPortTextBox_TextChanged);
             // 
             // DatabaseResetGroupBox
             // 
@@ -549,6 +687,7 @@
             this.DatabaseResetCheckBox.TabIndex = 0;
             this.DatabaseResetCheckBox.Text = "Reset Database and Files";
             this.DatabaseResetCheckBox.UseVisualStyleBackColor = true;
+            this.DatabaseResetCheckBox.CheckedChanged += new System.EventHandler(this.DatabaseResetCheckBox_CheckedChanged);
             // 
             // ParseCaptureFilesServiceGroupBox
             // 
@@ -685,10 +824,10 @@
             this.ClientTabControl.Controls.Add(this.FlooderTabPage);
             this.ClientTabControl.Controls.Add(this.AnalysisTabPage);
             this.ClientTabControl.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ClientTabControl.Location = new System.Drawing.Point(1, 137);
+            this.ClientTabControl.Location = new System.Drawing.Point(1, 187);
             this.ClientTabControl.Name = "ClientTabControl";
             this.ClientTabControl.SelectedIndex = 0;
-            this.ClientTabControl.Size = new System.Drawing.Size(1010, 571);
+            this.ClientTabControl.Size = new System.Drawing.Size(1010, 590);
             this.ClientTabControl.TabIndex = 3;
             this.ClientTabControl.Selected += new System.Windows.Forms.TabControlEventHandler(this.ClientTabControl_Selected);
             // 
@@ -699,7 +838,7 @@
             this.FlooderTabPage.Location = new System.Drawing.Point(4, 25);
             this.FlooderTabPage.Name = "FlooderTabPage";
             this.FlooderTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.FlooderTabPage.Size = new System.Drawing.Size(1002, 542);
+            this.FlooderTabPage.Size = new System.Drawing.Size(1002, 561);
             this.FlooderTabPage.TabIndex = 0;
             this.FlooderTabPage.Text = "Flooder";
             // 
@@ -709,7 +848,7 @@
             this.AnalysisTabPage.Location = new System.Drawing.Point(4, 25);
             this.AnalysisTabPage.Name = "AnalysisTabPage";
             this.AnalysisTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.AnalysisTabPage.Size = new System.Drawing.Size(1002, 542);
+            this.AnalysisTabPage.Size = new System.Drawing.Size(1002, 561);
             this.AnalysisTabPage.TabIndex = 1;
             this.AnalysisTabPage.Text = "Analysis";
             this.AnalysisTabPage.UseVisualStyleBackColor = true;
@@ -719,7 +858,7 @@
             this.AnalysisMainPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.AnalysisMainPanel.Location = new System.Drawing.Point(3, 3);
             this.AnalysisMainPanel.Name = "AnalysisMainPanel";
-            this.AnalysisMainPanel.Size = new System.Drawing.Size(996, 536);
+            this.AnalysisMainPanel.Size = new System.Drawing.Size(996, 555);
             this.AnalysisMainPanel.TabIndex = 0;
             // 
             // CientStatusStrip
@@ -727,7 +866,7 @@
             this.CientStatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ClientStatusToolStripProgressBar,
             this.ClientStatusToolStripStatusLabel});
-            this.CientStatusStrip.Location = new System.Drawing.Point(0, 710);
+            this.CientStatusStrip.Location = new System.Drawing.Point(0, 780);
             this.CientStatusStrip.Name = "CientStatusStrip";
             this.CientStatusStrip.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.CientStatusStrip.Size = new System.Drawing.Size(1013, 22);
@@ -747,22 +886,31 @@
             this.ClientStatusToolStripStatusLabel.Size = new System.Drawing.Size(207, 17);
             this.ClientStatusToolStripStatusLabel.Text = "ClientStatusToolStripStatusLabel...";
             // 
+            // HypothesisTestToolTip
+            // 
+            this.HypothesisTestToolTip.ToolTipTitle = "Hypothesis Test";
+            // 
             // Client
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1013, 732);
+            this.ClientSize = new System.Drawing.Size(1013, 802);
             this.Controls.Add(this.CientStatusStrip);
             this.Controls.Add(this.ClientTabControl);
             this.Controls.Add(this.topPanel);
             this.MainMenuStrip = this.menuStrip1;
-            this.MaximumSize = new System.Drawing.Size(1029, 770);
-            this.MinimumSize = new System.Drawing.Size(1029, 770);
+            this.MaximumSize = new System.Drawing.Size(1029, 840);
+            this.MinimumSize = new System.Drawing.Size(1029, 820);
             this.Name = "Client";
             this.Text = "Co-Residency Probe (Client)";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Client_FormClosing);
             this.Load += new System.EventHandler(this.Client_Load);
             this.topPanel.ResumeLayout(false);
             this.topPanel.PerformLayout();
+            this.AnalysisMetricsGroupBox.ResumeLayout(false);
+            this.AnalysisMetricsGroupBox.PerformLayout();
+            this.HypothesisTestGroupBox.ResumeLayout(false);
+            this.HypothesisTestGroupBox.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
@@ -856,7 +1004,19 @@
         private System.Windows.Forms.StatusStrip CientStatusStrip;
         private System.Windows.Forms.ToolStripStatusLabel ClientStatusToolStripStatusLabel;
         private System.Windows.Forms.ToolStripProgressBar ClientStatusToolStripProgressBar;
-        private System.Windows.Forms.Button AnalyzeDataButton;
+        private System.Windows.Forms.Button StartTimerButton;
+        private System.Windows.Forms.GroupBox AnalysisMetricsGroupBox;
+        private System.Windows.Forms.TextBox HistogramBinSizeTextBox;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.CheckBox TrimIntervalsCheckBox;
+        private System.Windows.Forms.TextBox AnalysisIntervalSizeTextBox;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.ToolTip TrimSmallestBinsToolTip;
+        private System.Windows.Forms.GroupBox HypothesisTestGroupBox;
+        private System.Windows.Forms.RadioButton MeansTestRadioButton;
+        private System.Windows.Forms.RadioButton KsTestStepRadioButton;
+        private System.Windows.Forms.ToolTip HypothesisTestToolTip;
+        private System.Windows.Forms.RadioButton KsTestLinearRadioButton;
     }
 }
 

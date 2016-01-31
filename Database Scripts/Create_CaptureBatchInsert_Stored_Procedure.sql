@@ -3,6 +3,9 @@
 -- J. Savage  06-07-2015
 -- COWE Thesis/Research Project (CISE)
 --
+-- v4 07-07-2015:
+--  - Add Mean and TrimmedMean columns
+--
 -- v3 06-14-2015:
 --  - First production version
 --
@@ -44,6 +47,8 @@ GO
 CREATE PROCEDURE [COWE].[CaptureBatchInsert]
 	@FileName VARCHAR(200),
 	@Marked bit,
+	@Mean decimal = 0,  -- Default value
+	@TrimmedMean decimal = 0,  -- Default value
 	@NewCaptureBatchId int output
 
 AS 
@@ -54,8 +59,8 @@ SET ROWCOUNT 0
 
 	BEGIN TRY
 		BEGIN TRANSACTION InsertCaptureBatch
-		INSERT INTO [COWE].[CaptureBatch] (FileName, Marked)
-		VALUES (@FileName, @Marked);
+		INSERT INTO [COWE].[CaptureBatch] (FileName, Marked, [Mean], TrimmedMean)
+		VALUES (@FileName, @Marked, @Mean, @TrimmedMean);
 		COMMIT;
 
 		-- Get the new CaptureBatchId

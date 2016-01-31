@@ -1,0 +1,220 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="PacketAnalysisModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="BatchInterval">
+    <Key>
+      <PropertyRef Name="BatchIntervalId" />
+    </Key>
+    <Property Name="BatchIntervalId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="CaptureBatchId" Type="int" Nullable="false" />
+    <Property Name="IntervalNumber" Type="int" Nullable="false" />
+    <Property Name="PacketCount" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="CaptureBatch">
+    <Key>
+      <PropertyRef Name="CaptureBatchId" />
+    </Key>
+    <Property Name="CaptureBatchId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="FileName" Type="varchar" MaxLength="200" Nullable="false" />
+    <Property Name="Marked" Type="bit" Nullable="false" />
+    <Property Name="Mean" Type="decimal" Precision="28" Scale="10" Nullable="false" />
+    <Property Name="TrimmedMean" Type="decimal" Precision="28" Scale="10" Nullable="false" />
+    <Property Name="Parsed" Type="bit" Nullable="false" />
+    <Property Name="SingleStatistics" Type="bit" Nullable="false" />
+    <Property Name="CumulativeStatistics" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="CapturePacket">
+    <Key>
+      <PropertyRef Name="CapturePacketId" />
+    </Key>
+    <Property Name="CapturePacketId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="CaptureBatchId" Type="int" Nullable="false" />
+    <Property Name="PacketNumber" Type="int" Nullable="false" />
+    <Property Name="TimeStamp" Type="datetime" Nullable="false" />
+    <Property Name="Marked" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="CumulativeHistogram">
+    <Key>
+      <PropertyRef Name="CumulativeHistogramId" />
+    </Key>
+    <Property Name="CumulativeHistogramId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Interval" Type="int" Nullable="false" />
+    <Property Name="Probability" Type="decimal" Precision="28" Scale="10" Nullable="false" />
+    <Property Name="CaptureState" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="CumulativeInterval">
+    <Key>
+      <PropertyRef Name="CumulativeIntervalId" />
+    </Key>
+    <Property Name="CumulativeIntervalId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="CumulativeIntervalNumber" Type="int" Nullable="false" />
+    <Property Name="PacketCount" Type="int" Nullable="false" />
+    <Property Name="Marked" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="CumulativeProbabilityDistribution">
+    <Key>
+      <PropertyRef Name="CumulativeProbabilityDistributionId" />
+    </Key>
+    <Property Name="CumulativeProbabilityDistributionId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Interval" Type="int" Nullable="false" />
+    <Property Name="Probability" Type="decimal" Precision="28" Scale="10" Nullable="false" />
+    <Property Name="CaptureState" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="DisplayStatistic">
+    <Key>
+      <PropertyRef Name="DisplayStatisticId" />
+    </Key>
+    <Property Name="DisplayStatisticId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="IntervalCount" Type="int" Nullable="false" />
+    <Property Name="TrimmedIntervalCount" Type="int" Nullable="false" />
+    <Property Name="MeanPacketsPerInterval" Type="decimal" Precision="28" Scale="10" Nullable="false" />
+    <Property Name="StandardDeviation" Type="decimal" Precision="28" Scale="10" Nullable="false" />
+    <Property Name="MinPacketsPerInterval" Type="int" Nullable="false" />
+    <Property Name="MaxPacketsPerInterval" Type="int" Nullable="false" />
+    <Property Name="MeanOfMeans" Type="decimal" Precision="28" Scale="10" Nullable="false" />
+    <Property Name="MeanOfMeansStandardDeviation" Type="decimal" Precision="28" Scale="10" Nullable="false" />
+    <Property Name="Marked" Type="bit" Nullable="false" />
+    <Property Name="BatchType" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="HypothesisTest">
+    <Key>
+      <PropertyRef Name="HypothesisTestId" />
+    </Key>
+    <Property Name="HypothesisTestId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="MeanOfMeansVariance" Type="decimal" Precision="28" Scale="10" Nullable="false" />
+    <Property Name="MeansVarianceStandardDeviation" Type="decimal" Precision="28" Scale="10" Nullable="false" />
+    <Property Name="KsStatistic" Type="decimal" Precision="28" Scale="10" Nullable="false" />
+    <Property Name="MaxCpdVariance" Type="decimal" Precision="28" Scale="10" Nullable="false" />
+    <Property Name="MeansTestResult" Type="bit" Nullable="false" />
+    <Property Name="KsTestResult" Type="bit" Nullable="false" />
+    <Property Name="HasValues" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="SingleHistogram">
+    <Key>
+      <PropertyRef Name="SingleHistogramId" />
+    </Key>
+    <Property Name="SingleHistogramId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="CaptureBatchId" Type="int" Nullable="false" />
+    <Property Name="Interval" Type="int" Nullable="false" />
+    <Property Name="Probability" Type="decimal" Precision="28" Scale="10" Nullable="false" />
+    <Property Name="CaptureState" Type="int" Nullable="false" />
+  </EntityType>
+  <Association Name="FK_BatchInterval$CaptureBatch_CaptureBatchId">
+    <End Role="CaptureBatch" Type="Self.CaptureBatch" Multiplicity="1" />
+    <End Role="BatchInterval" Type="Self.BatchInterval" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CaptureBatch">
+        <PropertyRef Name="CaptureBatchId" />
+      </Principal>
+      <Dependent Role="BatchInterval">
+        <PropertyRef Name="CaptureBatchId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CapturePacket$CaptureBatch_CaptureBatchId">
+    <End Role="CaptureBatch" Type="Self.CaptureBatch" Multiplicity="1" />
+    <End Role="CapturePacket" Type="Self.CapturePacket" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CaptureBatch">
+        <PropertyRef Name="CaptureBatchId" />
+      </Principal>
+      <Dependent Role="CapturePacket">
+        <PropertyRef Name="CaptureBatchId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SingleHistogram$CaptureBatch_CaptureBatchId">
+    <End Role="CaptureBatch" Type="Self.CaptureBatch" Multiplicity="1" />
+    <End Role="SingleHistogram" Type="Self.SingleHistogram" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CaptureBatch">
+        <PropertyRef Name="CaptureBatchId" />
+      </Principal>
+      <Dependent Role="SingleHistogram">
+        <PropertyRef Name="CaptureBatchId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Function Name="CaptureBatchInsert" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="COWE">
+    <Parameter Name="FileName" Type="varchar" Mode="In" />
+    <Parameter Name="Marked" Type="bit" Mode="In" />
+    <Parameter Name="Mean" Type="decimal" Mode="In" />
+    <Parameter Name="TrimmedMean" Type="decimal" Mode="In" />
+    <Parameter Name="NewCaptureBatchId" Type="int" Mode="InOut" />
+  </Function>
+  <Function Name="CaptureBatchUpdate_for_CaptureBatchId" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="COWE">
+    <Parameter Name="CaptureBatchId" Type="int" Mode="In" />
+    <Parameter Name="FileName" Type="varchar" Mode="In" />
+    <Parameter Name="Marked" Type="bit" Mode="In" />
+    <Parameter Name="Mean" Type="decimal" Mode="In" />
+    <Parameter Name="TrimmedMean" Type="decimal" Mode="In" />
+    <Parameter Name="Parsed" Type="bit" Mode="In" />
+    <Parameter Name="SingleStatistics" Type="bit" Mode="In" />
+    <Parameter Name="CumulativeStatistics" Type="bit" Mode="In" />
+  </Function>
+  <Function Name="CumulativeIntervalDelete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="COWE">
+    <Parameter Name="Marked" Type="bit" Mode="In" />
+    <Parameter Name="RowsDeleted" Type="int" Mode="InOut" />
+  </Function>
+  <Function Name="CumulativeProbabilityDistributionDelete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="COWE">
+    <Parameter Name="CaptureState" Type="int" Mode="In" />
+    <Parameter Name="BatchType" Type="int" Mode="In" />
+  </Function>
+  <Function Name="CumulativeProbabilityDistributionInsert" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="COWE">
+    <Parameter Name="Interval" Type="int" Mode="In" />
+    <Parameter Name="Probability" Type="decimal" Mode="In" />
+    <Parameter Name="CaptureState" Type="int" Mode="In" />
+    <Parameter Name="BatchType" Type="int" Mode="In" />
+  </Function>
+  <Function Name="DisplayStatisticsDelete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="COWE">
+    <Parameter Name="Marked" Type="bit" Mode="In" />
+    <Parameter Name="BatchType" Type="int" Mode="In" />
+  </Function>
+  <Function Name="DisplayStatisticsInsert" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="COWE">
+    <Parameter Name="IntervalCount" Type="int" Mode="In" />
+    <Parameter Name="TrimmedIntervalCount" Type="int" Mode="In" />
+    <Parameter Name="MeanPacketsPerInterval" Type="decimal" Mode="In" />
+    <Parameter Name="StandardDeviation" Type="decimal" Mode="In" />
+    <Parameter Name="MinPacketsPerInterval" Type="int" Mode="In" />
+    <Parameter Name="MaxPacketsPerInterval" Type="int" Mode="In" />
+    <Parameter Name="MeanOfMeans" Type="decimal" Mode="In" />
+    <Parameter Name="MeanOfMeansStandardDeviation" Type="decimal" Mode="In" />
+    <Parameter Name="Marked" Type="bit" Mode="In" />
+    <Parameter Name="BatchType" Type="int" Mode="In" />
+  </Function>
+  <Function Name="HistogramDelete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="COWE">
+    <Parameter Name="CaptureState" Type="int" Mode="In" />
+    <Parameter Name="BatchType" Type="int" Mode="In" />
+  </Function>
+  <Function Name="HistogramInsert" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="COWE">
+    <Parameter Name="Interval" Type="int" Mode="In" />
+    <Parameter Name="Probability" Type="decimal" Mode="In" />
+    <Parameter Name="CaptureState" Type="int" Mode="In" />
+    <Parameter Name="BatchType" Type="int" Mode="In" />
+  </Function>
+  <Function Name="TruncateAllIntervalStatisticAndTestTables" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="COWE" />
+  <Function Name="TruncateAllIntervalTables" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="COWE" />
+  <Function Name="TruncateAllTables" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="COWE" />
+  <EntityContainer Name="PacketAnalysisModelStoreContainer">
+    <EntitySet Name="BatchInterval" EntityType="Self.BatchInterval" Schema="COWE" store:Type="Tables" />
+    <EntitySet Name="CaptureBatch" EntityType="Self.CaptureBatch" Schema="COWE" store:Type="Tables" />
+    <EntitySet Name="CapturePacket" EntityType="Self.CapturePacket" Schema="COWE" store:Type="Tables" />
+    <EntitySet Name="CumulativeHistogram" EntityType="Self.CumulativeHistogram" Schema="COWE" store:Type="Tables" />
+    <EntitySet Name="CumulativeInterval" EntityType="Self.CumulativeInterval" Schema="COWE" store:Type="Tables" />
+    <EntitySet Name="CumulativeProbabilityDistribution" EntityType="Self.CumulativeProbabilityDistribution" Schema="COWE" store:Type="Tables" />
+    <EntitySet Name="DisplayStatistic" EntityType="Self.DisplayStatistic" Schema="COWE" store:Type="Tables" />
+    <EntitySet Name="HypothesisTest" EntityType="Self.HypothesisTest" Schema="COWE" store:Type="Tables" />
+    <EntitySet Name="SingleHistogram" EntityType="Self.SingleHistogram" Schema="COWE" store:Type="Tables" />
+    <AssociationSet Name="FK_BatchInterval$CaptureBatch_CaptureBatchId" Association="Self.FK_BatchInterval$CaptureBatch_CaptureBatchId">
+      <End Role="CaptureBatch" EntitySet="CaptureBatch" />
+      <End Role="BatchInterval" EntitySet="BatchInterval" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CapturePacket$CaptureBatch_CaptureBatchId" Association="Self.FK_CapturePacket$CaptureBatch_CaptureBatchId">
+      <End Role="CaptureBatch" EntitySet="CaptureBatch" />
+      <End Role="CapturePacket" EntitySet="CapturePacket" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SingleHistogram$CaptureBatch_CaptureBatchId" Association="Self.FK_SingleHistogram$CaptureBatch_CaptureBatchId">
+      <End Role="CaptureBatch" EntitySet="CaptureBatch" />
+      <End Role="SingleHistogram" EntitySet="SingleHistogram" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

@@ -42,13 +42,16 @@ namespace COWE.BusinessLayer
 
                     foreach (var file in fi)
                     {
-                        pcp.ProcessPacketFile(file.Name);
-
-                        if (currentCaptureFileName != file.Name)
+                        if (file.Name != "TestFile.txt")
                         {
-                            CurrentCaptureFile ccf = new CurrentCaptureFile();
-                            ccf = pcp.GetCurrentCaptureFile(file.Name);
-                            currentCaptureFiles.Add(ccf);
+                            pcp.ProcessPacketFile(file.Name);
+
+                            if (currentCaptureFileName != file.Name)
+                            {
+                                CurrentCaptureFile ccf = new CurrentCaptureFile();
+                                ccf = pcp.GetCurrentCaptureFile(file.Name);
+                                currentCaptureFiles.Add(ccf);
+                            }
                         }
 
                         // Move the file to the done folder

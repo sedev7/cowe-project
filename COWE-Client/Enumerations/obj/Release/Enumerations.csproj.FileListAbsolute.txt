@@ -1,0 +1,4 @@
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\Enumerations\bin\Release\Enumerations.dll
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\Enumerations\bin\Release\Enumerations.pdb
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\Enumerations\obj\Release\Enumerations.dll
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\Enumerations\obj\Release\Enumerations.pdb

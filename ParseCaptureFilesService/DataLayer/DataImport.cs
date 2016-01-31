@@ -60,11 +60,13 @@ namespace COWE.DataLayer
 
                 cmd.Parameters.Add(new SqlParameter("@FileName", SqlDbType.VarChar, 200, "FileName"));
                 cmd.Parameters.Add(new SqlParameter("@Marked", SqlDbType.Bit, 1, "Marked"));
+                cmd.Parameters.Add(new SqlParameter("@Mean", SqlDbType.Decimal, 18, "Mean"));
                 cmd.Parameters.Add(new SqlParameter("@NewCaptureBatchId", SqlDbType.Int));
                 cmd.Parameters["@NewCaptureBatchId"].Direction = ParameterDirection.Output;
 
                 cmd.Parameters[0].Value = fileName;
                 cmd.Parameters[1].Value = marked ? 1 : 0;
+                cmd.Parameters[2].Value = 0;
 
                 conn.Open();
                 cmd.ExecuteNonQuery();

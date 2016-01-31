@@ -3,3 +3,8 @@ C:\Jim's Folders\VS2013 Projects\CoResidencyProject\ParseCaptureFilesService\Dat
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\ParseCaptureFilesService\DataLayer\obj\Debug\DataLayer.dll
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\ParseCaptureFilesService\DataLayer\obj\Debug\DataLayer.pdb
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\ParseCaptureFilesService\DataLayer\obj\Debug\DataLayer.csprojResolveAssemblyReference.cache
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\ParseCaptureFilesService\DataLayer\bin\Debug\DataLayer.dll
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\ParseCaptureFilesService\DataLayer\bin\Debug\DataLayer.pdb
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\ParseCaptureFilesService\DataLayer\obj\Debug\DataLayer.csprojResolveAssemblyReference.cache
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\ParseCaptureFilesService\DataLayer\obj\Debug\DataLayer.dll
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\ParseCaptureFilesService\DataLayer\obj\Debug\DataLayer.pdb

@@ -13,9 +13,12 @@ namespace COWE.DomainClasses
         public BatchStatistics() { }
 
         public int IntervalCount { get; set; }
+        public int IntervalCountTrimmed { get; set; }
         public decimal PacketCountMean { get; set; }
         public decimal PacketCountStandardDeviation { get; set; }
         public int PacketCountMinimum { get; set; }
         public int PacketCountMaximum { get; set; }
+        public decimal MeanOfMeans { get; set; }
+        public decimal MeanOfMeansStandardDeviation { get; set; }
     }
 }

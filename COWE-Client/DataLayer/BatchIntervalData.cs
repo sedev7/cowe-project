@@ -29,8 +29,6 @@ namespace COWE.DataLayer
         #endregion
 
         #region Public Methods
-        #region Deprecated
-        // CreateBatchInterval() method no longer needed - done by ParseCaptureFilesService
         public int CreateBatchInterval(string fileName, CaptureState marked)
         {
             //bool success = false;
@@ -65,23 +63,12 @@ namespace COWE.DataLayer
             // success;
             return newCaptureBatchId;
         }
-        #endregion
         public BindingList<BatchIntervalMarked> GetMarkedBatchIntervals(int captureBatchId)
         {
             BindingList<BatchIntervalMarked> intervals = new BindingList<BatchIntervalMarked>();
 
             using (var context = new PacketAnalysisEntity())
             {
-                //var batchIntervals = from b in context.BatchIntervals
-                //                     select new
-                //                     {
-                //                         b.BatchIntervalId,
-                //                         b.CaptureBatchId,
-                //                         b.IntervalNumber,
-                //                         b.PacketCount,
-                //                         b.CaptureBatch.Marked
-                //                     };
-
                 var batchIntervals = from b in context.BatchIntervals
                                      where b.CaptureBatchId == captureBatchId
                                      select new
@@ -92,14 +79,6 @@ namespace COWE.DataLayer
                                          b.PacketCount,
                                          b.CaptureBatch.Marked
                                      };
-
-                //var batchIntervals = from b in context.BatchIntervals
-                //                     where b.CaptureBatchId == captureBatchId
-                //                     select b;
-
-                //var marked = (from m in context.CaptureBatches)
-                //var batchIntervals = (from b in context.BatchIntervals
-                //                      select b).ToList();
 
                 foreach (var bi in batchIntervals)
                 {
@@ -115,7 +94,6 @@ namespace COWE.DataLayer
             return intervals;
         }
 
-        //public bool LoadBatchIntervals(string dbConnectionString, DataTable dataTable)
         public bool LoadBatchIntervals(DataTable dataTable)
         {
             // Bulk-copy flooder batch interval packet counts
@@ -145,6 +123,21 @@ namespace COWE.DataLayer
             }
 
             return success;
+        }
+
+        public void RemoveAllBatchIntervals()
+        {
+            using(var context = new PacketAnalysisEntity())
+            {
+                context.TruncateAllIntervalTables();
+            }
+        }
+        public void TruncateAllIntervalStatisticAndTestTables()
+        {
+            using (var context = new PacketAnalysisEntity())
+            {
+                context.TruncateAllIntervalStatisticAndTestTables();
+            }
         }
         #endregion
     }

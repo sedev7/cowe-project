@@ -21,6 +21,11 @@
           <Property Name="CaptureBatchId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="FileName" Type="varchar" MaxLength="200" Nullable="false" />
           <Property Name="Marked" Type="bit" Nullable="false" />
+          <Property Name="Mean" Type="decimal" Precision="28" Scale="10" Nullable="false" />
+          <Property Name="TrimmedMean" Type="decimal" Precision="28" Scale="10" Nullable="false" />
+          <Property Name="Parsed" Type="bit" Nullable="false" />
+          <Property Name="SingleStatistics" Type="bit" Nullable="false" />
+          <Property Name="CumulativeStatistics" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="CapturePacket">
           <Key>
@@ -32,17 +37,71 @@
           <Property Name="TimeStamp" Type="datetime" Nullable="false" />
           <Property Name="Marked" Type="bit" Nullable="false" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'Packets.COWE.CumulativeInterval' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="CumulativeHistogram">
+          <Key>
+            <PropertyRef Name="CumulativeHistogramId" />
+          </Key>
+          <Property Name="CumulativeHistogramId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Interval" Type="int" Nullable="false" />
+          <Property Name="Probability" Type="decimal" Precision="28" Scale="10" Nullable="false" />
+          <Property Name="CaptureState" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="CumulativeInterval">
           <Key>
-            <PropertyRef Name="CumulativeIntervalNumber" />
-            <PropertyRef Name="PacketCount" />
-            <PropertyRef Name="Marked" />
+            <PropertyRef Name="CumulativeIntervalId" />
           </Key>
+          <Property Name="CumulativeIntervalId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="CumulativeIntervalNumber" Type="int" Nullable="false" />
           <Property Name="PacketCount" Type="int" Nullable="false" />
           <Property Name="Marked" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CumulativeProbabilityDistribution">
+          <Key>
+            <PropertyRef Name="CumulativeProbabilityDistributionId" />
+          </Key>
+          <Property Name="CumulativeProbabilityDistributionId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Interval" Type="int" Nullable="false" />
+          <Property Name="Probability" Type="decimal" Precision="28" Scale="10" Nullable="false" />
+          <Property Name="CaptureState" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="DisplayStatistic">
+          <Key>
+            <PropertyRef Name="DisplayStatisticId" />
+          </Key>
+          <Property Name="DisplayStatisticId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IntervalCount" Type="int" Nullable="false" />
+          <Property Name="TrimmedIntervalCount" Type="int" Nullable="false" />
+          <Property Name="MeanPacketsPerInterval" Type="decimal" Precision="28" Scale="10" Nullable="false" />
+          <Property Name="StandardDeviation" Type="decimal" Precision="28" Scale="10" Nullable="false" />
+          <Property Name="MinPacketsPerInterval" Type="int" Nullable="false" />
+          <Property Name="MaxPacketsPerInterval" Type="int" Nullable="false" />
+          <Property Name="MeanOfMeans" Type="decimal" Precision="28" Scale="10" Nullable="false" />
+          <Property Name="MeanOfMeansStandardDeviation" Type="decimal" Precision="28" Scale="10" Nullable="false" />
+          <Property Name="Marked" Type="bit" Nullable="false" />
+          <Property Name="BatchType" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="HypothesisTest">
+          <Key>
+            <PropertyRef Name="HypothesisTestId" />
+          </Key>
+          <Property Name="HypothesisTestId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MeanOfMeansVariance" Type="decimal" Precision="28" Scale="10" Nullable="false" />
+          <Property Name="MeansVarianceStandardDeviation" Type="decimal" Precision="28" Scale="10" Nullable="false" />
+          <Property Name="KsStatistic" Type="decimal" Precision="28" Scale="10" Nullable="false" />
+          <Property Name="MaxCpdVariance" Type="decimal" Precision="28" Scale="10" Nullable="false" />
+          <Property Name="MeansTestResult" Type="bit" Nullable="false" />
+          <Property Name="KsTestResult" Type="bit" Nullable="false" />
+          <Property Name="HasValues" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SingleHistogram">
+          <Key>
+            <PropertyRef Name="SingleHistogramId" />
+          </Key>
+          <Property Name="SingleHistogramId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CaptureBatchId" Type="int" Nullable="false" />
+          <Property Name="Interval" Type="int" Nullable="false" />
+          <Property Name="Probability" Type="decimal" Precision="28" Scale="10" Nullable="false" />
+          <Property Name="CaptureState" Type="int" Nullable="false" />
         </EntityType>
         <Association Name="FK_BatchInterval$CaptureBatch_CaptureBatchId">
           <End Role="CaptureBatch" Type="Self.CaptureBatch" Multiplicity="1" />
@@ -68,26 +127,88 @@ warning 6002: The table/view 'Packets.COWE.CumulativeInterval' does not have a p
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_SingleHistogram$CaptureBatch_CaptureBatchId">
+          <End Role="CaptureBatch" Type="Self.CaptureBatch" Multiplicity="1" />
+          <End Role="SingleHistogram" Type="Self.SingleHistogram" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CaptureBatch">
+              <PropertyRef Name="CaptureBatchId" />
+            </Principal>
+            <Dependent Role="SingleHistogram">
+              <PropertyRef Name="CaptureBatchId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Function Name="CaptureBatchInsert" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="COWE">
           <Parameter Name="FileName" Type="varchar" Mode="In" />
           <Parameter Name="Marked" Type="bit" Mode="In" />
+          <Parameter Name="Mean" Type="decimal" Mode="In" />
+          <Parameter Name="TrimmedMean" Type="decimal" Mode="In" />
           <Parameter Name="NewCaptureBatchId" Type="int" Mode="InOut" />
+        </Function>
+        <Function Name="CaptureBatchUpdate_for_CaptureBatchId" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="COWE">
+          <Parameter Name="CaptureBatchId" Type="int" Mode="In" />
+          <Parameter Name="FileName" Type="varchar" Mode="In" />
+          <Parameter Name="Marked" Type="bit" Mode="In" />
+          <Parameter Name="Mean" Type="decimal" Mode="In" />
+          <Parameter Name="TrimmedMean" Type="decimal" Mode="In" />
+          <Parameter Name="Parsed" Type="bit" Mode="In" />
+          <Parameter Name="SingleStatistics" Type="bit" Mode="In" />
+          <Parameter Name="CumulativeStatistics" Type="bit" Mode="In" />
         </Function>
         <Function Name="CumulativeIntervalDelete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="COWE">
           <Parameter Name="Marked" Type="bit" Mode="In" />
           <Parameter Name="RowsDeleted" Type="int" Mode="InOut" />
         </Function>
+        <Function Name="CumulativeProbabilityDistributionDelete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="COWE">
+          <Parameter Name="CaptureState" Type="int" Mode="In" />
+          <Parameter Name="BatchType" Type="int" Mode="In" />
+        </Function>
+        <Function Name="CumulativeProbabilityDistributionInsert" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="COWE">
+          <Parameter Name="Interval" Type="int" Mode="In" />
+          <Parameter Name="Probability" Type="decimal" Mode="In" />
+          <Parameter Name="CaptureState" Type="int" Mode="In" />
+          <Parameter Name="BatchType" Type="int" Mode="In" />
+        </Function>
+        <Function Name="DisplayStatisticsDelete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="COWE">
+          <Parameter Name="Marked" Type="bit" Mode="In" />
+          <Parameter Name="BatchType" Type="int" Mode="In" />
+        </Function>
+        <Function Name="DisplayStatisticsInsert" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="COWE">
+          <Parameter Name="IntervalCount" Type="int" Mode="In" />
+          <Parameter Name="TrimmedIntervalCount" Type="int" Mode="In" />
+          <Parameter Name="MeanPacketsPerInterval" Type="decimal" Mode="In" />
+          <Parameter Name="StandardDeviation" Type="decimal" Mode="In" />
+          <Parameter Name="MinPacketsPerInterval" Type="int" Mode="In" />
+          <Parameter Name="MaxPacketsPerInterval" Type="int" Mode="In" />
+          <Parameter Name="MeanOfMeans" Type="decimal" Mode="In" />
+          <Parameter Name="MeanOfMeansStandardDeviation" Type="decimal" Mode="In" />
+          <Parameter Name="Marked" Type="bit" Mode="In" />
+          <Parameter Name="BatchType" Type="int" Mode="In" />
+        </Function>
+        <Function Name="HistogramDelete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="COWE">
+          <Parameter Name="CaptureState" Type="int" Mode="In" />
+          <Parameter Name="BatchType" Type="int" Mode="In" />
+        </Function>
+        <Function Name="HistogramInsert" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="COWE">
+          <Parameter Name="Interval" Type="int" Mode="In" />
+          <Parameter Name="Probability" Type="decimal" Mode="In" />
+          <Parameter Name="CaptureState" Type="int" Mode="In" />
+          <Parameter Name="BatchType" Type="int" Mode="In" />
+        </Function>
+        <Function Name="TruncateAllIntervalStatisticAndTestTables" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="COWE" />
+        <Function Name="TruncateAllIntervalTables" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="COWE" />
+        <Function Name="TruncateAllTables" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="COWE" />
         <EntityContainer Name="PacketAnalysisModelStoreContainer">
           <EntitySet Name="BatchInterval" EntityType="Self.BatchInterval" Schema="COWE" store:Type="Tables" />
           <EntitySet Name="CaptureBatch" EntityType="Self.CaptureBatch" Schema="COWE" store:Type="Tables" />
           <EntitySet Name="CapturePacket" EntityType="Self.CapturePacket" Schema="COWE" store:Type="Tables" />
-          <EntitySet Name="CumulativeInterval" EntityType="Self.CumulativeInterval" store:Type="Tables" store:Schema="COWE">
-            <DefiningQuery>SELECT 
-    [CumulativeInterval].[CumulativeIntervalNumber] AS [CumulativeIntervalNumber], 
-    [CumulativeInterval].[PacketCount] AS [PacketCount], 
-    [CumulativeInterval].[Marked] AS [Marked]
-    FROM [COWE].[CumulativeInterval] AS [CumulativeInterval]</DefiningQuery>
-          </EntitySet>
+          <EntitySet Name="CumulativeHistogram" EntityType="Self.CumulativeHistogram" Schema="COWE" store:Type="Tables" />
+          <EntitySet Name="CumulativeInterval" EntityType="Self.CumulativeInterval" Schema="COWE" store:Type="Tables" />
+          <EntitySet Name="CumulativeProbabilityDistribution" EntityType="Self.CumulativeProbabilityDistribution" Schema="COWE" store:Type="Tables" />
+          <EntitySet Name="DisplayStatistic" EntityType="Self.DisplayStatistic" Schema="COWE" store:Type="Tables" />
+          <EntitySet Name="HypothesisTest" EntityType="Self.HypothesisTest" Schema="COWE" store:Type="Tables" />
+          <EntitySet Name="SingleHistogram" EntityType="Self.SingleHistogram" Schema="COWE" store:Type="Tables" />
           <AssociationSet Name="FK_BatchInterval$CaptureBatch_CaptureBatchId" Association="Self.FK_BatchInterval$CaptureBatch_CaptureBatchId">
             <End Role="CaptureBatch" EntitySet="CaptureBatch" />
             <End Role="BatchInterval" EntitySet="BatchInterval" />
@@ -95,6 +216,10 @@ warning 6002: The table/view 'Packets.COWE.CumulativeInterval' does not have a p
           <AssociationSet Name="FK_CapturePacket$CaptureBatch_CaptureBatchId" Association="Self.FK_CapturePacket$CaptureBatch_CaptureBatchId">
             <End Role="CaptureBatch" EntitySet="CaptureBatch" />
             <End Role="CapturePacket" EntitySet="CapturePacket" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SingleHistogram$CaptureBatch_CaptureBatchId" Association="Self.FK_SingleHistogram$CaptureBatch_CaptureBatchId">
+            <End Role="CaptureBatch" EntitySet="CaptureBatch" />
+            <End Role="SingleHistogram" EntitySet="SingleHistogram" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -117,9 +242,64 @@ warning 6002: The table/view 'Packets.COWE.CumulativeInterval' does not have a p
           <FunctionImport Name="CaptureBatchInsert">
             <Parameter Name="FileName" Mode="In" Type="String" />
             <Parameter Name="Marked" Mode="In" Type="Boolean" />
+            <Parameter Name="Mean" Mode="In" Type="Decimal" />
+            <Parameter Name="TrimmedMean" Mode="In" Type="Decimal" />
             <Parameter Name="NewCaptureBatchId" Mode="InOut" Type="Int32" />
           </FunctionImport>
+          <FunctionImport Name="CumulativeIntervalDelete" ReturnType="Collection(Decimal)">
+            <Parameter Name="Marked" Mode="In" Type="Boolean" />
+            <Parameter Name="RowsDeleted" Mode="InOut" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="TruncateAllIntervalTables" />
+          <FunctionImport Name="BatchStatisticsInsert">
+            <Parameter Name="IntervalCount" Mode="In" Type="Int32" />
+            <Parameter Name="TrimmedIntervalCount" Mode="In" Type="Int32" />
+            <Parameter Name="MeanPacketsPerInterval" Mode="In" Type="Decimal" />
+            <Parameter Name="StandardDeviation" Mode="In" Type="Decimal" />
+            <Parameter Name="MinPacketsPerInterval" Mode="In" Type="Int32" />
+            <Parameter Name="MaxPacketsPerInterval" Mode="In" Type="Int32" />
+            <Parameter Name="MeanOfMeansPerInterval" Mode="In" Type="Int32" />
+            <Parameter Name="Marked" Mode="In" Type="Boolean" />
+            <Parameter Name="StatisticsType" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="DisplayStatisticsInsert">
+            <Parameter Name="IntervalCount" Mode="In" Type="Int32" />
+            <Parameter Name="TrimmedIntervalCount" Mode="In" Type="Int32" />
+            <Parameter Name="MeanPacketsPerInterval" Mode="In" Type="Decimal" />
+            <Parameter Name="StandardDeviation" Mode="In" Type="Decimal" />
+            <Parameter Name="MinPacketsPerInterval" Mode="In" Type="Int32" />
+            <Parameter Name="MaxPacketsPerInterval" Mode="In" Type="Int32" />
+            <Parameter Name="MeanOfMeans" Mode="In" Type="Decimal" />
+            <Parameter Name="MeanOfMeansStandardDeviation" Mode="In" Type="Decimal" />
+            <Parameter Name="Marked" Mode="In" Type="Boolean" />
+            <Parameter Name="BatchType" Mode="In" Type="Int32" />
+          </FunctionImport>
           <EntitySet Name="BatchIntervals" EntityType="COWE.PacketAnalysisModel.BatchInterval" />
+          <FunctionImport Name="DisplayStatisticsDelete">
+            <Parameter Name="Marked" Mode="In" Type="Boolean" />
+            <Parameter Name="BatchType" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <EntitySet Name="CumulativeIntervals" EntityType="COWE.PacketAnalysisModel.CumulativeInterval" />
+          <FunctionImport Name="CumulativeProbabilityDistributionDelete">
+            <Parameter Name="CaptureState" Mode="In" Type="Int32" />
+            <Parameter Name="BatchType" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="HistogramDelete">
+            <Parameter Name="CaptureState" Mode="In" Type="Int32" />
+            <Parameter Name="BatchType" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="CumulativeProbabilityDistributionInsert">
+            <Parameter Name="Interval" Mode="In" Type="Int32" />
+            <Parameter Name="Probability" Mode="In" Type="Decimal" />
+            <Parameter Name="CaptureState" Mode="In" Type="Int32" />
+            <Parameter Name="BatchType" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="HistogramInsert">
+            <Parameter Name="Interval" Mode="In" Type="Int32" />
+            <Parameter Name="Probability" Mode="In" Type="Decimal" />
+            <Parameter Name="CaptureState" Mode="In" Type="Int32" />
+            <Parameter Name="BatchType" Mode="In" Type="Int32" />
+          </FunctionImport>
           <EntitySet Name="CaptureBatches" EntityType="COWE.PacketAnalysisModel.CaptureBatch" />
           <AssociationSet Name="FK_BatchInterval_CaptureBatch_CaptureBatchId" Association="COWE.PacketAnalysisModel.FK_BatchInterval_CaptureBatch_CaptureBatchId">
             <End Role="CaptureBatch" EntitySet="CaptureBatches" />
@@ -129,12 +309,28 @@ warning 6002: The table/view 'Packets.COWE.CumulativeInterval' does not have a p
             <End Role="CaptureBatch" EntitySet="CaptureBatches" />
             <End Role="CapturePacket" EntitySet="CapturePackets" />
           </AssociationSet>
-          <EntitySet Name="CumulativeIntervals" EntityType="COWE.PacketAnalysisModel.CumulativeInterval" />
-          <FunctionImport Name="CumulativeIntervalDelete" ReturnType="Collection(Decimal)">
+          <FunctionImport Name="CaptureBatchUpdate_for_CaptureBatchId">
+            <Parameter Name="CaptureBatchId" Mode="In" Type="Int32" />
+            <Parameter Name="FileName" Mode="In" Type="String" />
             <Parameter Name="Marked" Mode="In" Type="Boolean" />
-            <Parameter Name="RowsDeleted" Mode="InOut" Type="Int32" />
+            <Parameter Name="Mean" Mode="In" Type="Decimal" />
+            <Parameter Name="TrimmedMean" Mode="In" Type="Decimal" />
+            <Parameter Name="Parsed" Mode="In" Type="Boolean" />
+            <Parameter Name="SingleStatistics" Mode="In" Type="Boolean" />
+            <Parameter Name="CumulativeStatistics" Mode="In" Type="Boolean" />
           </FunctionImport>
-        </EntityContainer>
+          <EntitySet Name="DisplayStatistics" EntityType="COWE.PacketAnalysisModel.DisplayStatistic" />
+          <EntitySet Name="CumulativeHistograms" EntityType="COWE.PacketAnalysisModel.CumulativeHistogram" />
+          <EntitySet Name="SingleHistograms" EntityType="COWE.PacketAnalysisModel.SingleHistogram" />
+          <AssociationSet Name="FK_SingleHistogram_CaptureBatch_CaptureBatchId" Association="COWE.PacketAnalysisModel.FK_SingleHistogram_CaptureBatch_CaptureBatchId">
+            <End Role="CaptureBatch" EntitySet="CaptureBatches" />
+            <End Role="SingleHistogram" EntitySet="SingleHistograms" />
+          </AssociationSet>
+          <EntitySet Name="CumulativeProbabilityDistributions" EntityType="COWE.PacketAnalysisModel.CumulativeProbabilityDistribution" />
+          <FunctionImport Name="TruncateAllIntervalStatisticAndTestTables" />
+          <EntitySet Name="HypothesisTests" EntityType="COWE.PacketAnalysisModel.HypothesisTest" />
+          <FunctionImport Name="TruncateAllTables" />
+          </EntityContainer>
         <EntityType Name="BatchInterval">
           <Key>
             <PropertyRef Name="BatchIntervalId" />
@@ -145,6 +341,15 @@ warning 6002: The table/view 'Packets.COWE.CumulativeInterval' does not have a p
           <Property Name="PacketCount" Type="Int32" Nullable="false" />
           <NavigationProperty Name="CaptureBatch" Relationship="COWE.PacketAnalysisModel.FK_BatchInterval_CaptureBatch_CaptureBatchId" FromRole="BatchInterval" ToRole="CaptureBatch" />
         </EntityType>
+        <EntityType Name="CumulativeInterval">
+          <Key>
+            <PropertyRef Name="CumulativeIntervalId" />
+          </Key>
+          <Property Name="CumulativeIntervalId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CumulativeIntervalNumber" Type="Int32" Nullable="false" />
+          <Property Name="PacketCount" Type="Int32" Nullable="false" />
+          <Property Name="Marked" Type="Boolean" Nullable="false" />
+        </EntityType>
         <EntityType Name="CaptureBatch">
           <Key>
             <PropertyRef Name="CaptureBatchId" />
@@ -152,8 +357,14 @@ warning 6002: The table/view 'Packets.COWE.CumulativeInterval' does not have a p
           <Property Name="CaptureBatchId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="FileName" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
           <Property Name="Marked" Type="Boolean" Nullable="false" />
+          <Property Name="Mean" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
+          <Property Name="TrimmedMean" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
+          <Property Name="Parsed" Type="Boolean" Nullable="false" />
+          <Property Name="SingleStatistics" Type="Boolean" Nullable="false" />
+          <Property Name="CumulativeStatistics" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="BatchIntervals" Relationship="COWE.PacketAnalysisModel.FK_BatchInterval_CaptureBatch_CaptureBatchId" FromRole="CaptureBatch" ToRole="BatchInterval" />
           <NavigationProperty Name="CapturePackets" Relationship="COWE.PacketAnalysisModel.FK_CapturePacket_CaptureBatch_CaptureBatchId" FromRole="CaptureBatch" ToRole="CapturePacket" />
+          <NavigationProperty Name="SingleHistograms" Relationship="COWE.PacketAnalysisModel.FK_SingleHistogram_CaptureBatch_CaptureBatchId" FromRole="CaptureBatch" ToRole="SingleHistogram" />
         </EntityType>
         <Association Name="FK_BatchInterval_CaptureBatch_CaptureBatchId">
           <End Type="COWE.PacketAnalysisModel.CaptureBatch" Role="CaptureBatch" Multiplicity="1" />
@@ -179,17 +390,77 @@ warning 6002: The table/view 'Packets.COWE.CumulativeInterval' does not have a p
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="CumulativeInterval">
+        <EntityType Name="DisplayStatistic">
           <Key>
-            <PropertyRef Name="CumulativeIntervalNumber" />
-            <PropertyRef Name="PacketCount" />
-            <PropertyRef Name="Marked" />
+            <PropertyRef Name="DisplayStatisticId" />
           </Key>
-          <Property Name="CumulativeIntervalNumber" Type="Int32" Nullable="false" />
-          <Property Name="PacketCount" Type="Int32" Nullable="false" />
+          <Property Name="DisplayStatisticId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IntervalCount" Type="Int32" Nullable="false" />
+          <Property Name="TrimmedIntervalCount" Type="Int32" Nullable="false" />
+          <Property Name="MeanPacketsPerInterval" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
+          <Property Name="StandardDeviation" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
+          <Property Name="MinPacketsPerInterval" Type="Int32" Nullable="false" />
+          <Property Name="MaxPacketsPerInterval" Type="Int32" Nullable="false" />
+          <Property Name="MeanOfMeans" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
+          <Property Name="MeanOfMeansStandardDeviation" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
           <Property Name="Marked" Type="Boolean" Nullable="false" />
+          <Property Name="BatchType" Type="Int32" Nullable="false" />
         </EntityType>
-      </Schema>
+        <EntityType Name="CumulativeHistogram">
+          <Key>
+            <PropertyRef Name="CumulativeHistogramId" />
+          </Key>
+          <Property Name="CumulativeHistogramId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Interval" Type="Int32" Nullable="false" />
+          <Property Name="Probability" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
+          <Property Name="CaptureState" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SingleHistogram">
+          <Key>
+            <PropertyRef Name="SingleHistogramId" />
+          </Key>
+          <Property Name="SingleHistogramId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CaptureBatchId" Type="Int32" Nullable="false" />
+          <Property Name="Interval" Type="Int32" Nullable="false" />
+          <Property Name="Probability" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
+          <Property Name="CaptureState" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="CaptureBatch" Relationship="COWE.PacketAnalysisModel.FK_SingleHistogram_CaptureBatch_CaptureBatchId" FromRole="SingleHistogram" ToRole="CaptureBatch" />
+        </EntityType>
+        <Association Name="FK_SingleHistogram_CaptureBatch_CaptureBatchId">
+          <End Type="COWE.PacketAnalysisModel.CaptureBatch" Role="CaptureBatch" Multiplicity="1" />
+          <End Type="COWE.PacketAnalysisModel.SingleHistogram" Role="SingleHistogram" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CaptureBatch">
+              <PropertyRef Name="CaptureBatchId" />
+            </Principal>
+            <Dependent Role="SingleHistogram">
+              <PropertyRef Name="CaptureBatchId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="CumulativeProbabilityDistribution">
+          <Key>
+            <PropertyRef Name="CumulativeProbabilityDistributionId" />
+          </Key>
+          <Property Name="CumulativeProbabilityDistributionId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Interval" Type="Int32" Nullable="false" />
+          <Property Name="Probability" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
+          <Property Name="CaptureState" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="HypothesisTest">
+          <Key>
+            <PropertyRef Name="HypothesisTestId" />
+          </Key>
+          <Property Name="HypothesisTestId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MeanOfMeansVariance" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
+          <Property Name="MeansVarianceStandardDeviation" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
+          <Property Name="KsStatistic" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
+          <Property Name="MaxCpdVariance" Type="Decimal" Nullable="false" Precision="28" Scale="10" />
+          <Property Name="MeansTestResult" Type="Boolean" Nullable="false" />
+          <Property Name="KsTestResult" Type="Boolean" Nullable="false" />
+          <Property Name="HasValues" Type="Boolean" Nullable="false" />
+        </EntityType>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
@@ -207,6 +478,9 @@ warning 6002: The table/view 'Packets.COWE.CumulativeInterval' does not have a p
             </EntityTypeMapping>
           </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="CaptureBatchInsert" FunctionName="PacketAnalysisModel.Store.CaptureBatchInsert" />
+          <FunctionImportMapping FunctionImportName="CumulativeIntervalDelete" FunctionName="PacketAnalysisModel.Store.CumulativeIntervalDelete" />
+          <FunctionImportMapping FunctionImportName="TruncateAllIntervalTables" FunctionName="PacketAnalysisModel.Store.TruncateAllIntervalTables" />
+          <FunctionImportMapping FunctionImportName="DisplayStatisticsInsert" FunctionName="PacketAnalysisModel.Store.DisplayStatisticsInsert" />
           <EntitySetMapping Name="BatchIntervals">
             <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.BatchInterval">
               <MappingFragment StoreEntitySet="BatchInterval">
@@ -217,32 +491,140 @@ warning 6002: The table/view 'Packets.COWE.CumulativeInterval' does not have a p
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="CaptureBatches">
-            <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.CaptureBatch">
-              <MappingFragment StoreEntitySet="CaptureBatch">
-                <ScalarProperty Name="Marked" ColumnName="Marked" />
-                <ScalarProperty Name="FileName" ColumnName="FileName" />
-                <ScalarProperty Name="CaptureBatchId" ColumnName="CaptureBatchId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="DisplayStatisticsDelete" FunctionName="PacketAnalysisModel.Store.DisplayStatisticsDelete" />
           <EntitySetMapping Name="CumulativeIntervals">
             <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.CumulativeInterval">
               <MappingFragment StoreEntitySet="CumulativeInterval">
                 <ScalarProperty Name="Marked" ColumnName="Marked" />
                 <ScalarProperty Name="PacketCount" ColumnName="PacketCount" />
                 <ScalarProperty Name="CumulativeIntervalNumber" ColumnName="CumulativeIntervalNumber" />
+                <ScalarProperty Name="CumulativeIntervalId" ColumnName="CumulativeIntervalId" />
               </MappingFragment>
             </EntityTypeMapping>
-            <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.CumulativeInterval">
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="CumulativeProbabilityDistributionDelete" FunctionName="PacketAnalysisModel.Store.CumulativeProbabilityDistributionDelete" />
+          <FunctionImportMapping FunctionImportName="HistogramDelete" FunctionName="PacketAnalysisModel.Store.HistogramDelete" />
+          <FunctionImportMapping FunctionImportName="CumulativeProbabilityDistributionInsert" FunctionName="PacketAnalysisModel.Store.CumulativeProbabilityDistributionInsert" />
+          <FunctionImportMapping FunctionImportName="HistogramInsert" FunctionName="PacketAnalysisModel.Store.HistogramInsert" />
+          <EntitySetMapping Name="CaptureBatches">
+            <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.CaptureBatch">
+              <MappingFragment StoreEntitySet="CaptureBatch">
+                <ScalarProperty Name="CumulativeStatistics" ColumnName="CumulativeStatistics" />
+                <ScalarProperty Name="SingleStatistics" ColumnName="SingleStatistics" />
+                <ScalarProperty Name="Parsed" ColumnName="Parsed" />
+                <ScalarProperty Name="TrimmedMean" ColumnName="TrimmedMean" />
+                <ScalarProperty Name="Mean" ColumnName="Mean" />
+                <ScalarProperty Name="Marked" ColumnName="Marked" />
+                <ScalarProperty Name="FileName" ColumnName="FileName" />
+                <ScalarProperty Name="CaptureBatchId" ColumnName="CaptureBatchId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+            <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.CaptureBatch">
               <ModificationFunctionMapping>
-                <DeleteFunction FunctionName="PacketAnalysisModel.Store.CumulativeIntervalDelete" RowsAffectedParameter="RowsDeleted">
+                <InsertFunction FunctionName="PacketAnalysisModel.Store.CaptureBatchInsert" RowsAffectedParameter="NewCaptureBatchId">
+                  <ScalarProperty Name="TrimmedMean" ParameterName="TrimmedMean" />
+                  <ScalarProperty Name="Mean" ParameterName="Mean" />
+                  <ScalarProperty Name="Marked" ParameterName="Marked" />
+                  <ScalarProperty Name="FileName" ParameterName="FileName" />
+                </InsertFunction>
+                <UpdateFunction FunctionName="PacketAnalysisModel.Store.CaptureBatchUpdate_for_CaptureBatchId">
+                  <ScalarProperty Name="CumulativeStatistics" ParameterName="CumulativeStatistics" Version="Current" />
+                  <ScalarProperty Name="SingleStatistics" ParameterName="SingleStatistics" Version="Current" />
+                  <ScalarProperty Name="Parsed" ParameterName="Parsed" Version="Current" />
+                  <ScalarProperty Name="TrimmedMean" ParameterName="TrimmedMean" Version="Current" />
+                  <ScalarProperty Name="Mean" ParameterName="Mean" Version="Current" />
+                  <ScalarProperty Name="Marked" ParameterName="Marked" Version="Current" />
+                  <ScalarProperty Name="FileName" ParameterName="FileName" Version="Current" />
+                  <ScalarProperty Name="CaptureBatchId" ParameterName="CaptureBatchId" Version="Current" />
+                </UpdateFunction>
+              </ModificationFunctionMapping>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="CaptureBatchUpdate_for_CaptureBatchId" FunctionName="PacketAnalysisModel.Store.CaptureBatchUpdate_for_CaptureBatchId" />
+          <EntitySetMapping Name="DisplayStatistics">
+            <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.DisplayStatistic">
+              <MappingFragment StoreEntitySet="DisplayStatistic">
+                <ScalarProperty Name="BatchType" ColumnName="BatchType" />
+                <ScalarProperty Name="Marked" ColumnName="Marked" />
+                <ScalarProperty Name="MeanOfMeansStandardDeviation" ColumnName="MeanOfMeansStandardDeviation" />
+                <ScalarProperty Name="MeanOfMeans" ColumnName="MeanOfMeans" />
+                <ScalarProperty Name="MaxPacketsPerInterval" ColumnName="MaxPacketsPerInterval" />
+                <ScalarProperty Name="MinPacketsPerInterval" ColumnName="MinPacketsPerInterval" />
+                <ScalarProperty Name="StandardDeviation" ColumnName="StandardDeviation" />
+                <ScalarProperty Name="MeanPacketsPerInterval" ColumnName="MeanPacketsPerInterval" />
+                <ScalarProperty Name="TrimmedIntervalCount" ColumnName="TrimmedIntervalCount" />
+                <ScalarProperty Name="IntervalCount" ColumnName="IntervalCount" />
+                <ScalarProperty Name="DisplayStatisticId" ColumnName="DisplayStatisticId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+            <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.DisplayStatistic">
+              <ModificationFunctionMapping>
+                <InsertFunction FunctionName="PacketAnalysisModel.Store.DisplayStatisticsInsert">
+                  <ScalarProperty Name="BatchType" ParameterName="BatchType" />
+                  <ScalarProperty Name="Marked" ParameterName="Marked" />
+                  <ScalarProperty Name="MeanOfMeansStandardDeviation" ParameterName="MeanOfMeansStandardDeviation" />
+                  <ScalarProperty Name="MeanOfMeans" ParameterName="MeanOfMeans" />
+                  <ScalarProperty Name="MaxPacketsPerInterval" ParameterName="MaxPacketsPerInterval" />
+                  <ScalarProperty Name="MinPacketsPerInterval" ParameterName="MinPacketsPerInterval" />
+                  <ScalarProperty Name="StandardDeviation" ParameterName="StandardDeviation" />
+                  <ScalarProperty Name="MeanPacketsPerInterval" ParameterName="MeanPacketsPerInterval" />
+                  <ScalarProperty Name="TrimmedIntervalCount" ParameterName="TrimmedIntervalCount" />
+                  <ScalarProperty Name="IntervalCount" ParameterName="IntervalCount" />
+                </InsertFunction>
+                <DeleteFunction FunctionName="PacketAnalysisModel.Store.DisplayStatisticsDelete">
+                  <ScalarProperty Name="BatchType" ParameterName="BatchType" />
                   <ScalarProperty Name="Marked" ParameterName="Marked" />
                 </DeleteFunction>
               </ModificationFunctionMapping>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="CumulativeIntervalDelete" FunctionName="PacketAnalysisModel.Store.CumulativeIntervalDelete" />
+          <EntitySetMapping Name="CumulativeHistograms">
+            <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.CumulativeHistogram">
+              <MappingFragment StoreEntitySet="CumulativeHistogram">
+                <ScalarProperty Name="CaptureState" ColumnName="CaptureState" />
+                <ScalarProperty Name="Probability" ColumnName="Probability" />
+                <ScalarProperty Name="Interval" ColumnName="Interval" />
+                <ScalarProperty Name="CumulativeHistogramId" ColumnName="CumulativeHistogramId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SingleHistograms">
+            <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.SingleHistogram">
+              <MappingFragment StoreEntitySet="SingleHistogram">
+                <ScalarProperty Name="CaptureState" ColumnName="CaptureState" />
+                <ScalarProperty Name="Probability" ColumnName="Probability" />
+                <ScalarProperty Name="Interval" ColumnName="Interval" />
+                <ScalarProperty Name="CaptureBatchId" ColumnName="CaptureBatchId" />
+                <ScalarProperty Name="SingleHistogramId" ColumnName="SingleHistogramId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CumulativeProbabilityDistributions">
+            <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.CumulativeProbabilityDistribution">
+              <MappingFragment StoreEntitySet="CumulativeProbabilityDistribution">
+                <ScalarProperty Name="CaptureState" ColumnName="CaptureState" />
+                <ScalarProperty Name="Probability" ColumnName="Probability" />
+                <ScalarProperty Name="Interval" ColumnName="Interval" />
+                <ScalarProperty Name="CumulativeProbabilityDistributionId" ColumnName="CumulativeProbabilityDistributionId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="TruncateAllIntervalStatisticAndTestTables" FunctionName="PacketAnalysisModel.Store.TruncateAllIntervalStatisticAndTestTables" />
+          <EntitySetMapping Name="HypothesisTests">
+            <EntityTypeMapping TypeName="COWE.PacketAnalysisModel.HypothesisTest">
+              <MappingFragment StoreEntitySet="HypothesisTest">
+                <ScalarProperty Name="HasValues" ColumnName="HasValues" />
+                <ScalarProperty Name="KsTestResult" ColumnName="KsTestResult" />
+                <ScalarProperty Name="MeansTestResult" ColumnName="MeansTestResult" />
+                <ScalarProperty Name="MaxCpdVariance" ColumnName="MaxCpdVariance" />
+                <ScalarProperty Name="KsStatistic" ColumnName="KsStatistic" />
+                <ScalarProperty Name="MeansVarianceStandardDeviation" ColumnName="MeansVarianceStandardDeviation" />
+                <ScalarProperty Name="MeanOfMeansVariance" ColumnName="MeanOfMeansVariance" />
+                <ScalarProperty Name="HypothesisTestId" ColumnName="HypothesisTestId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="TruncateAllTables" FunctionName="PacketAnalysisModel.Store.TruncateAllTables" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -261,6 +643,7 @@ warning 6002: The table/view 'Packets.COWE.CumulativeInterval' does not have a p
         <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
         <DesignerProperty Name="UseLegacyProvider" Value="false" />
         <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+        <DesignerProperty Name="DefaultDatabaseSchema" Value="COWE" />
       </DesignerInfoPropertySet>
     </Options>
     <!-- Diagram content (shape and connector positions) -->

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using COWE.DataLayer;
+using COWE.DataLayer.Models;
 using COWE.DomainClasses;
 using COWE.Enumerations;
 
@@ -138,24 +139,8 @@ namespace COWE.BusinessLayer
 
             try
             {
-                //using (var context = new PacketCaptureContext())
                 using (var context = new PacketAnalysisEntity())
                 {
-                    //var captureBatchId = (from c in context.CaptureBatches
-                    //                      where c.FileName == fileName
-                    //                      select c).FirstOrDefault();
-
-                    //var capturePackets = context.CapturePackets.ToList();
-                    //var batch = context.BatchIntervals.ToList();
-
-                    //var capturePackets = (from c in context.CapturePackets
-                    //                      where c.FileName == fileName
-                    //                      select c).ToList();
-
-                    //var capturePackets = (from c in context.CapturePackets
-                    //                      where c.CaptureBatchId == captureBatchId
-                    //                      select c).ToList();
-
                     var captureBatchId = (from b in context.CaptureBatches
                                           where b.FileName == fileName
                                           select b.CaptureBatchId).FirstOrDefault();
@@ -220,10 +205,18 @@ namespace COWE.BusinessLayer
             }
             catch (Exception ex)
             {
-                throw new Exception("Error retrieving capture packet data: " + ex.Message);
+                throw new Exception("Error processing packet file: " + ex.Message);
             }
         }
 
+        public BindingList<CurrentCaptureFile> GetAllCaptureFiles()
+        {
+            BindingList<CurrentCaptureFile> files = new BindingList<CurrentCaptureFile>();
+
+            CaptureFileData cfd = new CaptureFileData();
+            files = cfd.GetAllFiles();
+            return files;
+        }
         public CurrentCaptureFile GetCurrentCaptureFile(string fileName)
         {
             CurrentCaptureFile ccf = null;
@@ -356,24 +349,73 @@ namespace COWE.BusinessLayer
             return success;
         }
 
-        //// No longer needed - done by ParseCaptureFilesService
-        //public int CreateIntervalBatchIdentifier(string fileName, bool marked)
-        //{
-        //    int captureBatchId = 0;
-        //    try
-        //    {
-        //        BatchIntervalData bi = new BatchIntervalData();
-        //        captureBatchId = bi.CreateBatchInterval(fileName, marked);
-        //        return captureBatchId;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new Exception("Error creating interval batch identifier: " + ex.Message + "\r\nInner Exception: " + ex.InnerException);
-        //    }
-        //}
-
-        public bool UpdateCumulativeIntervals(string dbConnectionString, BindingList<PacketInterval> intervalCounts, CaptureState marked)
+        //public bool UpdateCumulativeIntervals(string dbConnectionString, BindingList<PacketInterval> intervalCounts, CaptureState marked)
+        public bool UpdateCumulativeIntervals(string dbConnectionString, BindingList<PacketInterval> intervalCounts)
         {
+            // Add the intervals to the cumulative intervals collection
+            bool success = false;
+
+            //BindingList<BatchIntervalMarked> markedBatchIntervals = new BindingList<BatchIntervalMarked>();
+            BindingList<CumulativeInterval> cumulativeIntervals = new BindingList<CumulativeInterval>();
+            BatchIntervalData bid = new BatchIntervalData();
+            CumulativeIntervalData cid = new CumulativeIntervalData(dbConnectionString);
+
+            //cumulativeIntervals = cid.GetCumulativeIntervals();
+
+            int ciNumber = cid.LastIntervalNumber;
+
+            foreach (PacketInterval ic in intervalCounts)
+            {
+                ciNumber++;
+                CumulativeInterval ci = new CumulativeInterval();
+                ci.CumulativeIntervalNumber = ciNumber;
+                ci.PacketCount = ic.PacketCount;
+                ci.Marked = ic.PacketState == CaptureState.Marked ? true : false;
+                cumulativeIntervals.Add(ci);
+            }
+            
+            // Save the cumulative interval counts
+            //// Delete the old counts first
+            //cid.DeleteCumulativeIntervals(marked);
+            //cid.DbConnectionString = dbConnectionString;
+
+            // Create a DataTable to hold the cumulative intervals
+            DataTable CumulativeIntervalsDataTable = null;
+
+            // Create a data table for bulk-loading the data
+            DataTable dt = CreateCumulativeIntervalDataTable();
+
+            try
+            {
+                // Load the cumulative interval counts into the data table
+                CumulativeIntervalsDataTable = new DataTable();
+                CumulativeIntervalsDataTable = LoadCumulativeIntervalDataTable(dt, cumulativeIntervals);
+                success = true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error loading cumulative intervals into DataTable: " + ex.Message);
+            }
+
+            if (success)
+            {
+                try
+                {
+                    // Load the cumulative interval counts into the database
+                    success = cid.LoadCumulativeIntervals(CumulativeIntervalsDataTable);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Error loading cumulative intervals into database: " + ex.Message);
+                }
+            }
+
+            return success;
+        }
+
+        public bool UpdateCumulativeIntervalsAddToTotals(string dbConnectionString, BindingList<PacketInterval> intervalCounts, CaptureState marked)
+        {
+            // NOTE: don't use this method - just add the intervals (see UpdateCumulativeIntervals(...) above).
             bool success = false;
 
             //BindingList<BatchIntervalMarked> markedBatchIntervals = new BindingList<BatchIntervalMarked>();
@@ -382,8 +424,8 @@ namespace COWE.BusinessLayer
             CumulativeIntervalData cid = new CumulativeIntervalData();
 
             cumulativeIntervals = cid.GetCumulativeIntervals();
-            
-            if(cumulativeIntervals.Count == 0)
+
+            if (cumulativeIntervals.Count == 0)
             {
                 // No cumulative intervals yet - use the last batch intervals
                 foreach (PacketInterval ic in intervalCounts)
@@ -391,7 +433,7 @@ namespace COWE.BusinessLayer
                     CumulativeInterval ci = new CumulativeInterval();
                     ci.CumulativeIntervalNumber = ic.Interval;
                     ci.PacketCount = ic.PacketCount;
-                    ci.Marked = ic.PacketState == CaptureState.Marked? true : false;
+                    ci.Marked = ic.PacketState == CaptureState.Marked ? true : false;
                     cumulativeIntervals.Add(ci);
                 }
             }
@@ -403,31 +445,6 @@ namespace COWE.BusinessLayer
                 // Get the cumulative intervals for the marked type
                 cumulativeIntervals = cid.GetMarkedCumulativeIntervals(marked);
 
-                //// Add the current interval counts to the cumulative counts
-                //foreach (PacketInterval pi in intervalCounts)
-                //{
-                //    foreach (CumulativeInterval ci in cumulativeIntervals)
-                //    {
-                //        if (ci.CumulativeIntervalNumber == pi.Interval)
-                //        {
-                //            ci.PacketCount += pi.PacketCount;
-                //            break;
-                //        }
-                //        else if (pi.Interval >= cumulativeIntervals.Count)
-                //        {
-                //            // There are additional intervals in this batch
-                //            // Add them to the cumulative intervals
-                //            CumulativeInterval newci = new CumulativeInterval();
-                //            newci.CumulativeIntervalNumber = pi.Interval;
-                //            newci.PacketCount = pi.PacketCount;
-                //            newci.Marked = pi.PacketState == CaptureState.Marked ? true : false;
-                //            cumulativeIntervals.Add(newci);
-                //        }
-                //    }
-                //}
-
-                // test git
-
                 for (int i = 0; i < cumulativeIntervals.Count; i++)
                 {
                     cumulativeIntervals[i].PacketCount += intervalCounts[i].PacketCount;
@@ -435,6 +452,8 @@ namespace COWE.BusinessLayer
 
                 if (intervalCounts.Count >= cumulativeIntervals.Count)
                 {
+                    int lastIntervalNumber = cid.LastIntervalNumber;
+
                     // There are additional intervals in this batch
                     // Add them to the cumulative intervals
                     foreach (PacketInterval pi in intervalCounts)
@@ -443,9 +462,10 @@ namespace COWE.BusinessLayer
                         {
                             CumulativeInterval newci = new CumulativeInterval();
                             // Get the last cumulative interval number
-                            var cin = (from c in cumulativeIntervals select c.CumulativeIntervalNumber).Max();
+                            //var cin = (from c in cumulativeIntervals select c.CumulativeIntervalNumber).Max();
                             //newci.CumulativeIntervalNumber = pi.Interval;
-                            newci.CumulativeIntervalNumber = cin + 1;
+                            //newci.CumulativeIntervalNumber = cin + 1;
+                            newci.CumulativeIntervalNumber = lastIntervalNumber++;
                             newci.PacketCount = pi.PacketCount;
                             newci.Marked = pi.PacketState == CaptureState.Marked ? true : false;
                             cumulativeIntervals.Add(newci);
@@ -501,6 +521,11 @@ namespace COWE.BusinessLayer
             return markedIntervals;
         }
 
+        public int GetLastCaptureBatchId()
+        {
+            CaptureFileData cfd = new CaptureFileData();
+            return cfd.GetLastBatchId();
+        }
         public BindingList<CurrentCaptureFile> GetLastCaptureBatchIds()
         {
             BindingList<CurrentCaptureFile> lastBatchIds = new BindingList<CurrentCaptureFile>();
@@ -509,14 +534,14 @@ namespace COWE.BusinessLayer
             var batch = cfd.GetBatchIds();
 
             var lastMarkedBatchId = (from m in batch
-                                     where m.Marked == CaptureState.Marked
+                                     where m.CaptureState == CaptureState.Marked
                                      orderby m.CaptureBatchId descending
-                                     select m).First();
+                                     select m).FirstOrDefault();
 
             var lastUnmarkedBatchId = (from m in batch
-                                     where m.Marked == CaptureState.Unmarked
+                                     where m.CaptureState == CaptureState.Unmarked
                                      orderby m.CaptureBatchId descending
-                                     select m).First();
+                                       select m).FirstOrDefault();
 
             lastBatchIds.Add(lastMarkedBatchId);
             lastBatchIds.Add(lastUnmarkedBatchId);
@@ -533,7 +558,160 @@ namespace COWE.BusinessLayer
 
             return intervals;
         }
+        public BindingList<CumulativeHistogram> GetCumulativeHistogramData(CaptureState captureState)
+        {
+            BindingList<CumulativeHistogram> probabilities = new BindingList<CumulativeHistogram>();
+            CumulativeHistogramData chd = new CumulativeHistogramData(captureState);
+            probabilities = chd.GetCumulativeHistogramData();
+            return probabilities;
+        }
+        public BindingList<CumulativeProbabilityDistribution> GetCumulativeProbabilityDistributionData(CaptureState captureState)
+        {
+            BindingList<CumulativeProbabilityDistribution> distribution = new BindingList<CumulativeProbabilityDistribution>();
+            //CumulativeProbabilityDistributionData cpdd = new CumulativeProbabilityDistributionData();
+            //distribution = cpdd.GetCumulativeProbabilityDistribution(captureState);
+            using (var cpdRepository = new CumulativeProbabilityDistributionRepository(new UnitOfWorkCumulativeProbability()))
+            {
+                //foreach(CumulativeProbabilityDistribution cpd in cpdRepository.All.ToList())
+                foreach (var cpd in cpdRepository.All.Where(c => c.CaptureState == (captureState == CaptureState.Marked ? 1 : 0) ).ToList())
+                {
+                    distribution.Add(cpd);
+                }
+            }
+            return distribution;
+        }
  
+        public bool UpdateBatchMean(int captureBatchId, decimal mean, decimal trimmedMean)
+        {
+            bool result = false;
+
+            CaptureFileData cfd = new CaptureFileData();
+            result = cfd.UpdateBatchMean(captureBatchId, mean, trimmedMean);
+            return result;
+        }
+
+        public decimal CalculateMeanOfMeans(CaptureState captureState, bool trimmed)
+        {
+            CaptureFileData cfd = new CaptureFileData();
+            return cfd.CalculateMeanOfMeans(captureState, trimmed);
+        }
+        public decimal CalculateStdDevForMeanOfMeans(CaptureState captureState, bool trimmed)
+        {
+            CaptureFileData cfd = new CaptureFileData();
+            return cfd.CalculateStdDevForMeanOfMeans(captureState, trimmed);
+        }
+        public int GetMeanCount()
+        {
+            CaptureFileData cfd = new CaptureFileData();
+            return cfd.GetMeanCount();
+        }
+        public decimal GetMean(CaptureState captureState, bool trimmed)
+        {
+            CaptureFileData cfd = new CaptureFileData();
+            return cfd.GetMean(captureState, trimmed);
+        }
+        public int GetCaptureBatchId(string fileName)
+        {
+            CaptureFileData cfd = new CaptureFileData();
+            return cfd.GetBatchId(fileName);
+        }
+        public int GetProcessedFilesCountMarked()
+        {
+            int fileCount = 0;
+            CaptureFileData cfd = new CaptureFileData();
+            fileCount = cfd.GetProcessedFilesCountMarked();
+            return fileCount;
+        }
+        public int GetProcessedFilesCountUnmarked()
+        {
+            int fileCount = 0;
+            CaptureFileData cfd = new CaptureFileData();
+            fileCount = cfd.GetProcessedFilesCountUnmarked();
+            return fileCount;
+        }
+        public int GetRawFileCountMarked()
+        {
+            int fileCount = 0;
+            CaptureFileData cfd = new CaptureFileData();
+            fileCount = cfd.GetRawFileCountMarked();
+            return fileCount;
+        }
+        public int GetRawFileCountUnmarked()
+        {
+            int fileCount = 0;
+            CaptureFileData cfd = new CaptureFileData();
+            fileCount = cfd.GetRawFileCountUnmarked();
+            return fileCount;
+        }
+        public BindingList<SingleHistogram> GetSingleHistogramProbabilityData(int captureBatchId)
+        {
+            BindingList<SingleHistogram> probabilities = new BindingList<SingleHistogram>();
+            SingleHistogramData shd = new SingleHistogramData();
+            probabilities = shd.GetSingleHistogramData(captureBatchId);
+            return probabilities;
+        }
+        public DisplayStatistic GetLastSingleMarkedDisplayStatistics()
+        {
+            DisplayStatistic statistics = new DisplayStatistic();
+            DisplayStatisticsData dsd = new DisplayStatisticsData();
+            statistics = dsd.GetLastSingleMarkedDisplayStatistics();
+            return statistics;
+        }
+        public DisplayStatistic GetLastSingleUnmarkedDisplayStatistics()
+        {
+            DisplayStatistic statistics = new DisplayStatistic();
+            DisplayStatisticsData dsd = new DisplayStatisticsData();
+            statistics = dsd.GetLastSingleUnmarkedDisplayStatistics();
+            return statistics;
+        }
+        public DisplayStatistic GetCumulativeUnmarkedDisplayStatistics()
+        {
+            DisplayStatistic statistics = new DisplayStatistic();
+            DisplayStatisticsData dsd = new DisplayStatisticsData();
+            statistics = dsd.GetCumulativeUnmarkedDisplayStatistics();
+            return statistics;
+        }
+        public DisplayStatistic GetCumulativeMarkedDisplayStatistics()
+        {
+            DisplayStatistic statistics = new DisplayStatistic();
+            DisplayStatisticsData dsd = new DisplayStatisticsData();
+            statistics = dsd.GetCumulativeMarkedDisplayStatistics();
+            return statistics;
+        }
+        public void DeleteHypothesisTestResults()
+        {
+            DisplayStatisticsData dsd = new DisplayStatisticsData();
+            dsd.DeleteHypothesisTestResults();
+        }
+        public HypothesisTest GetHypothesisTestResults()
+        {
+            HypothesisTest ht = new HypothesisTest();
+            DisplayStatisticsData dsd = new DisplayStatisticsData();
+            ht = dsd.GetHypothesisTestResults();
+            if (ht != null)
+            {
+                return ht;
+            }
+            else
+            {
+                return new HypothesisTest();
+            }
+        }
+        public void InsertHypothesisTestResults(HypothesisTest testResults)
+        {
+            DisplayStatisticsData dsd = new DisplayStatisticsData();
+            dsd.InsertHypothesisTestResults(testResults);
+        }
+        public void TruncateAllIntervalStatisticAndTestTables()
+        {
+            BatchIntervalData bid = new BatchIntervalData();
+            bid.TruncateAllIntervalStatisticAndTestTables();
+        }
+        public void TruncateAllTables()
+        {
+            CaptureFileData cfd = new CaptureFileData();
+            cfd.TruncateAllTables();
+        }
         #endregion
 
         #region Private Methods
@@ -592,7 +770,14 @@ namespace COWE.BusinessLayer
 
         private DataTable CreateCumulativeIntervalDataTable()
         {
-            // Note: we are not using an identity column in this table
+            // Note: we are not using an identity column in this table - needed to add one for EF
+            DataColumn CumulativeIntervalIdDataColumn = new DataColumn("CumulativeIntervalId", typeof(int));
+            CumulativeIntervalIdDataColumn.Caption = "CumulativeIntervalId";
+            CumulativeIntervalIdDataColumn.ReadOnly = false;
+            CumulativeIntervalIdDataColumn.AllowDBNull = false;
+            CumulativeIntervalIdDataColumn.Unique = true;
+            CumulativeIntervalIdDataColumn.AutoIncrement = true;
+
             DataColumn CumulativeIntervalNumberDataColumn = new DataColumn("CumulativeIntervalNumber", typeof(int));
             CumulativeIntervalNumberDataColumn.Caption = "CumulativeIntervalNumber";
             CumulativeIntervalNumberDataColumn.ReadOnly = false;
@@ -613,7 +798,7 @@ namespace COWE.BusinessLayer
 
             // Add the columns to the DataTable
             DataTable dt = new DataTable();
-            dt.Columns.AddRange(new DataColumn[] { CumulativeIntervalNumberDataColumn, PacketCountDataColumn, MarkedDataColumn });
+            dt.Columns.AddRange(new DataColumn[] { CumulativeIntervalIdDataColumn, CumulativeIntervalNumberDataColumn, PacketCountDataColumn, MarkedDataColumn });
 
             // return the empty DataTable
             return dt;
@@ -625,7 +810,7 @@ namespace COWE.BusinessLayer
             foreach (CumulativeInterval ci in intervals)
             {
                 DataRow dr = dt.NewRow();
-                //dr["CumulativeIntervalId"] = ci.CumulativeIntervalId;
+                //dr["CumulativeIntervalId"] = null;
                 dr["CumulativeIntervalNumber"] = ci.CumulativeIntervalNumber;
                 dr["PacketCount"] = ci.PacketCount;
                 dr["Marked"] = ci.Marked;
