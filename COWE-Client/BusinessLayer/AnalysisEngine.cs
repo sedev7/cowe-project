@@ -281,7 +281,7 @@ namespace COWE.BusinessLayer
             if (AnalysisConfiguration.TrimSmallPackets)
             {
                 BaseStatistics stats = new BaseStatistics(batchIntervalsTrimmed);
-                bs.IntervalCount = stats.Count;
+                bs.IntervalCountTrimmed = stats.Count;
                 bs.PacketCountMaximum = stats.Maximum;
                 bs.PacketCountMinimum = stats.Minimum;
                 bs.PacketCountMean = stats.Mean;
@@ -290,6 +290,10 @@ namespace COWE.BusinessLayer
                 // Calculate both means for updating the capture batch intervals
                 batchIntervalsTrimmedMean = stats.Mean;
                 batchIntervalsMean = Convert.ToDecimal((from t in batchIntervals select t.PacketCount).Average());
+
+                // Get both counts for the batch
+                bs.IntervalCountTrimmed = stats.Count < 0 ? 0 : stats.Count;
+                bs.IntervalCount = batchIntervals.Count < 0 ? 0 : batchIntervals.Count;
             }
             else
             {
@@ -303,6 +307,10 @@ namespace COWE.BusinessLayer
                 // Calculate both means for updating the capture batch intervals
                 batchIntervalsMean = bs.PacketCountMean;
                 batchIntervalsTrimmedMean = Convert.ToDecimal((from t in batchIntervalsTrimmed select t.PacketCount).Average());
+
+                // Get both counts for the batch
+                bs.IntervalCount = stats.Count < 0 ? 0 : stats.Count;
+                bs.IntervalCountTrimmed = batchIntervalsTrimmed.Count < 0 ? 0 : batchIntervalsTrimmed.Count;
             }
 
             // Update the batch mean - only for single batches, not cumulative batches
@@ -465,8 +473,8 @@ namespace COWE.BusinessLayer
                 {
                     //// Delete any existing cumulative probability distribution data for the captureState
                     //cumProbDistData.DeleteCumulativeProbabilityDistribution(captureState);
-                    cpdRepository.DeleteAll();
 
+                    cpdRepository.DeleteBatch(captureState);
 
                     // Add the newly calculated cumulative probability distribution
                     switch (captureState)

@@ -8,6 +8,7 @@ using System.Linq.Expressions;
 using System.Web;
 using COWE.DomainClasses;
 using COWE.DataLayer;
+using COWE.Enumerations;
 
 namespace COWE.DataLayer.Models
 { 
@@ -61,6 +62,21 @@ namespace COWE.DataLayer.Models
         {
             BindingList<CumulativeProbabilityDistribution> distribution = new BindingList<CumulativeProbabilityDistribution>();
             foreach (CumulativeProbabilityDistribution cpd in context.CumulativeProbabilityDistributions.ToList())
+            {
+                distribution.Add(cpd);
+            }
+            //var cumulativeprobabilitydistribution = context.CumulativeProbabilityDistributions.Find(id);
+            foreach (CumulativeProbabilityDistribution cpd in distribution)
+            {
+                context.CumulativeProbabilityDistributions.Remove(cpd);
+            }
+            //context.CumulativeProbabilityDistributions.Remove(cumulativeprobabilitydistribution);
+        }
+        public void DeleteBatch(CaptureState captureState)
+        {
+            BindingList<CumulativeProbabilityDistribution> distribution = new BindingList<CumulativeProbabilityDistribution>();
+            int IsMarked = captureState == CaptureState.Marked ? 1 : 0;
+            foreach (CumulativeProbabilityDistribution cpd in context.CumulativeProbabilityDistributions.Where(c => c.CaptureState == IsMarked).ToList())
             {
                 distribution.Add(cpd);
             }
