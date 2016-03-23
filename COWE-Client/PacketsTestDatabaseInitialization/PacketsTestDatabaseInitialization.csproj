@@ -1,0 +1,148 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{9320596B-D51A-418C-98D1-F969DA595100}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>COWE.PacketsTestDatabaseInitialization</RootNamespace>
+    <AssemblyName>PacketsTestDatabaseInitialization</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BatchInterval.cs">
+      <DependentUpon>PacketAnalysisTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CaptureBatch.cs">
+      <DependentUpon>PacketAnalysisTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CapturePacket.cs">
+      <DependentUpon>PacketAnalysisTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CumulativeHistogram.cs">
+      <DependentUpon>PacketAnalysisTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CumulativeInterval.cs">
+      <DependentUpon>PacketAnalysisTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CumulativeProbabilityDistribution.cs">
+      <DependentUpon>PacketAnalysisTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DatabaseSeedingInitializer.cs" />
+    <Compile Include="DisplayStatistic.cs">
+      <DependentUpon>PacketAnalysisTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="HypothesisTest.cs">
+      <DependentUpon>PacketAnalysisTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PacketAnalysisTestModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PacketAnalysisTestModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PacketAnalysisTestModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PacketAnalysisTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PacketAnalysisTestModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PacketAnalysisTestModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="PacketAnalysisTestModel.Views.cs" />
+    <Compile Include="PacketsTestDatabase.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SingleHistogram.cs">
+      <DependentUpon>PacketAnalysisTestModel.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EntityDeploy Include="PacketAnalysisTestModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>PacketAnalysisTestModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.Config" />
+    <None Include="packages.config" />
+    <None Include="PacketAnalysisTestModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>PacketAnalysisTestModel.edmx</DependentUpon>
+      <LastGenOutput>PacketAnalysisTestModel.Context.cs</LastGenOutput>
+    </None>
+    <None Include="PacketAnalysisTestModel.edmx.diagram">
+      <DependentUpon>PacketAnalysisTestModel.edmx</DependentUpon>
+    </None>
+    <None Include="PacketAnalysisTestModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>PacketAnalysisTestModel.edmx</DependentUpon>
+      <LastGenOutput>PacketAnalysisTestModel.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DataLayer\DataLayer.csproj">
+      <Project>{a3ace4e3-24df-4402-b821-1265b371c115}</Project>
+      <Name>DataLayer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DomainClasses\DomainClasses.csproj">
+      <Project>{86cfed89-5df2-4219-a984-89e5f17339d6}</Project>
+      <Name>DomainClasses</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Enumerations\Enumerations.csproj">
+      <Project>{345e5758-ddfa-4ee8-b077-b17edf3f0def}</Project>
+      <Name>Enumerations</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

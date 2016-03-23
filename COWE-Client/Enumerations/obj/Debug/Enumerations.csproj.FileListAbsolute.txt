@@ -6,3 +6,4 @@ C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\Enumerations\bin\Debug\Enumerations.pdb
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\Enumerations\obj\Debug\Enumerations.dll
 C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\Enumerations\obj\Debug\Enumerations.pdb
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\Enumerations\obj\Debug\Enumerations.csprojResolveAssemblyReference.cache

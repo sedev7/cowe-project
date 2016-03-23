@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="COWE.PacketsTestModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="BatchInterval">
+    <Key>
+      <PropertyRef Name="BatchIntervalId" />
+    </Key>
+    <Property Name="BatchIntervalId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="CaptureBatchId" Type="Int32" Nullable="false" />
+    <Property Name="IntervalNumber" Type="Int32" Nullable="false" />
+    <Property Name="PacketCount" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="CaptureBatch" Relationship="Self.FK_BatchInterval_CaptureBatch_CaptureBatchId" FromRole="BatchInterval" ToRole="CaptureBatch" />
+  </EntityType>
+  <EntityType Name="CaptureBatch">
+    <Key>
+      <PropertyRef Name="CaptureBatchId" />
+    </Key>
+    <Property Name="CaptureBatchId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="FileName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Marked" Type="Boolean" Nullable="false" />
+    <Property Name="Mean" Type="Decimal" Precision="28" Scale="10" Nullable="false" />
+    <Property Name="TrimmedMean" Type="Decimal" Precision="28" Scale="10" Nullable="false" />
+    <Property Name="Parsed" Type="Boolean" Nullable="false" />
+    <Property Name="SingleStatistics" Type="Boolean" Nullable="false" />
+    <Property Name="CumulativeStatistics" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="BatchIntervals" Relationship="Self.FK_BatchInterval_CaptureBatch_CaptureBatchId" FromRole="CaptureBatch" ToRole="BatchInterval" />
+    <NavigationProperty Name="CapturePackets" Relationship="Self.FK_CapturePacket_CaptureBatch_CaptureBatchId" FromRole="CaptureBatch" ToRole="CapturePacket" />
+    <NavigationProperty Name="SingleHistograms" Relationship="Self.FK_SingleHistogram_CaptureBatch_CaptureBatchId" FromRole="CaptureBatch" ToRole="SingleHistogram" />
+  </EntityType>
+  <EntityType Name="CapturePacket">
+    <Key>
+      <PropertyRef Name="CapturePacketId" />
+    </Key>
+    <Property Name="CapturePacketId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="CaptureBatchId" Type="Int32" Nullable="false" />
+    <Property Name="PacketNumber" Type="Int32" Nullable="false" />
+    <Property Name="TimeStamp" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="Marked" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="CaptureBatch" Relationship="Self.FK_CapturePacket_CaptureBatch_CaptureBatchId" FromRole="CapturePacket" ToRole="CaptureBatch" />
+  </EntityType>
+  <EntityType Name="CumulativeHistogram">
+    <Key>
+      <PropertyRef Name="CumulativeHistogramId" />
+    </Key>
+    <Property Name="CumulativeHistogramId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Interval" Type="Int32" Nullable="false" />
+    <Property Name="Probability" Type="Decimal" Precision="28" Scale="10" Nullable="false" />
+    <Property Name="CaptureState" Type="Int32" Nullable="false" />
+  </EntityType>
+  <EntityType Name="CumulativeInterval">
+    <Key>
+      <PropertyRef Name="CumulativeIntervalId" />
+    </Key>
+    <Property Name="CumulativeIntervalId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="CumulativeIntervalNumber" Type="Int32" Nullable="false" />
+    <Property Name="PacketCount" Type="Int32" Nullable="false" />
+    <Property Name="Marked" Type="Boolean" Nullable="false" />
+  </EntityType>
+  <EntityType Name="CumulativeProbabilityDistribution">
+    <Key>
+      <PropertyRef Name="CumulativeProbabilityDistributionId" />
+    </Key>
+    <Property Name="CumulativeProbabilityDistributionId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Interval" Type="Int32" Nullable="false" />
+    <Property Name="Probability" Type="Decimal" Precision="28" Scale="10" Nullable="false" />
+    <Property Name="CaptureState" Type="Int32" Nullable="false" />
+  </EntityType>
+  <EntityType Name="DisplayStatistic">
+    <Key>
+      <PropertyRef Name="DisplayStatisticId" />
+    </Key>
+    <Property Name="DisplayStatisticId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="IntervalCount" Type="Int32" Nullable="false" />
+    <Property Name="TrimmedIntervalCount" Type="Int32" Nullable="false" />
+    <Property Name="MeanPacketsPerInterval" Type="Decimal" Precision="28" Scale="10" Nullable="false" />
+    <Property Name="StandardDeviation" Type="Decimal" Precision="28" Scale="10" Nullable="false" />
+    <Property Name="MinPacketsPerInterval" Type="Int32" Nullable="false" />
+    <Property Name="MaxPacketsPerInterval" Type="Int32" Nullable="false" />
+    <Property Name="MeanOfMeans" Type="Decimal" Precision="28" Scale="10" Nullable="false" />
+    <Property Name="MeanOfMeansStandardDeviation" Type="Decimal" Precision="28" Scale="10" Nullable="false" />
+    <Property Name="Marked" Type="Boolean" Nullable="false" />
+    <Property Name="BatchType" Type="Int32" Nullable="false" />
+  </EntityType>
+  <EntityType Name="HypothesisTest">
+    <Key>
+      <PropertyRef Name="HypothesisTestId" />
+    </Key>
+    <Property Name="HypothesisTestId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="MeanOfMeansVariance" Type="Decimal" Precision="28" Scale="10" Nullable="false" />
+    <Property Name="MeansVarianceStandardDeviation" Type="Decimal" Precision="28" Scale="10" Nullable="false" />
+    <Property Name="KsStatistic" Type="Decimal" Precision="28" Scale="10" Nullable="false" />
+    <Property Name="MaxCpdVariance" Type="Decimal" Precision="28" Scale="10" Nullable="false" />
+    <Property Name="MeansTestResult" Type="Boolean" Nullable="false" />
+    <Property Name="KsTestResult" Type="Boolean" Nullable="false" />
+    <Property Name="HasValues" Type="Boolean" Nullable="false" />
+  </EntityType>
+  <EntityType Name="SingleHistogram">
+    <Key>
+      <PropertyRef Name="SingleHistogramId" />
+    </Key>
+    <Property Name="SingleHistogramId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="CaptureBatchId" Type="Int32" Nullable="false" />
+    <Property Name="Interval" Type="Int32" Nullable="false" />
+    <Property Name="Probability" Type="Decimal" Precision="28" Scale="10" Nullable="false" />
+    <Property Name="CaptureState" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="CaptureBatch" Relationship="Self.FK_SingleHistogram_CaptureBatch_CaptureBatchId" FromRole="SingleHistogram" ToRole="CaptureBatch" />
+  </EntityType>
+  <Association Name="FK_BatchInterval_CaptureBatch_CaptureBatchId">
+    <End Role="CaptureBatch" Type="Self.CaptureBatch" Multiplicity="1" />
+    <End Role="BatchInterval" Type="Self.BatchInterval" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CaptureBatch">
+        <PropertyRef Name="CaptureBatchId" />
+      </Principal>
+      <Dependent Role="BatchInterval">
+        <PropertyRef Name="CaptureBatchId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CapturePacket_CaptureBatch_CaptureBatchId">
+    <End Role="CaptureBatch" Type="Self.CaptureBatch" Multiplicity="1" />
+    <End Role="CapturePacket" Type="Self.CapturePacket" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CaptureBatch">
+        <PropertyRef Name="CaptureBatchId" />
+      </Principal>
+      <Dependent Role="CapturePacket">
+        <PropertyRef Name="CaptureBatchId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SingleHistogram_CaptureBatch_CaptureBatchId">
+    <End Role="CaptureBatch" Type="Self.CaptureBatch" Multiplicity="1" />
+    <End Role="SingleHistogram" Type="Self.SingleHistogram" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CaptureBatch">
+        <PropertyRef Name="CaptureBatchId" />
+      </Principal>
+      <Dependent Role="SingleHistogram">
+        <PropertyRef Name="CaptureBatchId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="PacketsTestEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="BatchIntervals" EntityType="Self.BatchInterval" />
+    <EntitySet Name="CaptureBatches" EntityType="Self.CaptureBatch" />
+    <EntitySet Name="CapturePackets" EntityType="Self.CapturePacket" />
+    <EntitySet Name="CumulativeHistograms" EntityType="Self.CumulativeHistogram" />
+    <EntitySet Name="CumulativeIntervals" EntityType="Self.CumulativeInterval" />
+    <EntitySet Name="CumulativeProbabilityDistributions" EntityType="Self.CumulativeProbabilityDistribution" />
+    <EntitySet Name="DisplayStatistics" EntityType="Self.DisplayStatistic" />
+    <EntitySet Name="HypothesisTests" EntityType="Self.HypothesisTest" />
+    <EntitySet Name="SingleHistograms" EntityType="Self.SingleHistogram" />
+    <AssociationSet Name="FK_BatchInterval_CaptureBatch_CaptureBatchId" Association="Self.FK_BatchInterval_CaptureBatch_CaptureBatchId">
+      <End Role="CaptureBatch" EntitySet="CaptureBatches" />
+      <End Role="BatchInterval" EntitySet="BatchIntervals" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CapturePacket_CaptureBatch_CaptureBatchId" Association="Self.FK_CapturePacket_CaptureBatch_CaptureBatchId">
+      <End Role="CaptureBatch" EntitySet="CaptureBatches" />
+      <End Role="CapturePacket" EntitySet="CapturePackets" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SingleHistogram_CaptureBatch_CaptureBatchId" Association="Self.FK_SingleHistogram_CaptureBatch_CaptureBatchId">
+      <End Role="CaptureBatch" EntitySet="CaptureBatches" />
+      <End Role="SingleHistogram" EntitySet="SingleHistograms" />
+    </AssociationSet>
+    <FunctionImport Name="TruncateAllIntervalTables" />
+    <FunctionImport Name="TruncateAllTables" />
+  </EntityContainer>
+</Schema>

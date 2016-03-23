@@ -1,0 +1,16 @@
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\PacketsTestDatabaseInitialization\bin\Debug\PacketsTestDatabaseInitialization.dll.config
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\PacketsTestDatabaseInitialization\bin\Debug\PacketsTestDatabaseInitialization.dll
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\PacketsTestDatabaseInitialization\bin\Debug\PacketsTestDatabaseInitialization.pdb
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\PacketsTestDatabaseInitialization\bin\Debug\DataLayer.dll
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\PacketsTestDatabaseInitialization\bin\Debug\DomainClasses.dll
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\PacketsTestDatabaseInitialization\bin\Debug\EntityFramework.dll
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\PacketsTestDatabaseInitialization\bin\Debug\EntityFramework.SqlServer.dll
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\PacketsTestDatabaseInitialization\bin\Debug\Enumerations.dll
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\PacketsTestDatabaseInitialization\bin\Debug\DataLayer.pdb
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\PacketsTestDatabaseInitialization\bin\Debug\DomainClasses.pdb
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\PacketsTestDatabaseInitialization\bin\Debug\Enumerations.pdb
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\PacketsTestDatabaseInitialization\bin\Debug\EntityFramework.xml
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\PacketsTestDatabaseInitialization\bin\Debug\EntityFramework.SqlServer.xml
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\PacketsTestDatabaseInitialization\obj\Debug\PacketsTestDatabaseInitialization.csprojResolveAssemblyReference.cache
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\PacketsTestDatabaseInitialization\obj\Debug\PacketsTestDatabaseInitialization.dll
+C:\Jim's Folders\VS2013 Projects\CoResidencyProject\cowe-project.git\COWE-Client\PacketsTestDatabaseInitialization\obj\Debug\PacketsTestDatabaseInitialization.pdb
