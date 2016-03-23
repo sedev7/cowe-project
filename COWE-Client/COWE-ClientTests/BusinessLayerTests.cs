@@ -5,7 +5,7 @@ using System.IO;
 using System.Data;
 using System.Data.SqlClient;
 using System.Data.Entity;
-using System.Data.EntityModel;
+//using System.Data.EntityModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using COWE.BusinessLayer;
 using COWE.DomainClasses;

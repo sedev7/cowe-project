@@ -19,6 +19,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "COWE Tests", "COWE Tests", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "COWE-ClientTests", "COWE-ClientTests\COWE-ClientTests.csproj", "{1E215CAC-092B-4FA0-8B5B-335D4911D77A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PacketsTestDatabaseInitialization", "PacketsTestDatabaseInitialization\PacketsTestDatabaseInitialization.csproj", "{9320596B-D51A-418C-98D1-F969DA595100}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{1E215CAC-092B-4FA0-8B5B-335D4911D77A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E215CAC-092B-4FA0-8B5B-335D4911D77A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E215CAC-092B-4FA0-8B5B-335D4911D77A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9320596B-D51A-418C-98D1-F969DA595100}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9320596B-D51A-418C-98D1-F969DA595100}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9320596B-D51A-418C-98D1-F969DA595100}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9320596B-D51A-418C-98D1-F969DA595100}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

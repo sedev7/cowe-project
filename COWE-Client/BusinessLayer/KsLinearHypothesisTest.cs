@@ -83,6 +83,9 @@ namespace COWE.BusinessLayer
                     }
                 }
 
+                // Multiply by the square root of the sample size factor
+                maxVariance = maxVariance * Convert.ToDecimal(Math.Sqrt((markedCPD.Count * unmarkedCPD.Count) / (markedCPD.Count + unmarkedCPD.Count)));
+
                 // Compare the maximum variance with the hypothesis test threshold
                 // For significance level alpha = 0.05, the K-S statistic is computed as 1.36/N^(1/2), where N is the number of samples
                 decimal ksStatistic = Convert.ToDecimal(1.36 / Math.Pow(intervalCount, 0.5));

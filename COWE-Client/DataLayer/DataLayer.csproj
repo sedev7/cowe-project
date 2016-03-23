@@ -58,22 +58,6 @@
     <Compile Include="CaptureFileData.cs" />
     <Compile Include="CumulativeIntervalData.cs" />
     <Compile Include="Models\CumulativeProbabilityDistributionRepository.cs" />
-    <Compile Include="PacketAnalysisTestModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>PacketAnalysisTestModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="PacketAnalysisTestModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>PacketAnalysisTestModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="PacketAnalysisTestModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>PacketAnalysisTestModel.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="PacketAnalysisTestModel.Views.cs" />
     <Compile Include="SingleHistogramData.cs" />
     <Compile Include="PacketAnalysisModel.Context.cs">
       <AutoGen>True</AutoGen>
@@ -111,23 +95,6 @@
     </None>
     <None Include="PacketAnalysisModel.edmx.diagram">
       <DependentUpon>PacketAnalysisModel.edmx</DependentUpon>
-    </None>
-    <EntityDeploy Include="PacketAnalysisTestModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>PacketAnalysisTestModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <None Include="PacketAnalysisTestModel.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>PacketAnalysisTestModel.edmx</DependentUpon>
-      <LastGenOutput>PacketAnalysisTestModel.Context.cs</LastGenOutput>
-    </None>
-    <None Include="PacketAnalysisTestModel.edmx.diagram">
-      <DependentUpon>PacketAnalysisTestModel.edmx</DependentUpon>
-    </None>
-    <None Include="PacketAnalysisTestModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>PacketAnalysisTestModel.edmx</DependentUpon>
-      <LastGenOutput>PacketAnalysisTestModel.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>
