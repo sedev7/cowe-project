@@ -89,5 +89,5 @@ END
 GO
 
 IF ERROR_MESSAGE() IS NULL
-	PRINT '  -> Create procedure [CumulativeProbabilityDistributionInsert] successfully completed'
+	PRINT '  -> Create procedure [CaptureBatchUpdate_for_CaptureBatchId] successfully completed'
 GO
